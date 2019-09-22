@@ -19,7 +19,9 @@ void input_action();
 
 int main(int argc, char *argv[]) {
     input_command(argc, argv);
-    parse_input_action();
+    while(1){
+        parse_input_action();
+    }
 }
 
 int input_command(int argc, char *argv[]) {
@@ -64,8 +66,42 @@ int parse_input_action() {
 }
 
 void input_action(int numTokens, char** saveTokens) {
-    int i;
-    for(i = 0; i < numTokens; i++){
-        printf("%s\n", saveTokens[i]);
+
+    if((strcmp(saveTokens[0], "register") == 0) || (strcmp(saveTokens[0],"reg") == 0)) {
+        printf("register or reg\n");
+    }
+    else if((strcmp(saveTokens[0],"topic_list") == 0) || (strcmp(saveTokens[0], "tl") == 0)) {
+        printf("topic list or tl\n");
+    }
+    else if((strcmp(saveTokens[0], "topic_propose") == 0) || (strcmp(saveTokens[0], "tp") == 0)){
+        printf("topic propose or tp\n");
+    }
+    else if((strcmp(saveTokens[0], "question_list") == 0) || (strcmp(saveTokens[0], "ql") == 0)){
+        printf("question list or ql\n");
+    }
+    else if((strcmp(saveTokens[0], "question_submit") == 0) || (strcmp(saveTokens[0], "qs") == 0)){
+        printf("question submit or qs\n");
+    }
+    else if((strcmp(saveTokens[0], "answer_submit") == 0) || (strcmp(saveTokens[0], "as") == 0)){
+        printf("answer submit\n");
+    }
+    else if(strcmp(saveTokens[0], "topic_select") == 0){
+        printf("topic select\n");    
+    }
+    else if(strcmp(saveTokens[0], "ts") == 0){
+            printf("ts\n");
+    }
+    else if(strcmp(saveTokens[0], "question_get") == 0){
+        printf("question get\n");
+    }
+    else if(strcmp(saveTokens[0], "qg") == 0){
+        printf("qg\n");
+    }
+    else if(strcmp(saveTokens[0], "exit") == 0){
+        exit(0);
+    }
+    else{
+        printf("Invalid syntax!"); 
+        exit(-1);
     }
 }
