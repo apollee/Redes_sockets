@@ -18,31 +18,28 @@ void input_action();
 
 
 int main(int argc, char *argv[]) {
-    input_command(argc, argv);
+    int port, ip;
+    ip = 13525 ;/*getadrrinfo();*/
+    port = 58041;
+    input_command(argc, argv, &port, &ip);
+    printf("ip: %d\n", ip);
+    printf("port: %d\n", port);
     while(1){
         parse_input_action();
     }
 }
 
-int input_command(int argc, char *argv[]) {
-    
-    if(argc == 2 && (strcmp(argv[1],"-n") == 0)) {
-        printf("FSIP\n");
-    }
-    else if(argc == 2 && (strcmp(argv[1],"-p") == 0)) {
-        printf("FSport\n");
-    }
-    else if(argc == 3 && (strcmp(argv[1],"-n") == 0)) {
-        printf("FSIP  with ip\n");
+int input_command(int argc, char *argv[], int *port, int *ip) {
+    if(argc == 3 && (strcmp(argv[1],"-n") == 0)) {
+        (*ip) = atoi(argv[2]);
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        printf("FSport with port\n");
+        (*port) = atoi(argv[2]);
     }
-    else{
-        printf("Invalid syntax.\n");
-        return -1;
+    else if(argc == 5 && (strcmp(argv[1],"-n") == 0) && (strcmp(argv[3],"-p") == 0)) {
+        (*ip) = atoi(argv[2]);
+        (*port) = atoi(argv[4]);
     }
-    return 0;
 }
 
 int parse_input_action() {
