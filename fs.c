@@ -16,16 +16,17 @@ int input_command();
 
 
 int main(int argc, char *argv[]) {
-    input_command(argc, argv);
+    int port = input_command(argc, argv);
+    printf("%d\n", port);
 }
 
 int input_command(int argc, char *argv[]) {
     
-    if(argc == 2 && (strcmp(argv[1],"-p") == 0)) {
-        printf("FSport\n");
+    if(argc == 1) {
+        return 58041;
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        printf("FSport with port\n");
+        return atoi(argv[2]);
     }
     else{
         printf("Invalid syntax.\n");
