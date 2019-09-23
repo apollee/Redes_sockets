@@ -10,37 +10,44 @@
 
 /*------------------------*/
 
-int input_command();
+void input_command(int argc, char *argv[], int *port, char *ip);
 int parse_input_action();
-void input_action();
+void input_action(int numTokens, char** saveTokens);
 
 /*------------------------*/
 
 
 int main(int argc, char *argv[]) {
-    int port, ip;
-    ip = 13525 ;/*getadrrinfo();*/
-    port = 58041;
-    input_command(argc, argv, &port, &ip);
-    printf("ip: %d\n", ip);
+    int port = 58041;
+    char ip[50]; /*getadrrinfo();*/
+    input_command(argc, argv, &port, ip);
+    printf("ip: %s\n", ip);
     printf("port: %d\n", port);
     while(1){
         parse_input_action();
     }
 }
 
-int input_command(int argc, char *argv[], int *port, int *ip) {
-    if(argc == 3 && (strcmp(argv[1],"-n") == 0)) {
-        (*ip) = atoi(argv[2]);
+void input_command(int argc, char *argv[], int *port, char *ip) {
+    if(argc == 1){
+        return;
+    }
+    else if(argc == 3 && (strcmp(argv[1],"-n") == 0)) {
+        strcpy(ip,argv[2]);
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
         (*port) = atoi(argv[2]);
     }
     else if(argc == 5 && (strcmp(argv[1],"-n") == 0) && (strcmp(argv[3],"-p") == 0)) {
-        (*ip) = atoi(argv[2]);
+        strcpy(ip, argv[2]);
         (*port) = atoi(argv[4]);
     }
+    else{
+        fprintf(stderr, "Invalid sintax!\n");
+        exit(-1);
+    }
 }
+
 
 int parse_input_action() {
     int numTokens = 0;
