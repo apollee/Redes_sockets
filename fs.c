@@ -8,25 +8,34 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#define PORT "58041"
+#define FLAG "flag"
 /*------------------------*/
 
-int input_command();
+void input_command(int argc, char *argv[]);
 
 /*------------------------*/
 
 
 int main(int argc, char *argv[]) {
-    int port = input_command(argc, argv);
-    printf("%d\n", port);
+    char port[8] 
+    
+    strcpy(port, FLAG);
+    input_command(argc, argv, port);
+    
+    if(!strcmp(port, FLAG)){
+        strcpy(port, PORT);
+    }
+    printf("%s\n", port);
 }
 
-int input_command(int argc, char *argv[]) {
+void input_command(int argc, char *argv[], char* port) {
     
     if(argc == 1) {
-        return 58041;
+        return;
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        return atoi(argv[2]);
+        strcpy(port, argv[2]);
     }
     else{
         printf("Invalid syntax.\n");

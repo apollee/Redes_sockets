@@ -8,7 +8,9 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+
 #define PORT "58041"
+#define FLAG "flag"
 /*------------------------*/
 
 void input_command(int argc, char *argv[], char *port, char *ip);
@@ -30,12 +32,12 @@ int main(int argc, char *argv[]) {
     char port[8];
     char ip[INET_ADDRSTRLEN];
 
-    strcpy(port,"flag");
-    strcpy(ip,"flag");
+    strcpy(port, FLAG);
+    strcpy(ip, FLAG);
 
     input_command(argc, argv, port, ip);
    
-    if(!strcmp(port, "flag")){
+    if(!strcmp(port, FLAG)){
     	strcpy(port, PORT);
     }
 
@@ -46,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
     
-    if(!strcmp(ip, "flag")){
+    if(!strcmp(ip, FLAG)){
         printf("ola\n");
         inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
     }
