@@ -43,7 +43,7 @@ void input_command(int argc, char *argv[], int *port, char *ip) {
         (*port) = atoi(argv[4]);
     }
     else{
-        fprintf(stderr, "Invalid sintax!\n");
+        fprintf(stderr, "Invalid syntax!\n");
         exit(-1);
     }
 }
