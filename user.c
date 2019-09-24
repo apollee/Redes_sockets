@@ -8,9 +8,10 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
+#define PORT "58041"
 /*------------------------*/
 
-void input_command(int argc, char *argv[], int *port, char *ip);
+void input_command(int argc, char *argv[], char *port, char *ip);
 int parse_input_action();
 void input_action(int numTokens, char** saveTokens);
 
@@ -18,17 +19,47 @@ void input_action(int numTokens, char** saveTokens);
 
 
 int main(int argc, char *argv[]) {
-    int port = 58041;
-    char ip[50]; /*getadrrinfo();*/
-    input_command(argc, argv, &port, ip);
+    struct addrinfo hintsUDP, *resUDP;
+    struct sockaddr_in addr;
+    int fd, errcode;
+    socklen_t addrlen;
+    ssize_t n;
+
+    char host_name[128];
+    gethostname(host_name,128);
+    char port[8];
+    char ip[INET_ADDRSTRLEN];
+
+    strcpy(port,"flag");
+    strcpy(ip,"flag");
+
+    input_command(argc, argv, port, ip);
+   
+    if(!strcmp(port, "flag")){
+    	strcpy(port, PORT);
+    }
+
+    memset(&hintsUDP, 0 ,sizeof hintsUDP);
+    hintsUDP.ai_family = AF_INET;
+    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsUDP.ai_flags = AI_NUMERICSERV;
+
+    errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
+    
+    if(!strcmp(ip, "flag")){
+        printf("ola\n");
+        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
     printf("ip: %s\n", ip);
-    printf("port: %d\n", port);
+    printf("port: %s\n", port);
+    printf("%s\n",host_name);
+    
     while(1){
         parse_input_action();
     }
 }
 
-void input_command(int argc, char *argv[], int *port, char *ip) {
+void input_command(int argc, char *argv[], char *port, char *ip) {
     if(argc == 1){
         return;
     }
@@ -36,11 +67,11 @@ void input_command(int argc, char *argv[], int *port, char *ip) {
         strcpy(ip,argv[2]);
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        (*port) = atoi(argv[2]);
+        strcpy(port,argv[2]);
     }
     else if(argc == 5 && (strcmp(argv[1],"-n") == 0) && (strcmp(argv[3],"-p") == 0)) {
         strcpy(ip, argv[2]);
-        (*port) = atoi(argv[4]);
+        strcpy(port,argv[4]);
     }
     else{
         fprintf(stderr, "Invalid syntax!\n");
@@ -106,6 +137,5 @@ void input_action(int numTokens, char** saveTokens) {
     }
     else{
         printf("Invalid syntax!"); 
-        exit(-1);
     }
 }
