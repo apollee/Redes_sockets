@@ -9,13 +9,15 @@
 #include <arpa/inet.h>
 
 
-#define PORT "58041"
+#define DEFAULT_PORT "58041"
 #define FLAG "flag"
+
 /*------------------------*/
 
 void input_command(int argc, char *argv[], char *port, char *ip);
 int parse_input_action();
 void input_action(int numTokens, char** saveTokens);
+void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip);
 
 /*------------------------*/
 
@@ -23,38 +25,22 @@ void input_action(int numTokens, char** saveTokens);
 int main(int argc, char *argv[]) {
     struct addrinfo hintsUDP, *resUDP;
     struct sockaddr_in addr;
-    int fd, errcode;
     socklen_t addrlen;
     ssize_t n;
-
     char host_name[128];
-    gethostname(host_name,128);
-    char port[8];
+    char port[6];
     char ip[INET_ADDRSTRLEN];
 
+    gethostname(host_name,128);
     strcpy(port, FLAG);
     strcpy(ip, FLAG);
-
     input_command(argc, argv, port, ip);
    
     if(!strcmp(port, FLAG)){
-    	strcpy(port, PORT);
+    	strcpy(port, DEFAULT_PORT);
     }
 
-    memset(&hintsUDP, 0 ,sizeof hintsUDP);
-    hintsUDP.ai_family = AF_INET;
-    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
-    hintsUDP.ai_flags = AI_NUMERICSERV;
-
-    errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
-    
-    if(!strcmp(ip, FLAG)){
-        printf("ola\n");
-        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
-    }
-    printf("ip: %s\n", ip);
-    printf("port: %s\n", port);
-    printf("%s\n",host_name);
+    getIp(hintsUDP, host_name, port, resUDP, ip);
     
     while(1){
         parse_input_action();
@@ -65,13 +51,13 @@ void input_command(int argc, char *argv[], char *port, char *ip) {
     if(argc == 1){
         return;
     }
-    else if(argc == 3 && (strcmp(argv[1],"-n") == 0)) {
+    else if(argc == 3 && !(strcmp(argv[1],"-n"))) {
         strcpy(ip,argv[2]);
     }
-    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
+    else if(argc == 3 && !(strcmp(argv[1],"-p"))) {
         strcpy(port,argv[2]);
     }
-    else if(argc == 5 && (strcmp(argv[1],"-n") == 0) && (strcmp(argv[3],"-p") == 0)) {
+    else if(argc == 5 && !(strcmp(argv[1],"-n") == 0) && !(strcmp(argv[3],"-p") == 0)) {
         strcpy(ip, argv[2]);
         strcpy(port,argv[4]);
     }
@@ -80,7 +66,6 @@ void input_command(int argc, char *argv[], char *port, char *ip) {
         exit(-1);
     }
 }
-
 
 int parse_input_action() {
     int numTokens = 0;
@@ -104,40 +89,56 @@ int parse_input_action() {
 
 void input_action(int numTokens, char** saveTokens) {
 
-    if((strcmp(saveTokens[0], "register") == 0) || (strcmp(saveTokens[0],"reg") == 0)) {
+    if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) {
         printf("register or reg\n");
     }
-    else if((strcmp(saveTokens[0],"topic_list") == 0) || (strcmp(saveTokens[0], "tl") == 0)) {
+    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
         printf("topic list or tl\n");
     }
-    else if((strcmp(saveTokens[0], "topic_propose") == 0) || (strcmp(saveTokens[0], "tp") == 0)){
+    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
         printf("topic propose or tp\n");
     }
-    else if((strcmp(saveTokens[0], "question_list") == 0) || (strcmp(saveTokens[0], "ql") == 0)){
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
         printf("question list or ql\n");
     }
-    else if((strcmp(saveTokens[0], "question_submit") == 0) || (strcmp(saveTokens[0], "qs") == 0)){
+    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
         printf("question submit or qs\n");
     }
-    else if((strcmp(saveTokens[0], "answer_submit") == 0) || (strcmp(saveTokens[0], "as") == 0)){
+    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
         printf("answer submit\n");
     }
-    else if(strcmp(saveTokens[0], "topic_select") == 0){
+    else if(!strcmp(saveTokens[0], "topic_select")){
         printf("topic select\n");    
     }
-    else if(strcmp(saveTokens[0], "ts") == 0){
+    else if(!strcmp(saveTokens[0], "ts")){
             printf("ts\n");
     }
-    else if(strcmp(saveTokens[0], "question_get") == 0){
+    else if(!strcmp(saveTokens[0], "question_get")){
         printf("question get\n");
     }
-    else if(strcmp(saveTokens[0], "qg") == 0){
+    else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");
     }
-    else if(strcmp(saveTokens[0], "exit") == 0){
+    else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
     }
     else{
         printf("Invalid syntax!"); 
     }
+}
+
+void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip){
+    memset(&hintsUDP, 0 ,sizeof hintsUDP);
+    hintsUDP.ai_family = AF_INET;
+    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsUDP.ai_flags = AI_NUMERICSERV;
+
+    int errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
+    
+    if(!strcmp(ip, FLAG)){
+        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
+    printf("ip: %s\n", ip);
+    printf("port: %s\n", port);
+    printf("%s\n",host_name);
 }

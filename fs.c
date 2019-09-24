@@ -8,31 +8,32 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 
-#define PORT "58041"
+#define DEFAULT_PORT "58041"
 #define FLAG "flag"
+
 /*------------------------*/
 
-void input_command(int argc, char *argv[]);
+int input_command(int argc, char *argv[], char* port);
 
 /*------------------------*/
 
 
 int main(int argc, char *argv[]) {
-    char port[8] 
-    
+    char port[6];
+
     strcpy(port, FLAG);
     input_command(argc, argv, port);
     
     if(!strcmp(port, FLAG)){
-        strcpy(port, PORT);
+        strcpy(port, DEFAULT_PORT); //set the default port
     }
-    printf("%s\n", port);
+    printf("port: %s\n", port);
 }
 
-void input_command(int argc, char *argv[], char* port) {
-    
+int input_command(int argc, char *argv[], char* port) {
+
     if(argc == 1) {
-        return;
+        return 0;
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
         strcpy(port, argv[2]);
