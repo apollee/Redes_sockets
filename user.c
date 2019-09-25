@@ -18,7 +18,7 @@ void input_command(int argc, char *argv[], char *port, char *ip);
 int parse_input_action();
 void input_action(int numTokens, char** saveTokens);
 void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip);
-
+int createUDPSocket(struct addrinfo hints, struct addrinfo* res);
 /*------------------------*/
 
 
@@ -40,8 +40,26 @@ int main(int argc, char *argv[]) {
     	strcpy(port, DEFAULT_PORT);
     }
 
-    getIp(hintsUDP, host_name, port, resUDP, ip);
+
+    //getIp(hintsUDP, host_name, port, resUDP, ip);
+    memset(&hintsUDP, 0 ,sizeof hintsUDP);
+    hintsUDP.ai_family = AF_INET;
+    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsUDP.ai_flags = AI_NUMERICSERV;
+
+    int errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
     
+    if(!strcmp(ip, FLAG)){
+        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
+
+    printf("ip: %s\n", ip);
+    printf("port: %s\n", port);
+    printf("%s\n",host_name);
+    
+    int fd = createUDPSocket(hintsUDP, resUDP);
+
+    sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
     while(1){
         parse_input_action();
     }
@@ -127,6 +145,9 @@ void input_action(int numTokens, char** saveTokens) {
     }
 }
 
+
+
+//Not being used----------------------------
 void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip){
     memset(&hintsUDP, 0 ,sizeof hintsUDP);
     hintsUDP.ai_family = AF_INET;
@@ -141,4 +162,13 @@ void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinf
     printf("ip: %s\n", ip);
     printf("port: %s\n", port);
     printf("%s\n",host_name);
+}
+
+
+
+int createUDPSocket(struct addrinfo hints, struct addrinfo* res){
+    
+    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
+
+    return fd;
 }
