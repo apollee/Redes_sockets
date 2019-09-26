@@ -42,10 +42,22 @@ int main(int argc, char *argv[]) {
     char* message = "Hello!\n";
     int message_len = strlen(message);
 
-
     //UDP-------------------------------------------------------
 
-    getIp(hintsUDP, host_name, port, resUDP, ip);
+    //getIp(hintsUDP, host_name, port, resUDP, ip);
+    memset(&hintsUDP, 0 ,sizeof hintsUDP);
+    hintsUDP.ai_family = AF_INET;
+    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsUDP.ai_flags = AI_NUMERICSERV;
+
+    int errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
+    
+    if(!strcmp(ip, FLAG)){
+        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
+    printf("ip: %s\n", ip);
+    printf("port: %s\n", port);
+    printf("%s\n",host_name);
    
     fd = createSocket(hintsUDP, resUDP);
 
@@ -66,7 +78,7 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_NUMERICSERV;
     
-    getIp(hintsTCP, host_name, port, resTCP, ip);
+    //getIp(hintsTCP, host_name, port, resTCP, ip);
     
     fd = createSocket(hintsTCP, resTCP);
     
