@@ -46,7 +46,7 @@ int main(int argc, char *argv[]) {
 
     hints.ai_family=AF_INET;//IPv4
     hints.ai_socktype=SOCK_DGRAM;//UDP socket
-    hints.ai_flags=AI_NUMERICSERV;
+    hints.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
     getaddrinfo(NULL, port, &hints, &res);
     fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
