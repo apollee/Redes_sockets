@@ -37,25 +37,18 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in addr;
     socklen_t addrlen;
 
-    memset(&hintsTCP, 0 ,sizeof hintsTCP);
-    hintsTCP.ai_family = AF_INET;
-    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
-    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
+    
 
+    //UDP--------------------------------------------------
     memset(&hintsUDP,0,sizeof hintsUDP);
     hintsUDP.ai_family=AF_INET;//IPv4
     hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
     hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hintsTCP, &resUDP);
     getaddrinfo(NULL, port, &hintsUDP, &resUDP);
-
-    fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
 
     fdUDP = socket(resUDP->ai_family, resUDP->ai_socktype, resUDP->ai_protocol);
 
-    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
 
     addrlen=sizeof(addr);
@@ -64,7 +57,21 @@ int main(int argc, char *argv[]) {
 
     sendto(fdUDP, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
    
-    
+
+
+
+
+    //TCP-----------------------------------------
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
+
+    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+
+    fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
+
+    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
 }
 
 int input_command(int argc, char *argv[], char* port) {
