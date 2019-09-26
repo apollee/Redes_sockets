@@ -21,7 +21,6 @@ int createUDPSocket();
 
 int main(int argc, char *argv[]) {
     char port[6];
-
     strcpy(port, FLAG);
     input_command(argc, argv, port);
     
@@ -29,11 +28,6 @@ int main(int argc, char *argv[]) {
         strcpy(port, DEFAULT_PORT); //set the default port
     }
     printf("port: %s\n", port);
-
-
-
-
-
 
     struct addrinfo hints,*res;
     int fd;
@@ -53,10 +47,13 @@ int main(int argc, char *argv[]) {
 
     n = bind(fd,res->ai_addr,res->ai_addrlen);
 
-    recvfrom(fd,buffer,128,0,(struct sockaddr*)&addr,&addrlen);
-
+    addrlen=sizeof(addr);
+    n = recvfrom(fd, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     printf("%s\n", buffer);
 
+    sendto(fd, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
+   
+    
 }
 
 int input_command(int argc, char *argv[], char* port) {

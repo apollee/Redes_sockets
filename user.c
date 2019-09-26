@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     char host_name[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
+    char buffer[128];
 
     gethostname(host_name,128);
     strcpy(port, FLAG);
@@ -60,6 +61,11 @@ int main(int argc, char *argv[]) {
     int fd = createUDPSocket(hintsUDP, resUDP);
 
     sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+
+    addrlen = sizeof(addr);
+    recvfrom(fd, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
+    printf("%s\n", buffer);
+
     while(1){
         parse_input_action();
     }
