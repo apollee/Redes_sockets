@@ -43,27 +43,13 @@ int main(int argc, char *argv[]) {
     }
 
 
-    //getIp(hintsUDP, host_name, port, resUDP, ip);
-    memset(&hintsUDP, 0 ,sizeof hintsUDP);
-    hintsUDP.ai_family = AF_INET;
-    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
-    hintsUDP.ai_flags = AI_NUMERICSERV;
 
-    memset(&hintsTCP, 0 ,sizeof hintsTCP);
-    hintsTCP.ai_family = AF_INET;
-    hintsTCP.ai_socktype = SOCK_DGRAM; //UDP
-    hintsTCP.ai_flags = AI_NUMERICSERV;
 
-    int errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
-    
-    if(!strcmp(ip, FLAG)){
-        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
-    }
 
-    printf("ip: %s\n", ip);
-    printf("port: %s\n", port);
-    printf("%s\n",host_name);
-    
+    //UDP-------------------------------------------------------
+
+    getIp(hintsUDP, host_name, port, resUDP, ip);
+   
     int fd = createUDPSocket(hintsUDP, resUDP);
 
     sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
@@ -72,10 +58,35 @@ int main(int argc, char *argv[]) {
     recvfrom(fd, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     printf("%s\n", buffer);
 
+    
+    
+    
+    
+    //TCP----------------------------------------
+    
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_DGRAM; //TCP
+    hintsTCP.ai_flags = AI_NUMERICSERV;
+    
+    
+    
+    
+    
+    
     while(1){
         parse_input_action();
     }
 }
+
+
+
+
+
+
+
+
+
 
 void input_command(int argc, char *argv[], char *port, char *ip) {
     if(argc == 1){
@@ -156,6 +167,11 @@ void input_action(int numTokens, char** saveTokens) {
         printf("Invalid syntax!"); 
     }
 }
+
+
+
+
+
 
 
 
