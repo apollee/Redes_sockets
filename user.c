@@ -24,6 +24,7 @@ int createUDPSocket(struct addrinfo hints, struct addrinfo* res);
 
 int main(int argc, char *argv[]) {
     struct addrinfo hintsUDP, *resUDP;
+    struct addrinfo hintsTCP, *resTCP;
     struct sockaddr_in addr;
     socklen_t addrlen;
     ssize_t n;
@@ -47,6 +48,11 @@ int main(int argc, char *argv[]) {
     hintsUDP.ai_family = AF_INET;
     hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
     hintsUDP.ai_flags = AI_NUMERICSERV;
+
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsTCP.ai_flags = AI_NUMERICSERV;
 
     int errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP);
     

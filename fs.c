@@ -29,29 +29,39 @@ int main(int argc, char *argv[]) {
     }
     printf("port: %s\n", port);
 
-    struct addrinfo hints,*res;
-    int fd;
+    struct addrinfo hintsUDP,*resUDP;
+    int fdUDP, fdTCP;
     ssize_t n;
     char buffer[128];
     struct sockaddr_in addr;
     socklen_t addrlen;
 
-    memset(&hints,0,sizeof hints);
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
 
-    hints.ai_family=AF_INET;//IPv4
-    hints.ai_socktype=SOCK_DGRAM;//UDP socket
-    hints.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
+    memset(&hintsUDP,0,sizeof hintsUDP);
+    hintsUDP.ai_family=AF_INET;//IPv4
+    hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
+    hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hints, &res);
-    fd = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    getaddrinfo(NULL, port,&hintsTCP,,&resUDP);
+    getaddrinfo(NULL, port, &hintsUDP, &resUDP);
 
-    n = bind(fd,res->ai_addr,res->ai_addrlen);
+    fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
+
+    fdUDP = socket(resUDP->ai_family, resUDP->ai_socktype, resUDP->ai_protocol);
+
+    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    
+    n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
 
     addrlen=sizeof(addr);
-    n = recvfrom(fd, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
+    n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     printf("%s\n", buffer);
 
-    sendto(fd, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
+    sendto(fdUDP, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
    
     
 }
