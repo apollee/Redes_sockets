@@ -6,11 +6,14 @@
 #include "parse.h"
 
 /* =============================================================================
- * input_command - input user when starting the program
+ * input_command_user - input user when starting the program
  * =============================================================================
  */
 
-void input_command(int argc, char *argv[], char *port, char *ip) {
+void input_command_user(int argc, char *argv[], char *port, char *ip) {
+    strcpy(port, DEFAULT_PORT);
+    strcpy(ip, FLAG);
+
     if(argc == 1){
         return;
     }
@@ -20,13 +23,33 @@ void input_command(int argc, char *argv[], char *port, char *ip) {
     else if(argc == 3 && !(strcmp(argv[1],"-p"))) {
         strcpy(port,argv[2]);
     }
-    else if(argc == 5 && !(strcmp(argv[1],"-n") == 0) && !(strcmp(argv[3],"-p") == 0)) {
+    else if(argc == 5 && !(strcmp(argv[1],"-n")) && !(strcmp(argv[3],"-p"))) {
         strcpy(ip, argv[2]);
         strcpy(port,argv[4]);
     }
     else{
         fprintf(stderr, "Invalid syntax!\n");
         exit(-1);
+    }
+}
+
+/* =============================================================================
+ * input_command_server - input server when starting the program
+ * =============================================================================
+ */
+
+int input_command_server(int argc, char *argv[], char* port) {
+    strcpy(port, DEFAULT_PORT);
+
+    if(argc == 1) {
+        return 0;
+    }
+    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
+        strcpy(port, argv[2]);
+    }
+    else{
+        printf("Invalid syntax.\n");
+        return -1;
     }
 }
 

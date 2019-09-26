@@ -1,11 +1,20 @@
 #ifndef PARSE_H
 #define PARSE_H 1
 
-/* =============================================================================
- * input_command - input user when starting the program
- * ===========================================================================*/
-void input_command(int argc, char *argv[], char *port, char *ip);
+#define FLAG "flag"
+#define DEFAULT_PORT "58041"
 
+/* =============================================================================
+ * input_command_user - input user when starting the program
+ * ===========================================================================*/
+
+void input_command_user(int argc, char *argv[], char *port, char *ip);
+
+/* =============================================================================
+ * input_command_server - input server when starting the program
+ * ===========================================================================*/
+
+int input_command_server(int argc, char *argv[], char* port);
 
 /* =============================================================================
  * parse_input_action - parsing the command to perform

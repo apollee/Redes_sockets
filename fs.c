@@ -7,37 +7,27 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
-#define DEFAULT_PORT "58041"
-#define FLAG "flag"
+#include "parse.h"
 
 /*------------------------*/
 
-int input_command(int argc, char *argv[], char* port);
-int createUDPSocket();
+int createUDPSocket(struct addrinfo* resUDP);
 
 /*------------------------*/
 
 
 int main(int argc, char *argv[]) {
-    char port[6];
-    strcpy(port, FLAG);
-    input_command(argc, argv, port);
-    
-    if(!strcmp(port, FLAG)){
-        strcpy(port, DEFAULT_PORT); //set the default port
-    }
-    printf("port: %s\n", port);
-
     struct addrinfo hintsUDP,*resUDP;
     struct addrinfo hintsTCP,*resTCP;
     int fdUDP, fdTCP;
     ssize_t n;
     char buffer[128];
+    char port[6];
     struct sockaddr_in addr;
     socklen_t addrlen;
 
-    
+    input_command_server(argc, argv, port);
+    printf("port: %s\n", port);
 
     //UDP--------------------------------------------------
     memset(&hintsUDP,0,sizeof hintsUDP);
@@ -47,8 +37,7 @@ int main(int argc, char *argv[]) {
 
     getaddrinfo(NULL, port, &hintsUDP, &resUDP);
 
-    fdUDP = socket(resUDP->ai_family, resUDP->ai_socktype, resUDP->ai_protocol);
-
+    fdUDP = createUDPSocket(resUDP);
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
 
     addrlen=sizeof(addr);
@@ -57,9 +46,6 @@ int main(int argc, char *argv[]) {
 
     sendto(fdUDP, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
    
-
-
-
 
     //TCP-----------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
@@ -70,20 +56,11 @@ int main(int argc, char *argv[]) {
     getaddrinfo(NULL, port, &hintsTCP, &resTCP);
 
     fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
-
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
 }
 
-int input_command(int argc, char *argv[], char* port) {
 
-    if(argc == 1) {
-        return 0;
-    }
-    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        strcpy(port, argv[2]);
-    }
-    else{
-        printf("Invalid syntax.\n");
-        return -1;
-    }
+int createUDPSocket(struct addrinfo* resUDP){ 
+    int fd = socket(resUDP->ai_family,resUDP->ai_socktype,resUDP->ai_protocol);
+    return fd;
 }
