@@ -1,5 +1,3 @@
-fs: fs
-	gcc fs.c -o fs
-
-user: user
-	gcc user.c -o user
+SRCS=$(wildcard *.c)
+OBJS=$(SRCS:.c=.o)
+all: $(OBJS)
