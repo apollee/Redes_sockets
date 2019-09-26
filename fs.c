@@ -30,6 +30,7 @@ int main(int argc, char *argv[]) {
     printf("port: %s\n", port);
 
     struct addrinfo hintsUDP,*resUDP;
+    struct addrinfo hintsTCP,*resTCP;
     int fdUDP, fdTCP;
     ssize_t n;
     char buffer[128];
@@ -46,7 +47,7 @@ int main(int argc, char *argv[]) {
     hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
     hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port,&hintsTCP,,&resUDP);
+    getaddrinfo(NULL, port, &hintsTCP, &resUDP);
     getaddrinfo(NULL, port, &hintsUDP, &resUDP);
 
     fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
