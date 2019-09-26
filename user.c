@@ -13,29 +13,25 @@
 #define FLAG "flag"
 
 /*------------------------*/
-
 void input_command(int argc, char *argv[], char *port, char *ip);
 int parse_input_action();
 void input_action(int numTokens, char** saveTokens);
 void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip);
-int createUDPSocket(struct addrinfo hints, struct addrinfo* res);
+int createSocket(struct addrinfo hints, struct addrinfo* res);
 /*------------------------*/
 
 
 int main(int argc, char *argv[]) {
-    struct addrinfo hintsUDP, *resUDP;
-    struct addrinfo hintsTCP, *resTCP;
+    struct addrinfo hintsUDP, *resUDP, hintsTCP, *resTCP;
     struct sockaddr_in addr;
     socklen_t addrlen;
-    ssize_t n;
-    char host_name[128];
-    char port[6];
-    char ip[INET_ADDRSTRLEN];
-    char buffer[128];
+    char host_name[128], port[6], ip[INET_ADDRSTRLEN], buffer[128];
+    int fd, n;
 
     gethostname(host_name,128);
     strcpy(port, FLAG);
     strcpy(ip, FLAG);
+
     input_command(argc, argv, port, ip);
    
     if(!strcmp(port, FLAG)){
@@ -43,16 +39,17 @@ int main(int argc, char *argv[]) {
     }
 
 
-
+    char* message = "Hello!\n";
+    int message_len = strlen(message);
 
 
     //UDP-------------------------------------------------------
 
     getIp(hintsUDP, host_name, port, resUDP, ip);
    
-    int fd = createUDPSocket(hintsUDP, resUDP);
+    fd = createSocket(hintsUDP, resUDP);
 
-    sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    sendto(fd, message, message_len , 0, resUDP->ai_addr, resUDP->ai_addrlen);
 
     addrlen = sizeof(addr);
     recvfrom(fd, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
@@ -66,13 +63,17 @@ int main(int argc, char *argv[]) {
     
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET;
-    hintsTCP.ai_socktype = SOCK_DGRAM; //TCP
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_NUMERICSERV;
     
+    getIp(hintsTCP, host_name, port, resTCP, ip);
     
+    fd = createSocket(hintsTCP, resTCP);
     
-    
-    
+    n = connect(fd, resTCP->ai_addr, resTCP->ai_addrlen);
+
+
+
     
     while(1){
         parse_input_action();
@@ -194,9 +195,7 @@ void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinf
 
 
 
-int createUDPSocket(struct addrinfo hints, struct addrinfo* res){
-    
+int createSocket(struct addrinfo hints, struct addrinfo* res){ 
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
-
     return fd;
 }
