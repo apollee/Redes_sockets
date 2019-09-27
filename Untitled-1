@@ -1,0 +1,29 @@
+ struct addrinfo hintsUDP, hintsTCP;
+    struct addrinfo *resUDP, *resTCP;
+    struct sockaddr_in addr;
+    socklen_t addrlen;
+    ssize_t n;
+    char host_name[128];
+    char buffer[128];
+    char port[6];
+    char ip[INET_ADDRSTRLEN];
+    int fdUDP, fdTCP;
+
+//TCP-------------------------------------------------------------------
+    /*memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_NUMERICSERV;
+    SO_REUSEPORT;
+
+    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+
+    fdTCP = createSocket(resTCP);
+    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    printf("%d", h);
+    
+    int b = write(fdTCP, "ola\n", 4);
+    b = read(fdTCP, buffer, 128);
+
+    write(1, "echo: ", 6);
+    write(1, buffer, b);*/

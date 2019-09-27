@@ -18,13 +18,16 @@ int createUDPSocket(struct addrinfo* resUDP);
 
 
 int main(int argc, char *argv[]) {
-    struct addrinfo hintsUDP, *resUDP;
+     struct addrinfo hintsUDP, hintsTCP;
+    struct addrinfo *resUDP, *resTCP;
     struct sockaddr_in addr;
     socklen_t addrlen;
     ssize_t n;
     char host_name[128];
+    char buffer[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
+    int fdUDP, fdTCP;
 
     gethostname(host_name,128);
     input_command_user(argc, argv, port, ip);
@@ -48,6 +51,25 @@ int main(int argc, char *argv[]) {
     int fd = createUDPSocket(resUDP);
 
     sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+
+    //TCP-------------------------------------------------------------------
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_NUMERICSERV;
+    SO_REUSEPORT;
+
+    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+
+    fdTCP = createUDPSocket(resTCP);
+    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    printf("%d", h);
+    
+    int b = write(fdTCP, "ola\n", 4);
+    b = read(fdTCP, buffer, 128);
+
+    write(1, "echo: ", 6);
+    write(1, buffer, b);
 
     while(1){
         parse_input_action();

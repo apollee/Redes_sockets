@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     char port[6];
     struct sockaddr_in addr;
     socklen_t addrlen;
+    extern int errno;
 
     input_command_server(argc, argv, port);
     printf("port: %s\n", port);
@@ -55,12 +56,23 @@ int main(int argc, char *argv[]) {
 
     getaddrinfo(NULL, port, &hintsTCP, &resTCP);
 
-    fdTCP = socket(resTCP->ai_family, resTCP->ai_socktype, resTCP->ai_protocol);
+    fdTCP = createUDPSocket(resTCP);
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    memset(buffer, 0, strlen(buffer));
+    listen(fdTCP, 5);
+    
+    int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
+    printf("%d", newfd);
+    
+    int b = read(newfd, buffer, 128);
+    write(1, "received: \n", 11);
+    write(1, buffer, b); //fs
+
+    b = write(newfd, buffer, b); 
 }
 
 
-int createUDPSocket(struct addrinfo* resUDP){ 
+int createUPSocket(struct addrinfo* resUDP){ 
     int fd = socket(resUDP->ai_family,resUDP->ai_socktype,resUDP->ai_protocol);
     return fd;
 }

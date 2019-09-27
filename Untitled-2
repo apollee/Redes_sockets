@@ -1,0 +1,33 @@
+    struct addrinfo hintsUDP,*resUDP;
+    struct addrinfo hintsTCP,*resTCP;
+    int fdUDP, fdTCP;
+    ssize_t n;
+    char buffer[128];
+    char port[6];
+    struct sockaddr_in addr;
+    socklen_t addrlen;
+    extern int errno;
+    
+    
+    
+    //TCP-----------------------------------------
+    /*memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
+
+    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+
+    fdTCP = createSocket(resTCP);
+    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    memset(buffer, 0, strlen(buffer));
+    listen(fdTCP, 5);
+    
+    int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
+    printf("%d", newfd);
+    
+    int b = read(newfd, buffer, 128);
+    write(1, "received: \n", 11);
+    write(1, buffer, b); //fs
+
+    b = write(newfd, buffer, b);*/
