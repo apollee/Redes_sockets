@@ -45,9 +45,6 @@ int main(int argc, char *argv[]) {
     n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     printf("%s\n", buffer);
 
-    sendto(fdUDP, "Ola!\n" , 5, 0, (struct sockaddr*)&addr,addrlen);
-   
-
     //TCP-----------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET;
@@ -72,7 +69,7 @@ int main(int argc, char *argv[]) {
 }
 
 
-int createUPSocket(struct addrinfo* resUDP){ 
+int createUDPSocket(struct addrinfo* resUDP){ 
     int fd = socket(resUDP->ai_family,resUDP->ai_socktype,resUDP->ai_protocol);
     return fd;
 }
