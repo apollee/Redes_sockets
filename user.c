@@ -62,7 +62,7 @@ int main(int argc, char *argv[]) {
 
     getaddrinfo(NULL, port, &hintsTCP, &resTCP);
 
-    fdTCP = createUDPSocket(resTCP);
+    fdTCP = createSocket(resTCP);
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     printf("%d", h);
     
