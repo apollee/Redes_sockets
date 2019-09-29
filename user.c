@@ -12,7 +12,7 @@
 /*------------------------*/
 
 void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip);
-int createUDPSocket(struct addrinfo* resUDP);
+int createSocket(struct addrinfo* res);
 
 /*------------------------*/
 
@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
     ssize_t n;
     char host_name[128];
     char buffer[128];
+    char buffer1[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
     int fdUDP, fdTCP;
@@ -43,14 +44,14 @@ int main(int argc, char *argv[]) {
     if(!strcmp(ip, FLAG)){
         inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
     }
-
-    printf("ip: %s\n", ip);
-    printf("port: %s\n", port);
-    printf("%s\n",host_name);
     
-    int fd = createUDPSocket(resUDP);
+    fdUDP = createSocket(resUDP);
+    sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
 
-    sendto(fd,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    addrlen = sizeof(addr);
+    n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
+    write(1, buffer, n);
+
 
     //TCP-------------------------------------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
@@ -66,10 +67,10 @@ int main(int argc, char *argv[]) {
     printf("%d", h);
     
     int b = write(fdTCP, "ola\n", 4);
-    b = read(fdTCP, buffer, 128);
+    b = read(fdTCP, buffer1, 128);
 
     write(1, "echo: ", 6);
-    write(1, buffer, b);
+    write(1, buffer1, b);
 
     while(1){
         parse_input_action();
@@ -92,7 +93,7 @@ void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinf
 }
 
 
-int createUDPSocket( struct addrinfo* resUDP){ 
-    int fd = socket(resUDP->ai_family,resUDP->ai_socktype,resUDP->ai_protocol);
+int createSocket(struct addrinfo* res){ 
+    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
 }

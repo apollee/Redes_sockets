@@ -11,7 +11,7 @@
 
 /*------------------------*/
 
-int createUDPSocket(struct addrinfo* resUDP);
+int createSocket(struct addrinfo* res);
 
 /*------------------------*/
 
@@ -43,7 +43,10 @@ int main(int argc, char *argv[]) {
 
     addrlen=sizeof(addr);
     n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
+    
     printf("%s\n", buffer);
+
+    n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
 
     //TCP-----------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
@@ -69,7 +72,7 @@ int main(int argc, char *argv[]) {
 }
 
 
-int createUDPSocket(struct addrinfo* resUDP){ 
-    int fd = socket(resUDP->ai_family,resUDP->ai_socktype,resUDP->ai_protocol);
+int createSocket(struct addrinfo* res){ 
+    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
 }
