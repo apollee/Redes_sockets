@@ -26,6 +26,7 @@ int main(int argc, char *argv[]) {
     char host_name[128];
     char buffer[128];
     char buffer1[128];
+    char buffer2[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
     int fdUDP, fdTCP;
@@ -46,13 +47,7 @@ int main(int argc, char *argv[]) {
     }
     
     fdUDP = createSocket(resUDP);
-    sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
-
-    addrlen = sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
-    write(1, buffer, n);
-
-
+    
     //TCP-------------------------------------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET;
@@ -63,15 +58,21 @@ int main(int argc, char *argv[]) {
     getaddrinfo(NULL, port, &hintsTCP, &resTCP);
 
     fdTCP = createSocket(resTCP);
-    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    printf("%d", h);
-    
-    int b = write(fdTCP, "ola\n", 4);
-    b = read(fdTCP, buffer1, 128);
-
-    write(1, "echo: ", 6);
-    write(1, buffer1, b);
-
+    scanf("%s",buffer2);
+    if(!strcmp(buffer2, "reg")){
+        sendto(fdUDP,"Hello\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+        addrlen = sizeof(addr);
+        n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
+        write(1, buffer, n);
+    }
+    else{
+        int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+        printf("%d", h);
+        int b = write(fdTCP, "ola\n", 4);
+        b = read(fdTCP, buffer1, 128);
+        write(1, "echo: ", 6);
+        write(1, buffer1, b);
+    }
     while(1){
         parse_input_action();
     }
