@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <errno.h>
 #include "parse.h"
 
 /*------------------------*/
@@ -18,7 +19,7 @@ int createSocket(struct addrinfo* res);
 
 
 int main(int argc, char *argv[]) {
-     struct addrinfo hintsUDP, hintsTCP;
+    struct addrinfo hintsUDP, hintsTCP;
     struct addrinfo *resUDP, *resTCP;
     struct sockaddr_in addr;
     socklen_t addrlen;
@@ -28,9 +29,12 @@ int main(int argc, char *argv[]) {
     char buffer1[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
-    int fdUDP, fdTCP;
+    int fdUDP, fdTCP, errcode;
 
-    gethostname(host_name,128);
+    if(gethostname(host_name,128) == -1) {
+        fprintf(stderr, "error: %s\n", strerror(errno));
+    }
+
     input_command_user(argc, argv, port, ip);
 
     //getIp(hintsUDP, host_name, port, resUDP, ip);
@@ -39,18 +43,31 @@ int main(int argc, char *argv[]) {
     hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
     hintsUDP.ai_flags = AI_NUMERICSERV;
   
-    getaddrinfo(host_name, port, &hintsUDP, &resUDP);
+    if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
     
     if(!strcmp(ip, FLAG)){
         inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
     }
     
     fdUDP = createSocket(resUDP);
-    sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    if(fdUDP == -1){
+        printf("creating UDP socket failed\n");
+    }
+    n = sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    if(n == -1){
+        printf("send to not working UDP\n");
+    }
 
     addrlen = sizeof(addr);
     n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
+    if(n == -1){
+        printf("receiving from UDP server not working\n");
+    }
+    write(1, "echo UDP: ", 10);
     write(1, buffer, n);
+    close(fdUDP);
 
 
     //TCP-------------------------------------------------------------------
@@ -58,19 +75,19 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_family = AF_INET;
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_NUMERICSERV;
-    SO_REUSEPORT;
 
     getaddrinfo(NULL, port, &hintsTCP, &resTCP);
 
-    fdTCP = createUDPSocket(resTCP);
+    fdTCP = createSocket(resTCP);
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    printf("%d", h);
     
     int b = write(fdTCP, "ola\n", 4);
     b = read(fdTCP, buffer1, 128);
 
-    write(1, "echo: ", 6);
+    write(1, "echo TCP: ", 10);
     write(1, buffer1, b);
+
+    close(fdTCP);
 
     while(1){
         parse_input_action();

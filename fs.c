@@ -36,17 +36,20 @@ int main(int argc, char *argv[]) {
     hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
     hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hintsUDP, &resUDP);
+    n = getaddrinfo(NULL, port, &hintsUDP, &resUDP);
+    fdUDP = createSocket(resUDP);
 
-    fdUDP = createUDPSocket(resUDP);
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
 
     addrlen=sizeof(addr);
     n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     
-    printf("%s\n", buffer);
+    write(1, "received UDP: ", 15);
+    write(1, buffer, n);
 
     n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
+
+    close(fdUDP);
 
     //TCP-----------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
@@ -54,21 +57,21 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
-
-    fdTCP = createUDPSocket(resTCP);
+    n = getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+    
+    fdTCP = createSocket(resTCP);
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     memset(buffer, 0, strlen(buffer));
     listen(fdTCP, 5);
     
     int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
-    printf("%d", newfd);
     
     int b = read(newfd, buffer, 128);
-    write(1, "received: \n", 11);
-    write(1, buffer, b); //fs
+    write(1, "received TCP: ", 15);
+    write(1, buffer, b); 
 
-    b = write(newfd, buffer, b); 
+    b = write(newfd, buffer, b);
+    close(fdTCP);
 }
 
 
