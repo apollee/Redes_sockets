@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
     char host_name[128];
     char buffer[128];
     char buffer1[128];
+    char buffer2[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
     int fdUDP, fdTCP, errcode;

@@ -9,6 +9,8 @@
 #include <arpa/inet.h>
 #include "parse.h"
 
+#define max(A, B) ((A)>=(B)?(A):(B))
+
 /*------------------------*/
 
 int createSocket(struct addrinfo* res);
@@ -26,6 +28,9 @@ int main(int argc, char *argv[]) {
     struct sockaddr_in addr;
     socklen_t addrlen;
     extern int errno;
+    fd_set rfds;
+    int maxDescriptor, counter;
+    enum {idle, busy} state;
 
     input_command_server(argc, argv, port);
     printf("port: %s\n", port);
@@ -41,8 +46,6 @@ int main(int argc, char *argv[]) {
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
 
-    addrlen=sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     
     write(1, "received UDP: ", 15);
     write(1, buffer, n);
@@ -57,8 +60,8 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
 
-    n = getaddrinfo(NULL, port, &hintsTCP, &resTCP);
-    
+    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+
     fdTCP = createSocket(resTCP);
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     memset(buffer, 0, strlen(buffer));
@@ -79,3 +82,4 @@ int createSocket(struct addrinfo* res){
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
 }
+
