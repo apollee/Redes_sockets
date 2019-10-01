@@ -18,19 +18,17 @@ int createSocket(struct addrinfo* res);
 /*------------------------*/
 
 
-int main(int argc, char *argv[]) {
     struct addrinfo hintsUDP, hintsTCP;
     struct addrinfo *resUDP, *resTCP;
     struct sockaddr_in addr;
     socklen_t addrlen;
     ssize_t n;
+    int fdUDP, fdTCP, errcode;
+
+int main(int argc, char *argv[]) {
     char host_name[128];
-    char buffer[128];
-    char buffer1[128];
-    char buffer2[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
-    int fdUDP, fdTCP, errcode;
 
     if(gethostname(host_name,128) == -1) {
         fprintf(stderr, "error: %s\n", strerror(errno));
@@ -58,22 +56,6 @@ int main(int argc, char *argv[]) {
         printf("creating UDP socket failed\n");
     }
 
-    n = sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
-    if(n == -1){
-        printf("send to not working UDP\n");
-    }
-
-    addrlen = sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
-    if(n == -1){
-        printf("receiving from UDP server not working\n");
-    }
-    write(1, "echo UDP: ", 10);
-    write(1, buffer, n);
-    freeaddrinfo(resUDP);
-    close(fdUDP);
- 
-
     //TCP-------------------------------------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET;
@@ -88,31 +70,17 @@ int main(int argc, char *argv[]) {
     if(fdTCP == -1){
         printf("creating TCP socket failed\n");
     }
-
-    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    if(h == -1){
-        printf("send to not working TCP\n");
-    }
+  
     
-    int b = write(fdTCP, "ola\n", 4);
-    if (b == -1){
-        printf("write not working TCP");
-    }
-
-    b = read(fdTCP, buffer1, 128);
-    if (b == -1){
-        printf("read not working TCP");
-    }
-
-    write(1, "echo TCP: ", 10);
-    write(1, buffer1, b);  
-
-    freeaddrinfo(resTCP);
-    close(fdTCP);
-
     while(1){ 
         parse_input_action();
     }
+
+    freeaddrinfo(resUDP);
+    close(fdUDP);
+
+    freeaddrinfo(resTCP);
+    close(fdTCP);
 }
 
 //Not being used----------------------------
@@ -133,4 +101,43 @@ void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinf
 int createSocket(struct addrinfo* res){ 
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
+}
+
+void sendREG(char *message){
+    char buffer[128];
+
+    n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    if(n == -1){
+        printf("send to not working UDP\n");
+    }
+
+    addrlen = sizeof(addr);
+    n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
+    if(n == -1){
+        printf("receiving from UDP server not working\n");
+    }
+    write(1, "echo UDP: ", 10);
+    write(1, buffer, n);
+}
+
+void sendQG(){
+    char buffer[128];
+
+    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(h == -1){
+        printf("send to not working TCP\n");
+    }   
+    int b = write(fdTCP, "ola\n", 4);
+    if (b == -1){
+        printf("write not working TCP");
+    }
+
+    b = read(fdTCP, buffer, 128);
+    if (b == -1){
+        printf("read not working TCP");
+    }
+
+    write(1, "echo TCP: ", 10);
+    write(1, buffer, b);
+
 }

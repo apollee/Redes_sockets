@@ -1,9 +1,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-#include <string.h>
+#include <sys/socket.h>
+#include <string.h> 
 #include <unistd.h>
+#include <netinet/in.h>
+#include <netdb.h>
+#include <arpa/inet.h>
+#include <errno.h>
 #include "parse.h"
+#include "user.h"
 
 /* =============================================================================
  * input_command_user - input user when starting the program
@@ -46,6 +52,7 @@ int input_command_server(int argc, char *argv[], char* port) {
     }
     else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
         strcpy(port, argv[2]);
+        return 0;
     }
     else{
         printf("Invalid syntax.\n");
@@ -75,6 +82,7 @@ int parse_input_action() {
         token = strtok(NULL, " ");
     }
     input_action(numTokens, saveTokens, input);
+    return 0;
 }
 
 /* =============================================================================
@@ -85,6 +93,7 @@ void input_action(int numTokens, char** saveTokens, char* input) {
         
     if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) {
         printf("register or reg\n");
+        sendREG(saveTokens[1]);
     }
     else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
         printf("topic propose or tp\n");
@@ -106,6 +115,7 @@ void input_action(int numTokens, char** saveTokens, char* input) {
     }
     else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");
+        sendQG();
     }
     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
         printf("topic list or tl\n");

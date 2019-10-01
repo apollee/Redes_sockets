@@ -1,5 +1,5 @@
 #ifndef PARSE_H
-#define PARSE_H 1
+#define PARSE_H
 
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
