@@ -8,8 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
-#include "parse.h"
-#include "user.h"
+
 
 /* =============================================================================
  * input_command_user - input user when starting the program
@@ -93,7 +92,6 @@ void input_action(int numTokens, char** saveTokens, char* input) {
         
     if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) {
         printf("register or reg\n");
-        sendREG(saveTokens[1]);
     }
     else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
         printf("topic propose or tp\n");
@@ -115,7 +113,6 @@ void input_action(int numTokens, char** saveTokens, char* input) {
     }
     else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");
-        sendQG();
     }
     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
         printf("topic list or tl\n");
