@@ -119,8 +119,28 @@ void input_action(int numTokens, char** saveTokens, char* input) {
         strcat(saveTokens[1], "\n");
         sendREG(saveTokens[1]);
     }
+     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
+        printf("topic list or tl\n");
+        sendREG("TL\n");
+    }
+    else if(!strcmp(saveTokens[0], "topic_select")){
+        printf("topic select\n");
+        strcat(saveTokens[1], "\n");
+        sendREG(saveTokens[1]);    
+    }
+    else if(!strcmp(saveTokens[0], "ts")){
+        printf("ts\n");
+        strcat(saveTokens[1], "\n");
+        sendREG(saveTokens[1]);   
+    }
     else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
         printf("topic propose or tp\n");
+        strcat(saveTokens[1], "\n");
+        sendREG(saveTokens[1]);
+    }
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
+        printf("question list or ql\n");
+        sendREG("QL\n");
     }
     else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
         printf("question submit or qs\n");
@@ -128,24 +148,12 @@ void input_action(int numTokens, char** saveTokens, char* input) {
     else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
         printf("answer submit\n");
     }
-    else if(!strcmp(saveTokens[0], "topic_select")){
-        printf("topic select\n");    
-    }
-    else if(!strcmp(saveTokens[0], "ts")){
-        printf("ts\n");
-    }
     else if(!strcmp(saveTokens[0], "question_get")){
         printf("question get\n");
     }
     else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");
         sendQG();
-    }
-    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
-        printf("topic list or tl\n");
-    }
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
-        printf("question list or ql\n");
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
@@ -226,7 +234,10 @@ int main(int argc, char *argv[]) {
     if(fdTCP == -1){
         printf("creating TCP socket failed\n");
     }
-  
+
+    /*if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
+        printf("setsockopt(SO_REUSEADDR) failed");
+    }*/
     
     while(1){ 
         parse_input_action();

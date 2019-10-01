@@ -50,7 +50,7 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
         fprintf(stderr, "Invalid syntax!\n");
         exit(-1);
     }
-    
+
 }
 
 /* =============================================================================
@@ -121,6 +121,9 @@ int main(int argc, char *argv[]) {
     fdTCP = createSocket(resTCP);
     if(fdTCP == -1){
         printf("creating Server TCP socket failed\n");
+    }
+    if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
+    	printf("setsockopt(SO_REUSEADDR) failed");
     }
 
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
