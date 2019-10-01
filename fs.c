@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     ssize_t n;
     char buffer[128];
     char port[6];
-    struct sockaddr_in addr;
+    struct sockaddr_in addr;  
     socklen_t addrlen;
     extern int errno;
     fd_set rfds;
@@ -45,14 +45,14 @@ int main(int argc, char *argv[]) {
     fdUDP = createSocket(resUDP);
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-    
-    addrlen=sizeof(addr);
+
+    addrlen=sizeof(addr); 
     n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     
     write(1, "received UDP: ", 15);
     write(1, buffer, n);
 
-    n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
+    sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
 
     close(fdUDP);
 

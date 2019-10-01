@@ -74,27 +74,20 @@ int parse_input_action() {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    printf("%s\n", token);
-    input_action(numTokens, saveTokens);
+    input_action(numTokens, saveTokens, input);
 }
 
 /* =============================================================================
  * input_action - executes the command if valid
  * =============================================================================
  */
-void input_action(int numTokens, char** saveTokens) {
-
+void input_action(int numTokens, char** saveTokens, char* input) {
+        
     if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) {
         printf("register or reg\n");
     }
-    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
-        printf("topic list or tl\n");
-    }
     else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
         printf("topic propose or tp\n");
-    }
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
-        printf("question list or ql\n");
     }
     else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
         printf("question submit or qs\n");
@@ -106,13 +99,19 @@ void input_action(int numTokens, char** saveTokens) {
         printf("topic select\n");    
     }
     else if(!strcmp(saveTokens[0], "ts")){
-            printf("ts\n");
+        printf("ts\n");
     }
     else if(!strcmp(saveTokens[0], "question_get")){
         printf("question get\n");
     }
     else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");
+    }
+    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
+        printf("topic list or tl\n");
+    }
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
+        printf("question list or ql\n");
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
