@@ -78,13 +78,29 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+    if ((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
 
     fdTCP = createSocket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
+    }
+
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(h == -1){
+        printf("send to not working TCP\n");
+    }
     
     int b = write(fdTCP, "ola\n", 4);
+    if (b == -1){
+        printf("write not working TCP");
+    }
+
     b = read(fdTCP, buffer1, 128);
+    if (b == -1){
+        printf("read not working TCP");
+    }
 
     write(1, "echo TCP: ", 10);
     write(1, buffer1, b);
@@ -95,7 +111,6 @@ int main(int argc, char *argv[]) {
         parse_input_action();
     }
 }
-
 
 //Not being used----------------------------
 void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip){
