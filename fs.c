@@ -97,7 +97,7 @@ int main(int argc, char *argv[]) {
         printf("listen not working Server TCP\n");
     }
     
-    if ((newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen)) != -0){
+    if ((newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen)) == -1){
         fprintf(stderr, "error: newfd: %s\n", gai_strerror(newfd));
     };
     
