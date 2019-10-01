@@ -45,7 +45,9 @@ int main(int argc, char *argv[]) {
     fdUDP = createSocket(resUDP);
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-
+    
+    addrlen=sizeof(addr);
+    n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
     
     write(1, "received UDP: ", 15);
     write(1, buffer, n);

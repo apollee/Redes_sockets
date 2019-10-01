@@ -38,6 +38,7 @@ int main(int argc, char *argv[]) {
 
     input_command_user(argc, argv, port, ip);
 
+    //UDP
     //getIp(hintsUDP, host_name, port, resUDP, ip);
     memset(&hintsUDP, 0 ,sizeof hintsUDP);
     hintsUDP.ai_family = AF_INET;

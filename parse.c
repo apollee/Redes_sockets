@@ -74,6 +74,7 @@ int parse_input_action() {
         numTokens++;
         token = strtok(NULL, " ");
     }
+    printf("%s\n", token);
     input_action(numTokens, saveTokens);
 }
 
