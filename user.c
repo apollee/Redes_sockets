@@ -57,6 +57,7 @@ int main(int argc, char *argv[]) {
     if(fdUDP == -1){
         printf("creating UDP socket failed\n");
     }
+
     n = sendto(fdUDP,"Hello!\n",7,0,resUDP->ai_addr,resUDP->ai_addrlen);
     if(n == -1){
         printf("send to not working UDP\n");
@@ -69,6 +70,7 @@ int main(int argc, char *argv[]) {
     }
     write(1, "echo UDP: ", 10);
     write(1, buffer, n);
+    freeaddrinfo(resUDP);
     close(fdUDP);
 
 
@@ -105,11 +107,12 @@ int main(int argc, char *argv[]) {
     write(1, "echo TCP: ", 10);
     write(1, buffer1, b);
 
+    freeaddrinfo(resTCP);
     close(fdTCP);
 
-    while(1){
-        parse_input_action();
-    }
+    //while(1){
+      //  parse_input_action();
+    //}
 }
 
 //Not being used----------------------------

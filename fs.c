@@ -68,7 +68,7 @@ int main(int argc, char *argv[]) {
     if(n == -1){
         printf("send to not working Server UDP\n");
     }
-
+    freeaddrinfo(resUDP);
     close(fdUDP);
 
     //TCP-----------------------------------------
@@ -113,6 +113,8 @@ int main(int argc, char *argv[]) {
     if(b == -1){
         printf("write not working Server TCP\n");
     }
+    freeaddrinfo(resTCP);
+    close(newfd);
     close(fdTCP);
 }
 
