@@ -21,7 +21,7 @@ int createSocket(struct addrinfo* res);
 int main(int argc, char *argv[]) {
     struct addrinfo hintsUDP,*resUDP;
     struct addrinfo hintsTCP,*resTCP;
-    int fdUDP, fdTCP;
+    int fdUDP, fdTCP, errcode, newfd;
     ssize_t n;
     char buffer[128];
     char port[6];
@@ -41,18 +41,33 @@ int main(int argc, char *argv[]) {
     hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
     hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
 
-    n = getaddrinfo(NULL, port, &hintsUDP, &resUDP);
+    if ((errcode = getaddrinfo(NULL, port, &hintsUDP, &resUDP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
+
     fdUDP = createSocket(resUDP);
+    if(fdUDP == -1){
+        printf("creating Server UDP socket failed\n");
+    }
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-
-    addrlen=sizeof(addr); 
+    if(n == -1){
+        printf("bind not working Server UDP\n");
+    }
+    
+    addrlen=sizeof(addr);
     n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
+    if(n == -1){
+        printf("recv from not working Server UDP\n");
+    }
     
     write(1, "received UDP: ", 15);
     write(1, buffer, n);
 
-    sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
+    n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
+    if(n == -1){
+        printf("send to not working Server UDP\n");
+    }
 
     close(fdUDP);
 
@@ -62,20 +77,42 @@ int main(int argc, char *argv[]) {
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
 
-    getaddrinfo(NULL, port, &hintsTCP, &resTCP);
+    if((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
 
     fdTCP = createSocket(resTCP);
+    if(fdTCP == -1){
+        printf("creating Server TCP socket failed\n");
+    }
+
     n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(n == -1){
+        printf("bind not working Server TCP\n");
+    }
+
     memset(buffer, 0, strlen(buffer));
-    listen(fdTCP, 5);
+    n = listen(fdTCP, 5);
+    if(n == -1){
+        printf("listen not working Server TCP\n");
+    }
     
-    int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
+    if ((newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen)) == -1){
+        fprintf(stderr, "error: newfd: %s\n", gai_strerror(newfd));
+    };
     
     int b = read(newfd, buffer, 128);
+    if(b == -1){
+        printf("read not working Server TCP\n");
+    }
+
     write(1, "received TCP: ", 15);
     write(1, buffer, b); 
 
     b = write(newfd, buffer, b);
+    if(b == -1){
+        printf("write not working Server TCP\n");
+    }
     close(fdTCP);
 }
 
