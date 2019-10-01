@@ -26,6 +26,6 @@ int parse_input_action();
  * input_action - executes the command if valid
  * ===========================================================================*/
 
-void input_action(int numTokens, char** saveTokens);
+void input_action(int numTokens, char** saveTokens, char* input);
 
 #endif

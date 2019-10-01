@@ -1,7 +1,6 @@
 all: user fs
 
-user: user.c
+user: user.c parse.c
 	gcc -o user user.c parse.c
-fs: fs.c
+fs: fs.c parse.c
 	gcc -o fs fs.c parse.c
-

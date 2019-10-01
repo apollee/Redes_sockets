@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     ssize_t n;
     char buffer[128];
     char port[6];
-    struct sockaddr_in addr;
+    struct sockaddr_in addr;  
     socklen_t addrlen;
     extern int errno;
     fd_set rfds;

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <string.h>
+#include <string.h> 
 #include <unistd.h>
 #include <netinet/in.h>
 #include <netdb.h>
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     write(1, buffer, n);
     freeaddrinfo(resUDP);
     close(fdUDP);
-
+ 
 
     //TCP-------------------------------------------------------------------
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
@@ -105,14 +105,14 @@ int main(int argc, char *argv[]) {
     }
 
     write(1, "echo TCP: ", 10);
-    write(1, buffer1, b);
+    write(1, buffer1, b);  
 
     freeaddrinfo(resTCP);
     close(fdTCP);
 
-    //while(1){
-      //  parse_input_action();
-    //}
+    while(1){ 
+        parse_input_action();
+    }
 }
 
 //Not being used----------------------------
