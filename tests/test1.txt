@@ -1,0 +1,8 @@
+reg 12345
+ reg 12345
+reg 1234a
+reg  12345
+reg 123
+ql 
+ ql
+exit

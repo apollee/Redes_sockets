@@ -134,32 +134,42 @@ int onlyNumbers(char* message) {
 }
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
-    if( numTokens != 2 ){
-        printf("1\n");
+    if( numTokens != 2 )        
         return FALSE;
-    }
-    else if (strlen(saveTokens[1]) != 5 ){
-        printf("2\n");
+    else if (strlen(saveTokens[1]) != 5 )        
         return FALSE;
-    }
-    else if( !onlyNumbers(saveTokens[1])){
-        printf("3\n");
+    else if( !onlyNumbers(saveTokens[1]))        
         return FALSE;
-    }
-    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1])){
-        printf("4\n");
+    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
         return FALSE;
-    }
-    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")){
-        printf("5\n");
-        return TRUE;
-    }
+    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg"))       
+     return TRUE;
     else{
         return FALSE;
     }
 }
 
+int commandTLOK(int numTokens, char ** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl"))
+        return TRUE;
+    else
+        return FALSE;
+}
 
+int commandQLOK(int numTokens, char ** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))
+        return TRUE;
+    else
+        return FALSE;
+}
 
 /* =============================================================================
  * input_action - executes the command if valid
@@ -172,7 +182,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(saveTokens[1], "\n");
         sendREG(saveTokens[1]);
     }
-     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
+     else if(commandTLOK(numTokens, saveTokens, numberCar)) {
         printf("topic list or tl\n");
         sendREG("TL\n");
     }
@@ -191,7 +201,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(saveTokens[1], "\n");
         sendREG(saveTokens[1]);
     }
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
+    else if(commandQLOK(numTokens, saveTokens, numberCar)){
         printf("question list or ql\n");
         sendREG("QL\n");
     }
