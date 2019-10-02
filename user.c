@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <signal.h>
 
+
+#define TRUE 1
+#define FALSE 0
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
 /*------------------------*/
@@ -119,13 +122,39 @@ int input_command_server(int argc, char *argv[], char* port) {
     }
 }
 
+int commandREGOK(int numTokens, char** saveTokens, int numberCar){
+    if(strcmp(saveTokens[0], "register") || strcmp(saveTokens[0],"reg"))
+        return FALSE;
+    else if( numTokens != 2 )
+        return FALSE;
+    else if (strlen(saveTokens[1]) != 5 )
+        return FALSE;
+    else if( !onlyNumbers(saveTokens[1]))
+        return FALSE;
+    else if(numberCar + 1 != strlen(saveTokens[0])+strlen(saveTokens[1]))
+        return FALSE;
+    else
+        return TRUE;
+}
+
+int onlyNumbers(char* message) {
+    int i;
+
+    for(i = 0; i < strlen(message);i++){
+        if(message[i] < 48 || message[i] > 57){
+            return 0;
+        }
+    }
+    return 1;
+}
+
 /* =============================================================================
  * input_action - executes the command if valid
  * =============================================================================
  */
-void input_action(int numTokens, char** saveTokens, char* input) {
+void input_action(int numTokens, char** saveTokens, char* input, long int numberCar) {
         
-    if((!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) && numTokens == 2) {
+    if(commandREGOK(numTokens, saveTokens, numberCar)) {
         printf("register or reg\n");
         strcat(saveTokens[1], "\n");
         sendREG(saveTokens[1]);
@@ -170,7 +199,7 @@ void input_action(int numTokens, char** saveTokens, char* input) {
         exit(0);
     }
     else{
-        printf("Invalid syntax!"); 
+        printf("Invalid syntax!\n"); 
     }
 }
 
@@ -183,11 +212,11 @@ int parse_input_action() {
     int numTokens = 0;
     char *saveTokens[7];
     char input[50];
-    
+    int numberCar;
     if(fgets(input, 50, stdin) == NULL){
         return -1;
     }    
-    
+    numberCar = strlen(input);
     input[strcspn(input, "\n")] = 0; /*remove the \n added by fgets*/
     char *token = strtok(input, " ");
 
@@ -196,7 +225,7 @@ int parse_input_action() {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    input_action(numTokens, saveTokens, input);
+    input_action(numTokens, saveTokens, input, numberCar);
     return 0;
 }
 
