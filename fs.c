@@ -7,6 +7,7 @@
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <signal.h>
 
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
@@ -32,7 +33,6 @@ int createSocket(struct addrinfo* res);
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
     strcpy(ip, FLAG);
-
     if(argc == 1){
         return;
     }
@@ -84,6 +84,11 @@ int main(int argc, char *argv[]) {
     char buffer[128];
     char port[6];
     int maxDescriptor, counter;
+
+    struct sigaction act;	
+	memset(&act,0,sizeof act);
+	act.sa_handler=SIG_IGN;	
+	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);
     
 
     input_command_server(argc, argv, port);
@@ -154,21 +159,40 @@ int main(int argc, char *argv[]) {
         }
 
         if(FD_ISSET(fdTCP, &rfds)){
+        	addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
-            printf("%d", newfd);
             int b = read(newfd, buffer, 128);
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
             b = write(newfd, buffer, b); 
-        }
+        	close(newfd);
+        	close(fdTCP);
 
+        	fdTCP = createSocket(resTCP);
+   			if(fdTCP == -1){
+        		printf("creating Server TCP socket failed\n");
+    		}
+    		if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
+    			printf("setsockopt(SO_REUSEADDR) failed");
+    		}
+
+    		n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    		if(n == -1){
+		        printf("bind not working Server TCP\n");
+		    }
+
+		    memset(buffer, 0, strlen(buffer));
+		    n = listen(fdTCP, 5);
+		    if(n == -1){
+		        printf("listen not working Server TCP\n");
+		    }
+        }
     }
     freeaddrinfo(resUDP);
     close(fdUDP);
 
     freeaddrinfo(resTCP);
-    close(newfd);
-    close(fdTCP);
+    
 }
 
 

@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <signal.h>
 
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
@@ -48,7 +49,8 @@ void sendQG(){
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
         printf("send to not working TCP\n");
-    }   
+    } 
+
     int b = write(fdTCP, "ola\n", 4);
     if (b == -1){
         printf("write not working TCP");
@@ -61,6 +63,15 @@ void sendQG(){
 
     write(1, "echo TCP: ", 10);
     write(1, buffer, b);
+    close(fdTCP);
+
+    fdTCP = createSocket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
+    }
+    
+
+
 
 }
 
@@ -193,6 +204,12 @@ int main(int argc, char *argv[]) {
     char host_name[128];
     char port[6];
     char ip[INET_ADDRSTRLEN];
+    
+    struct sigaction act;
+    
+    memset(&act,0,sizeof act);
+    act.sa_handler=SIG_IGN;
+    if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);   
 
     if(gethostname(host_name,128) == -1) {
         fprintf(stderr, "error: %s\n", strerror(errno));
