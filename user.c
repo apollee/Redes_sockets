@@ -122,21 +122,6 @@ int input_command_server(int argc, char *argv[], char* port) {
     }
 }
 
-int commandREGOK(int numTokens, char** saveTokens, int numberCar){
-    if(strcmp(saveTokens[0], "register") || strcmp(saveTokens[0],"reg"))
-        return FALSE;
-    else if( numTokens != 2 )
-        return FALSE;
-    else if (strlen(saveTokens[1]) != 5 )
-        return FALSE;
-    else if( !onlyNumbers(saveTokens[1]))
-        return FALSE;
-    else if(numberCar + 1 != strlen(saveTokens[0])+strlen(saveTokens[1]))
-        return FALSE;
-    else
-        return TRUE;
-}
-
 int onlyNumbers(char* message) {
     int i;
 
@@ -147,6 +132,34 @@ int onlyNumbers(char* message) {
     }
     return 1;
 }
+
+int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
+    if( numTokens != 2 ){
+        printf("1\n");
+        return FALSE;
+    }
+    else if (strlen(saveTokens[1]) != 5 ){
+        printf("2\n");
+        return FALSE;
+    }
+    else if( !onlyNumbers(saveTokens[1])){
+        printf("3\n");
+        return FALSE;
+    }
+    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1])){
+        printf("4\n");
+        return FALSE;
+    }
+    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")){
+        printf("5\n");
+        return TRUE;
+    }
+    else{
+        return FALSE;
+    }
+}
+
+
 
 /* =============================================================================
  * input_action - executes the command if valid
