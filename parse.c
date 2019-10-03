@@ -71,8 +71,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
         printf("answer submit\n");
     }
-    else if(!strcmp(saveTokens[0], "question_get")){
-        printf("question get\n");
+    else if(commandQGOK(numTokens, saveTokens, numberCar)){
+        strcpy(message, "CGU ");
     }
     else if(!strcmp(saveTokens[0], "qg")){
         printf("qg\n");

@@ -21,4 +21,6 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberCar);
 
 int commandQLOK(int numTokens, char ** saveTokens, long int numberCar);
 
+int commandQGOK(int numTokens, char** saveTokens, long int numberCar);
+
 #endif

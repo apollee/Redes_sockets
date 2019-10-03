@@ -236,3 +236,22 @@ int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
     else
         return FALSE; 
 }
+
+int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "question_get")){
+        if(onlyNumbers(saveTokens[1])){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    else if(!strcmp(saveTokens[0], "qg"))
+        return TRUE;
+    else
+        return FALSE;
+    
+}
