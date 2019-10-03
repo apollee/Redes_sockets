@@ -1,7 +1,5 @@
 #ifndef USER_H
-#define USER_H 
-
-
+#define USER_H 1
 
 struct addrinfo;
 
@@ -11,6 +9,8 @@ int createSocket(struct addrinfo* res);
 
 void sendQG();
 
-void sendREG(char message[]);
+void sendREG(char* message);
+
+int commandREGOK(int numTokens, char** saveTokens, long int numberCar);
 
 #endif

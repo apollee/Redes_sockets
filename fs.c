@@ -17,6 +17,7 @@
 /*------------------------*/
 
 int createSocket(struct addrinfo* res);
+int input_command_server(int argc, char *argv[], char* port);
 
 /*------------------------*/
 
@@ -30,60 +31,10 @@ int createSocket(struct addrinfo* res);
     fd_set rfds;
 
 
-void input_command_user(int argc, char *argv[], char *port, char *ip) {
-    strcpy(port, DEFAULT_PORT);
-    strcpy(ip, FLAG);
-    if(argc == 1){
-        return;
-    }
-    else if(argc == 3 && !(strcmp(argv[1],"-n"))) {
-        strcpy(ip,argv[2]);
-    }
-    else if(argc == 3 && !(strcmp(argv[1],"-p"))) {
-        strcpy(port,argv[2]);
-    }
-    else if(argc == 5 && !(strcmp(argv[1],"-n")) && !(strcmp(argv[3],"-p"))) {
-        strcpy(ip, argv[2]);
-        strcpy(port,argv[4]);
-    }
-    else{
-        fprintf(stderr, "Invalid syntax!\n");
-        exit(-1);
-    }
-
-}
-
-/* =============================================================================
- * input_command_server - input server when starting the program
- * =============================================================================
- */
-
-int input_command_server(int argc, char *argv[], char* port) {
-    strcpy(port, DEFAULT_PORT);
-
-    if(argc == 1) {
-        return 0;
-    }
-    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        strcpy(port, argv[2]);
-        return 0;
-    }
-    else{
-        printf("Invalid syntax.\n");
-        return -1;
-    }
-}
-
-/* =============================================================================
- * parse_input_action - parsing the command to perform
- * =============================================================================
-*/
-
-
 int main(int argc, char *argv[]) {
     char buffer[128];
     char port[6];
-    int maxDescriptor, counter;
+    int maxDescriptor;
 
     struct sigaction act;	
 	memset(&act,0,sizeof act);
@@ -149,7 +100,7 @@ int main(int argc, char *argv[]) {
 
         maxDescriptor = max(fdTCP, fdUDP);
 
-        counter = select(maxDescriptor + 1, &rfds, NULL, NULL, NULL);
+        select(maxDescriptor + 1, &rfds, NULL, NULL, NULL);
 
         if(FD_ISSET(fdUDP, &rfds)){
            addrlen = sizeof(addr);
@@ -195,9 +146,23 @@ int main(int argc, char *argv[]) {
     
 }
 
-
 int createSocket(struct addrinfo* res){ 
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
 }
 
+int input_command_server(int argc, char *argv[], char* port) {
+    strcpy(port, DEFAULT_PORT);
+
+    if(argc == 1) {
+        return 0;
+    }
+    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
+        strcpy(port, argv[2]);
+        return 0;
+    }
+    else{
+        printf("Invalid syntax.\n");
+        return -1;
+    }
+}

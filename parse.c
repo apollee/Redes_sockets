@@ -2,18 +2,14 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/socket.h>
-#include <string.h> 
+#include <string.h>
 #include <unistd.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-#include <errno.h>
-
-
-/* =============================================================================
- * input_command_user - input user when starting the program
- * =============================================================================
- */
+#include <signal.h>
+#include "user.h"
+#include "parse.h"
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
@@ -38,40 +34,70 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     }
 }
 
-/* =============================================================================
- * input_command_server - input server when starting the program
- * =============================================================================
- */
 
-int input_command_server(int argc, char *argv[], char* port) {
-    strcpy(port, DEFAULT_PORT);
-
-    if(argc == 1) {
-        return 0;
+void input_action(int numTokens, char** saveTokens, char* input, long int numberCar) {
+        
+    if(commandREGOK(numTokens, saveTokens, numberCar)) {
+        char message[45] = "REG";
+        printf("register or reg\n");
+        strcat(message, saveTokens[1]);
+        strcat(message, "\n");
+        sendCommandUDP(saveTokens[1]);
     }
-    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        strcpy(port, argv[2]);
-        return 0;
+     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
+        printf("topic list or tl\n");
+        sendCommandUDP("TL\n");
+    }
+    else if(!strcmp(saveTokens[0], "topic_select")){
+        printf("topic select\n");
+        strcat(saveTokens[1], "\n");
+        sendCommandUDP(saveTokens[1]);    
+    }
+    else if(!strcmp(saveTokens[0], "ts")){
+        printf("ts\n");
+        strcat(saveTokens[1], "\n");
+        sendCommandUDP(saveTokens[1]);   
+    }
+    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
+        printf("topic propose or tp\n");
+        strcat(saveTokens[1], "\n");
+        sendCommandUDP(saveTokens[1]);
+    }
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
+        printf("question list or ql\n");
+        sendCommandUDP("QL\n");
+    }
+    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
+        printf("question submit or qs\n");
+    }
+    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
+        printf("answer submit\n");
+    }
+    else if(!strcmp(saveTokens[0], "question_get")){
+        printf("question get\n");
+    }
+    else if(!strcmp(saveTokens[0], "qg")){
+        printf("qg\n");
+        sendCommandTCP();
+    }
+    else if(!strcmp(saveTokens[0], "exit")){
+        exit(0);
     }
     else{
-        printf("Invalid syntax.\n");
-        return -1;
+        printf("Invalid syntax!\n"); 
     }
 }
 
-/* =============================================================================
- * parse_input_action - parsing the command to perform
- * =============================================================================
- */
 int parse_input_action() {
+
     int numTokens = 0;
     char *saveTokens[7];
     char input[50];
-    
+    int numberCar;
     if(fgets(input, 50, stdin) == NULL){
         return -1;
     }    
-    
+    numberCar = strlen(input);
     input[strcspn(input, "\n")] = 0; /*remove the \n added by fgets*/
     char *token = strtok(input, " ");
 
@@ -80,50 +106,6 @@ int parse_input_action() {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    input_action(numTokens, saveTokens, input);
+    input_action(numTokens, saveTokens, input, numberCar);
     return 0;
-}
-
-/* =============================================================================
- * input_action - executes the command if valid
- * =============================================================================
- */
-void input_action(int numTokens, char** saveTokens, char* input) {
-        
-    if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) {
-        printf("register or reg\n");
-    }
-    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
-        printf("topic propose or tp\n");
-    }
-    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
-        printf("question submit or qs\n");
-    }
-    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
-        printf("answer submit\n");
-    }
-    else if(!strcmp(saveTokens[0], "topic_select")){
-        printf("topic select\n");    
-    }
-    else if(!strcmp(saveTokens[0], "ts")){
-        printf("ts\n");
-    }
-    else if(!strcmp(saveTokens[0], "question_get")){
-        printf("question get\n");
-    }
-    else if(!strcmp(saveTokens[0], "qg")){
-        printf("qg\n");
-    }
-    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
-        printf("topic list or tl\n");
-    }
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
-        printf("question list or ql\n");
-    }
-    else if(!strcmp(saveTokens[0], "exit")){
-        exit(0);
-    }
-    else{
-        printf("Invalid syntax!"); 
-    }
 }
