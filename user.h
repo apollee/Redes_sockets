@@ -7,7 +7,7 @@ void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinf
 
 int createSocket(struct addrinfo* res);
 
-void sendCommandTCP();
+void sendCommandTCP(char* message);
 
 void sendCommandUDP(char* message);
 
@@ -22,5 +22,9 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberCar);
 int commandQLOK(int numTokens, char ** saveTokens, long int numberCar);
 
 int commandQGOK(int numTokens, char** saveTokens, long int numberCar);
+
+int commandQSOK(int numTokens, char** saveTokens, long int numberCar);
+
+int commandASOK(int numTokens, char** saveTokens, long int numberCar);
 
 #endif

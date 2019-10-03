@@ -65,24 +65,36 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(message, "\n");
         sendCommandUDP(message);
     }
-    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
-        printf("question submit or qs\n");
-    }
-    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as")){
-        printf("answer submit\n");
-    }
     else if(commandQGOK(numTokens, saveTokens, numberCar)){
-        strcpy(message, "CGU ");
+        strcpy(message, "GQU ");
+        //adicionar o topico? nao sei de onde vem
+        strcat(message, "\n");
+        sendCommandTCP(message);
     }
-    else if(!strcmp(saveTokens[0], "qg")){
-        printf("qg\n");
-        sendCommandTCP();
+    else if(commandQSOK(numTokens, saveTokens, numberCar)){
+        strcpy(message, "QUS ");
+        //strcat(message, ID(temos que adicionar isto))
+        //adicionar o topico?? nao sei de onde vem?
+        strcat(message, saveTokens[1]);
+        //adicionar qsize, qdata, qimg
+        strcat(message, "\n");
+        sendCommandTCP(message);
+    }
+    else if(commandASOK(numTokens, saveTokens, numberCar)){
+        strcpy(message, "ANS ");
+        //strcat(message, ID(temos que adicionar isto))
+        //adicionar o topico?? nao sei de onde vem?
+        //adicionar a questao? nao sei de onde vem
+        //adicionar asize, adata, aIMG
+        strcat(message, "\n");
+        sendCommandUDP(message);
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
     }
     else{
-        printf("Invalid syntax!\n"); 
+        strcpy(message, "ERR\n");
+        sendCommandUDP(message);
     }
 }
 

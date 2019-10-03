@@ -143,7 +143,7 @@ void sendCommandUDP(char *message){
     write(1, buffer, n);
 }
 
-void sendCommandTCP(){
+void sendCommandTCP(char* message){
     char buffer[128];
 
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
@@ -151,7 +151,7 @@ void sendCommandTCP(){
         printf("send to not working TCP\n");
     } 
 
-    int b = write(fdTCP, "ola\n", 4);
+    int b = write(fdTCP, message, strlen(message));
     if (b == -1){
         printf("write not working TCP");
     }
@@ -242,16 +242,41 @@ int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
         return FALSE;
     else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "question_get")){
+    else if(!strcmp(saveTokens[0], "qg")){
         if(onlyNumbers(saveTokens[1])){
             return TRUE;
         }else{
             return FALSE;
         }
     }
-    else if(!strcmp(saveTokens[0], "qg"))
+    else if(!strcmp(saveTokens[0], "question_get"))
         return TRUE;
-    else
+    else 
         return FALSE;
     
+}
+
+int commandQSOK(int numTokens, char** saveTokens, long int numberCar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 4)
+        return FALSE;
+    else if(numberCar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
+        return FALSE;
+    }
+    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))
+        return TRUE;
+    else 
+        return FALSE;
+}
+
+int commandASOK(int numTokens, char** saveTokens, long int numberCar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 3)
+        return FALSE;
+    else if(numberCar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as"))
+        return TRUE;
+    else 
+        return FALSE;
 }
