@@ -34,38 +34,36 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     }
 }
 
-
 void input_action(int numTokens, char** saveTokens, char* input, long int numberCar) {
-        
+    
+    char message[150]; //AUMENTAR O BUFFER!!!!!
+
     if(commandREGOK(numTokens, saveTokens, numberCar)) {
-        char message[45] = "REG";
-        printf("register or reg\n");
+        strcpy(message, "REG ");
         strcat(message, saveTokens[1]);
         strcat(message, "\n");
-        sendCommandUDP(saveTokens[1]);
+        sendCommandUDP(message);
     }
-     else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl")) {
-        printf("topic list or tl\n");
-        sendCommandUDP("TL\n");
+    else if(commandTLOK(numTokens, saveTokens, numberCar)) {
+        sendCommandUDP("TLP \n");
     }
-    else if(!strcmp(saveTokens[0], "topic_select")){
-        printf("topic select\n");
-        strcat(saveTokens[1], "\n");
-        sendCommandUDP(saveTokens[1]);    
+    else if(commandTSOK(numTokens, saveTokens, numberCar)){
+        printf("topic select or ts\n");
+        //only works localy   
     }
-    else if(!strcmp(saveTokens[0], "ts")){
-        printf("ts\n");
-        strcat(saveTokens[1], "\n");
-        sendCommandUDP(saveTokens[1]);   
+    else if(commandTPOK(numTokens, saveTokens, numberCar)){
+        strcpy(message, "PTP ");
+        //strcat(message, ID(temos que adicionar isto));
+        strcat(message, " ");
+        strcat(message, saveTokens[1]);
+        strcat(message, "\n");
+        sendCommandUDP(message);
     }
-    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp")){
-        printf("topic propose or tp\n");
-        strcat(saveTokens[1], "\n");
-        sendCommandUDP(saveTokens[1]);
-    }
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql")){
-        printf("question list or ql\n");
-        sendCommandUDP("QL\n");
+    else if(commandQLOK(numTokens, saveTokens, numberCar)){
+        strcpy(message, "LQU ");
+        strcat(message, saveTokens[1]);
+        strcat(message, "\n");
+        sendCommandUDP(message);
     }
     else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs")){
         printf("question submit or qs\n");

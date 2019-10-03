@@ -126,32 +126,6 @@ int createSocket(struct addrinfo* res){
     return fd;
 }
 
-int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
-    if( numTokens != 2 ){
-        printf("1\n");
-        return FALSE;
-    }
-    else if (strlen(saveTokens[1]) != 5 ){
-        printf("2\n");
-        return FALSE;
-    }
-    else if( !onlyNumbers(saveTokens[1])){
-        printf("3\n");
-        return FALSE;
-    }
-    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1])){
-        printf("4\n");
-        return FALSE;
-    }
-    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")){
-        printf("5\n");
-        return TRUE;
-    }
-    else{
-        return FALSE;
-    }
-}
-
 void sendCommandUDP(char *message){
     char buffer[128];
     n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
@@ -195,4 +169,70 @@ void sendCommandTCP(){
     if(fdTCP == -1){
         printf("creating TCP socket failed\n");
     }
+}
+
+int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2 )        
+        return FALSE;
+    else if (strlen(saveTokens[1]) != 5)        
+        return FALSE;
+    else if(!onlyNumbers(saveTokens[1]))        
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg"))       
+     return TRUE;
+    else
+        return FALSE;
+}
+
+int commandTLOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl"))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+int commandTSOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "ts")){
+        if(onlyNumbers(saveTokens[1])){
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }
+    else if(!strcmp(saveTokens[0], "topic_select"))
+        return TRUE;   
+    else
+        return FALSE;
+}
+
+int commandTPOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))
+        return TRUE;
+    else 
+        return FALSE;     
+}
+
+int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))
+        return TRUE;
+    else
+        return FALSE; 
 }
