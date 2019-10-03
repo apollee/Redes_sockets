@@ -10,6 +10,7 @@
 #include <signal.h>
 #include "user.h"
 #include "parse.h"
+#include "commands_user.h"
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
@@ -61,7 +62,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     }
     else if(commandQLOK(numTokens, saveTokens, numberCar)){
         strcpy(message, "LQU ");
-        strcat(message, saveTokens[1]);
+        //strcat(message, saveTokens[1]);
         strcat(message, "\n");
         sendCommandUDP(message);
     }

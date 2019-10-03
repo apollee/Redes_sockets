@@ -11,16 +11,10 @@
 #include <signal.h>
 #include "parse.h"
 #include "user.h"
-
-#define TRUE 1
-#define FALSE 0
+#include "commands_user.h"
+ 
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
-/*------------------------*/
-
-void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip);
-
-/*------------------------*/
 
 struct addrinfo hintsUDP, hintsTCP;
 struct addrinfo *resUDP, *resTCP;
@@ -28,17 +22,6 @@ struct sockaddr_in addr;
 socklen_t addrlen;
 ssize_t n;
 int fdUDP, fdTCP, errcode;
-
-int onlyNumbers(char* message) {
-    int i;
-
-    for(i = 0; i < strlen(message);i++){
-        if(message[i] < 48 || message[i] > 57){
-            return 0;
-        }
-    }
-    return 1;
-}
 
 int main(int argc, char *argv[]) {
     char host_name[128];
@@ -58,7 +41,6 @@ int main(int argc, char *argv[]) {
     input_command_user(argc, argv, port, ip);
 
     //UDP
-    //getIp(hintsUDP, host_name, port, resUDP, ip);
     memset(&hintsUDP, 0 ,sizeof hintsUDP);
     hintsUDP.ai_family = AF_INET;
     hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
@@ -107,25 +89,6 @@ int main(int argc, char *argv[]) {
     close(fdTCP);
 }
 
-//Not being used----------------------------
-void getIp(struct addrinfo hintsUDP, char *host_name, char *port, struct addrinfo *resUDP, char *ip){
-    memset(&hintsUDP, 0 ,sizeof hintsUDP);
-    hintsUDP.ai_family = AF_INET;
-    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
-    hintsUDP.ai_flags = AI_NUMERICSERV;
-
-    getaddrinfo(host_name, port, &hintsUDP, &resUDP);
-    
-    if(!strcmp(ip, FLAG)){
-        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
-    }
-}
-
-int createSocket(struct addrinfo* res){ 
-    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
-    return fd;
-}
-
 void sendCommandUDP(char *message){
     char buffer[128];
     n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
@@ -171,112 +134,7 @@ void sendCommandTCP(char* message){
     }
 }
 
-int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 2 )        
-        return FALSE;
-    else if (strlen(saveTokens[1]) != 5)        
-        return FALSE;
-    else if(!onlyNumbers(saveTokens[1]))        
-        return FALSE;
-    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg"))       
-     return TRUE;
-    else
-        return FALSE;
-}
-
-int commandTLOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 1)
-        return FALSE; 
-    else if(numberCar - 1 != strlen(saveTokens[0]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl"))
-        return TRUE;
-    else
-        return FALSE;
-}
-
-int commandTSOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 2)
-        return FALSE;
-    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "ts")){
-        if(onlyNumbers(saveTokens[1])){
-            return TRUE;
-        }else{
-            return FALSE;
-        }
-    }
-    else if(!strcmp(saveTokens[0], "topic_select"))
-        return TRUE;   
-    else
-        return FALSE;
-}
-
-int commandTPOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 2)
-        return FALSE;
-    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))
-        return TRUE;
-    else 
-        return FALSE;     
-}
-
-int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 1)
-        return FALSE; 
-    else if(numberCar - 1 != strlen(saveTokens[0]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))
-        return TRUE;
-    else
-        return FALSE; 
-}
-
-int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
-    if(numTokens != 2)
-        return FALSE;
-    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "qg")){
-        if(onlyNumbers(saveTokens[1])){
-            return TRUE;
-        }else{
-            return FALSE;
-        }
-    }
-    else if(!strcmp(saveTokens[0], "question_get"))
-        return TRUE;
-    else 
-        return FALSE;
-    
-}
-
-int commandQSOK(int numTokens, char** saveTokens, long int numberCar){
-    //Nao sei se nao temos que verificar os ficheiros 
-    if(numTokens != 4)
-        return FALSE;
-    else if(numberCar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
-        return FALSE;
-    }
-    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))
-        return TRUE;
-    else 
-        return FALSE;
-}
-
-int commandASOK(int numTokens, char** saveTokens, long int numberCar){
-    //Nao sei se nao temos que verificar os ficheiros 
-    if(numTokens != 3)
-        return FALSE;
-    else if(numberCar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as"))
-        return TRUE;
-    else 
-        return FALSE;
+int createSocket(struct addrinfo* res){ 
+    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
+    return fd;
 }
