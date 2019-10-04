@@ -62,7 +62,7 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
         return FALSE;
 }
 
-int commandTLOK(int numTokens, char** saveTokens, long int numberCar){
+int commandLTPOK(int numTokens, char** saveTokens, long int numberCar){
     if(numTokens != 1)
         return FALSE; 
     else if(numberCar - 1 != strlen(saveTokens[0]))
@@ -74,7 +74,7 @@ int commandTLOK(int numTokens, char** saveTokens, long int numberCar){
 }
 
 
-int commandTPOK(int numTokens, char** saveTokens, long int numberCar){
+int commandPTPOK(int numTokens, char** saveTokens, long int numberCar){
     if(numTokens != 2)
         return FALSE;
     else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
@@ -85,7 +85,7 @@ int commandTPOK(int numTokens, char** saveTokens, long int numberCar){
         return FALSE;     
 }
 
-int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
+int commandLQUOK(int numTokens, char** saveTokens, long int numberCar){
     if(numTokens != 1)
         return FALSE; 
     else if(numberCar - 1 != strlen(saveTokens[0]))
@@ -96,7 +96,7 @@ int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
         return FALSE; 
 }
 
-int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
+int commandGQUOK(int numTokens, char** saveTokens, long int numberCar){
     if(numTokens != 2)
         return FALSE;
     else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
@@ -105,7 +105,7 @@ int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
         return TRUE;
 }
 
-int commandQSOK(int numTokens, char** saveTokens, long int numberCar){
+int commandQUSOK(int numTokens, char** saveTokens, long int numberCar){
     //Nao sei se nao temos que verificar os ficheiros 
     if(numTokens != 4)
         return FALSE;
@@ -118,7 +118,7 @@ int commandQSOK(int numTokens, char** saveTokens, long int numberCar){
         return FALSE;
 }
 
-int commandASOK(int numTokens, char** saveTokens, long int numberCar){
+int commandANSOK(int numTokens, char** saveTokens, long int numberCar){
     //Nao sei se nao temos que verificar os ficheiros 
     if(numTokens != 3)
         return FALSE;
