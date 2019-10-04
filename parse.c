@@ -104,12 +104,12 @@ int parse_input_action() {
     int numTokens = 0;
     char *saveTokens[7];
     char input[50];
-    int numberCar;
+    int numberChar;
     if(fgets(input, 50, stdin) == NULL){
         return -1;
     }    
 
-    numberCar = strlen(input);
+    numberChar = strlen(input);
     input[strcspn(input, "\n")] = 0; /*remove the \n added by fgets*/
     char *token = strtok(input, " ");
 
@@ -118,7 +118,7 @@ int parse_input_action() {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    input_action(numTokens, saveTokens, input, numberCar);
+    input_action(numTokens, saveTokens, input, numberChar);
     return 0;
 }
 

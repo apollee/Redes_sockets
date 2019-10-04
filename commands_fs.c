@@ -46,8 +46,7 @@ int onlyNumbers(char* message) {
 void command_received(int numTokens, char** saveTokens, char* input, long int numberChar){
 
     char message[1024];
-    //comentarios do que e para fazer referem-se aos comandos mesmo em si
-
+    
     if(commandREGOK(numTokens, saveTokens, numberChar)){
         sendCommandUDP("RGR OK\n");
         //function to execute the command RGR
@@ -106,4 +105,87 @@ void command_received(int numTokens, char** saveTokens, char* input, long int nu
     
     //sendCommandUDP("ERR\n");
 
+}
+
+int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 2 )        
+        return FALSE;
+    else if (strlen(saveTokens[1]) != 5)        
+        return FALSE;
+    else if(!onlyNumbers(saveTokens[1]))        
+        return FALSE;
+    else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "REG"))       
+        return TRUE;
+    else
+        return FALSE;
+}
+
+int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberChar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0],"LTP"))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+
+int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "PTP"))
+        return TRUE;
+    else 
+        return FALSE;     
+}
+
+int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberChar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "LQU"))
+        return TRUE;
+    else
+        return FALSE; 
+}
+
+int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "GQU")){
+        return TRUE;
+}
+
+int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 4)
+        return FALSE;
+    else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
+        return FALSE;
+    }
+    else if(!strcmp(saveTokens[0], "QUS"))
+        return TRUE;
+    else 
+        return FALSE;
+}
+
+int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 3)
+        return FALSE;
+    else if(numberChar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "ANS"))
+        return TRUE;
+    else 
+        return FALSE;
 }
