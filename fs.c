@@ -8,6 +8,7 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <signal.h>
+#include "commands_fs.h"
 
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
@@ -106,6 +107,7 @@ int main(int argc, char *argv[]) {
            addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
             printf("%s\n", buffer);
+            parse_command(buffer);
             n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
         }
 
@@ -115,7 +117,8 @@ int main(int argc, char *argv[]) {
             int b = read(newfd, buffer, 128);
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
-            b = write(newfd, buffer, b); 
+            parse_command(buffer);
+            b = write(newfd, buffer, b); //???
         	close(newfd);
         	close(fdTCP);
 
@@ -140,7 +143,7 @@ int main(int argc, char *argv[]) {
         }
     }
     freeaddrinfo(resUDP);
-    close(fdUDP);
+    close(fdUDP); 
 
     freeaddrinfo(resTCP);
     

@@ -37,7 +37,7 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
 
 void input_action(int numTokens, char** saveTokens, char* input, long int numberCar) {
     
-    char message[150]; //AUMENTAR O BUFFER!!!!!
+    char message[1024]; //AUMENTAR O BUFFER!!!!!
 
     if(commandREGOK(numTokens, saveTokens, numberCar)) {
         strcpy(message, "REG ");
