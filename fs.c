@@ -9,27 +9,16 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include "commands_fs.h"
+#include "fs.h"
 
-#define FLAG "flag"
-#define DEFAULT_PORT "58041"
-
-#define max(A, B) ((A)>=(B)?(A):(B))
-
-/*------------------------*/
-
-int createSocket(struct addrinfo* res);
-int input_command_server(int argc, char *argv[], char* port);
-
-/*------------------------*/
-
-	struct addrinfo hintsUDP,*resUDP;
-    struct addrinfo hintsTCP,*resTCP;
-    int fdUDP, fdTCP, errcode, newfd;
-    ssize_t n;
-	struct sockaddr_in addr;  
-    socklen_t addrlen;
-    extern int errno;
-    fd_set rfds;
+struct addrinfo hintsUDP,*resUDP;
+struct addrinfo hintsTCP,*resTCP;
+int fdUDP, fdTCP, errcode, newfd;
+ssize_t n;
+struct sockaddr_in addr;  
+socklen_t addrlen;
+extern int errno;
+fd_set rfds;
 
 
 int main(int argc, char *argv[]) {
@@ -108,7 +97,7 @@ int main(int argc, char *argv[]) {
             n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
             printf("%s\n", buffer);
             parse_command(buffer);
-            n = sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
+            sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
         }
 
         if(FD_ISSET(fdTCP, &rfds)){
@@ -167,5 +156,35 @@ int input_command_server(int argc, char *argv[], char* port) {
     else{
         printf("Invalid syntax.\n");
         return -1;
+    }
+}
+
+void sendCommandUDP(char *message){
+    char buffer[128];
+    n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
+
+    if(n == -1){
+        printf("send to not working UDP\n");
+    }
+}
+
+void sendCommandTCP(char* message){
+    char buffer[128];
+
+    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(h == -1){
+        printf("send to not working TCP\n");
+    } 
+
+    int b = write(fdTCP, message, strlen(message));
+    if (b == -1){
+        printf("write not working TCP");
+    }
+
+    close(fdTCP);
+
+    fdTCP = createSocket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
     }
 }

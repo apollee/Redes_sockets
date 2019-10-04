@@ -10,12 +10,9 @@ void command_received(int numTokens, char** saveTokens, char* input, long int nu
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar);
 int commandLTPOK(int numTokens, char** saveTokens, long int numberChar);
 int commandPTPOK(int numTokens, char** saveTokens, long int numberChar);
-int commandLQROK(int numTokens, char** saveTokens, long int numberChar);
-int commandQGROK(int numTokens, char** saveTokens, long int numberChar);
-int commandQUROK(int numTokens, char** saveTokens, long int numberChar);
-int commandANROK(int numTokens, char** saveTokens, long int numberChar);
-
-
-
+int commandLQUOK(int numTokens, char** saveTokens, long int numberChar);
+int commandGQUOK(int numTokens, char** saveTokens, long int numberChar);
+int commandQUSOK(int numTokens, char** saveTokens, long int numberChar);
+int commandANSOK(int numTokens, char** saveTokens, long int numberChar);
 
 #endif

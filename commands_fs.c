@@ -10,6 +10,7 @@
 #include <errno.h>
 #include <signal.h>
 #include "commands_fs.h"
+#include "fs.h"
 
 int parse_command(char* message) {
 
@@ -71,14 +72,14 @@ void command_received(int numTokens, char** saveTokens, char* input, long int nu
         sendCommandUDP("PTR NOK\n");
     }
 
-    if(commandLQROK(numTokens, saveTokens, numberChar)){
+    if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
         //function to execute the command LQR
         sendCommandUDP(message);
         strcpy(message, "\n");
     }
     
-    if(commandQGROK(numTokens, saveTokens, numberChar)){
+    if(commandGQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QGR ");
         //function to execute the command QGR
         strcpy(message, "\n");
@@ -87,7 +88,7 @@ void command_received(int numTokens, char** saveTokens, char* input, long int nu
         sendCommandTCP("QGR EOF\n");
     }
 
-    if(commandQUROK(numTokens, saveTokens, numberChar)){
+    if(commandQUSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUR ");
         //function to execute the command QUR
         strcpy(message, "\n");
@@ -96,7 +97,7 @@ void command_received(int numTokens, char** saveTokens, char* input, long int nu
         sendCommandTCP("QUR NOK\n");
     }
     
-    if(commandANROK(numTokens, saveTokens, numberChar)){
+    if(commandANSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANR ");
         //function to execute the command ANR
         strcpy(message, "\n");
@@ -161,20 +162,21 @@ int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "GQU")){
+    else if(!strcmp(saveTokens[0], "GQU"))
         return TRUE;
+    else 
+        return FALSE;
 }
 
 int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
     if(numTokens != 4)
         return FALSE;
-    else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
+    else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])))
         return FALSE;
-    }
     else if(!strcmp(saveTokens[0], "QUS"))
         return TRUE;
-    else 
+    else  
         return FALSE;
 }
 
