@@ -18,9 +18,6 @@ int parse_command(char* message) {
     int numTokens = 0;
     char *saveTokens[7];
     int numberCar;
-    if(fgets(message, 50, stdin) == NULL){
-        return -1;
-    }    
     numberCar = strlen(message);
     message[strcspn(message, "\n")] = 0;; /*remove the \n added by fgets*/
     char *token = strtok(message, " ");
@@ -48,5 +45,87 @@ int onlyNumbers(char* message) {
 void command_received(int numTokens, char** saveTokens, char* input, long int numberCar){
 
     char message[1024];
-    printf("tou a bazar\n");
+}
+
+int commandREGOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2 )        
+        return FALSE;
+    else if (strlen(saveTokens[1]) != 5)        
+        return FALSE;
+    else if(!onlyNumbers(saveTokens[1]))        
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "REG"))       
+        return TRUE;
+    else
+        return FALSE;
+}
+
+int commandTLOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0],"LTP"))
+        return TRUE;
+    else
+        return FALSE;
+}
+
+
+int commandTPOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "PTP"))
+        return TRUE;
+    else 
+        return FALSE;     
+}
+
+int commandQLOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 1)
+        return FALSE; 
+    else if(numberCar - 1 != strlen(saveTokens[0]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "LQU"))
+        return TRUE;
+    else
+        return FALSE; 
+}
+
+int commandQGOK(int numTokens, char** saveTokens, long int numberCar){
+    if(numTokens != 2)
+        return FALSE;
+    else if(numberCar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "GQU")){
+        return TRUE;
+}
+
+int commandQSOK(int numTokens, char** saveTokens, long int numberCar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 4)
+        return FALSE;
+    else if(numberCar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
+        return FALSE;
+    }
+    else if(!strcmp(saveTokens[0], "QUS"))
+        return TRUE;
+    else 
+        return FALSE;
+}
+
+int commandASOK(int numTokens, char** saveTokens, long int numberCar){
+    //Nao sei se nao temos que verificar os ficheiros 
+    if(numTokens != 3)
+        return FALSE;
+    else if(numberCar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
+        return FALSE;
+    else if(!strcmp(saveTokens[0], "ANS"))
+        return TRUE;
+    else 
+        return FALSE;
 }
