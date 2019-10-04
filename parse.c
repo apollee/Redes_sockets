@@ -35,24 +35,24 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     }
 }
 
-void input_action(int numTokens, char** saveTokens, char* input, long int numberCar) {
+void input_action(int numTokens, char** saveTokens, char* input, long int numberChar) {
     
     char message[1024]; //AUMENTAR O BUFFER!!!!!
 
-    if(commandREGOK(numTokens, saveTokens, numberCar)) {
+    if(commandREGOK(numTokens, saveTokens, numberChar)) {
         strcpy(message, "REG ");
         strcat(message, saveTokens[1]);
         strcat(message, "\n");
         sendCommandUDP(message);
     }
-    else if(commandTLOK(numTokens, saveTokens, numberCar)) {
+    else if(commandTLOK(numTokens, saveTokens, numberChar)) {
         sendCommandUDP("TLP \n");
     }
-    else if(commandTSOK(numTokens, saveTokens, numberCar)){
+    else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
         //only works localy   
     }
-    else if(commandTPOK(numTokens, saveTokens, numberCar)){
+    else if(commandTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTP ");
         //strcat(message, ID(temos que adicionar isto));
         strcat(message, " ");
@@ -60,19 +60,19 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(message, "\n");
         sendCommandUDP(message);
     }
-    else if(commandQLOK(numTokens, saveTokens, numberCar)){
+    else if(commandQLOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQU ");
         //strcat(message, saveTokens[1]);
         strcat(message, "\n");
         sendCommandUDP(message);
     }
-    else if(commandQGOK(numTokens, saveTokens, numberCar)){
+    else if(commandQGOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "GQU ");
         //adicionar o topico? nao sei de onde vem
         strcat(message, "\n");
         sendCommandTCP(message);
     }
-    else if(commandQSOK(numTokens, saveTokens, numberCar)){
+    else if(commandQSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUS ");
         //strcat(message, ID(temos que adicionar isto))
         //adicionar o topico?? nao sei de onde vem?
@@ -81,7 +81,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(message, "\n");
         sendCommandTCP(message);
     }
-    else if(commandASOK(numTokens, saveTokens, numberCar)){
+    else if(commandASOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANS ");
         //strcat(message, ID(temos que adicionar isto))
         //adicionar o topico?? nao sei de onde vem?
@@ -108,6 +108,7 @@ int parse_input_action() {
     if(fgets(input, 50, stdin) == NULL){
         return -1;
     }    
+
     numberCar = strlen(input);
     input[strcspn(input, "\n")] = 0; /*remove the \n added by fgets*/
     char *token = strtok(input, " ");
@@ -120,3 +121,6 @@ int parse_input_action() {
     input_action(numTokens, saveTokens, input, numberCar);
     return 0;
 }
+
+
+
