@@ -28,24 +28,6 @@ int input_command_server(int argc, char *argv[], char* port) {
     } 
 }
 
-char* parse_command(char* message) { 
-
-    int numTokens = 0;
-    char *saveTokens[7];
-    int numberChar;
-   
-    numberChar = strlen(message);
-    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
-    char *token = strtok(message, " ");
-
-    while(token != NULL) {
-        saveTokens[numTokens] = token;
-        numTokens++;
-        token = strtok(NULL, " ");
-    }
-    return input_action(numTokens, saveTokens, message, numberChar);
-}
-
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
     printf("%s", saveTokens[0]);
     char *message = malloc (sizeof (char) * 1024);
@@ -105,6 +87,30 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
         //sendCommandTCP(message);
     }
+    else{
+        //Porque é que aqui o \n esta no mesmo strcpy do ERR e não num a 
+        //parte como no resto das funcoes
+        strcpy(message, "ERR\n");
+        return message;
+    }
     
     //sendCommandUDP("ERR\n");
+}
+
+char* parse_command(char* message) { 
+
+    int numTokens = 0;
+    char *saveTokens[7];
+    int numberChar;
+   
+    numberChar = strlen(message);
+    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
+    char *token = strtok(message, " ");
+
+    while(token != NULL) {
+        saveTokens[numTokens] = token;
+        numTokens++;
+        token = strtok(NULL, " ");
+    }
+    return input_action(numTokens, saveTokens, message, numberChar);
 }

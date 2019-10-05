@@ -38,7 +38,6 @@ int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
 }
 
-
 int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
         return FALSE;
