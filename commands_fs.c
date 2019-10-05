@@ -12,98 +12,6 @@
 #include "commands_fs.h"
 #include "fs.h"
 
-char* parse_command(char* message) {
-
-    int numTokens = 0;
-    char *saveTokens[7];
-    int numberChar;
-   
-    numberChar = strlen(message);
-    message[strcspn(message, "\n")] = 0;; /*remove the \n added by fgets*/
-    char *token = strtok(message, " ");
-
-    while(token != NULL) {
-        saveTokens[numTokens] = token;
-        numTokens++;
-        token = strtok(NULL, " ");
-    }
-    return command_received(numTokens, saveTokens, message, numberChar);;
-}
-
-int onlyNumbers(char* message) {
-    int i;
-
-    for(i = 0; i < strlen(message);i++){
-        if(message[i] < 48 || message[i] > 57){
-            return 0;
-        }
-    }
-    return 1;
-}
-
-char* command_received(int numTokens, char** saveTokens, char* input, long int numberChar){
-    printf("%s", saveTokens[0]);
-    char *message = malloc (sizeof (char) * 1024);
-    
-    if(commandREGOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "RGR OK\n");
-        return message;
-        //sendCommandUDP(message);
-        //function to execute the command RGR
-    }
-
-    if(commandLTPOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "LTR ");
-        //function to execute the command LTR
-        strcpy(message, "\n");
-        return message;
-        //sendCommandUDP(message);
-    }
-
-    if(commandPTPOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "PTR ");
-        //Pode responder ok, dup ou ful
-        strcpy(message, "\n");
-        return message;
-        //function to execute the command PTR
-        //sendCommandUDP(message);
-    }
-
-    if(commandLQUOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "LQR ");
-        //function to execute the command LQR
-        //sendCommandUDP(message);
-        strcpy(message, "\n");
-        return message;
-    }
-    
-    if(commandGQUOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "QGR ");
-        //function to execute the command QGR
-        strcpy(message, "\n");
-        return message;
-        //sendCommandUDP(message);
-    }
-
-    if(commandQUSOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "QUR ");
-        //function to execute the command QUR
-        strcpy(message, "\n");
-        return message;
-        //sendCommandTCP(message);
-    }
-    
-    if(commandANSOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "ANR ");
-        //function to execute the command ANR
-        strcpy(message, "\n");
-        return message;
-        //sendCommandTCP(message);
-    }
-    
-    //sendCommandUDP("ERR\n");
-}
-
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2 )        
         return FALSE;
@@ -186,4 +94,15 @@ int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE;
     else 
         return FALSE;
+}
+
+int onlyNumbers(char* message) {
+    int i;
+
+    for(i = 0; i < strlen(message);i++){
+        if(message[i] < 48 || message[i] > 57){
+            return 0;
+        }
+    }
+    return 1;
 }

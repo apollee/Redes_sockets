@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include "user.h"
-#include "parse.h"
+#include "parse_user.h"
 #include "commands_user.h"
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
@@ -98,7 +98,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     }
 }
 
-int parse_input_action() {
+int parse_command() {
 
     int numTokens = 0;
     char *saveTokens[7];

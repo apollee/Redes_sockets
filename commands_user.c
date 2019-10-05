@@ -11,17 +11,6 @@
 #include <signal.h>
 #include "commands_user.h"
 
-int onlyNumbers(char* message) {
-    int i;
-
-    for(i = 0; i < strlen(message);i++){
-        if(message[i] < 48 || message[i] > 57){
-            return 0;
-        }
-    }
-    return 1;
-}
-
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2 )        
         return FALSE;
@@ -130,4 +119,15 @@ int commandASOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE;
     else 
         return FALSE;
+}
+
+int onlyNumbers(char* message) {
+    int i;
+
+    for(i = 0; i < strlen(message);i++){
+        if(message[i] < 48 || message[i] > 57){
+            return 0;
+        }
+    }
+    return 1;
 }

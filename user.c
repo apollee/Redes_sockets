@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <signal.h>
-#include "parse.h"
+#include "parse_user.h"
 #include "user.h"
 #include "commands_user.h"
 
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
 
     //start the program
     while(1){ 
-        parse_input_action(); 
+        parse_command(); 
     }
 
     free_and_close(); 

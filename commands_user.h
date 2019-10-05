@@ -5,7 +5,6 @@
 #define FALSE 0
 
 int onlyNumbers(char* message);
-
 int commandREGOK(int numTokens, char** saveTokens, long int numberCar);
 int commandTLOK(int numTokens, char ** saveTokens, long int numberCar);
 int commandTPOK(int numTokens, char** saveTokens, long int numberCar);

@@ -5,8 +5,10 @@
 #define DEFAULT_PORT "58041"
 #define max(A, B) ((A)>=(B)?(A):(B))
 
-int createSocket(struct addrinfo* res);
-int input_command_server(int argc, char *argv[], char* port);
+void sigpipe_handler();
+void start_UDP();
+void start_TCP();
+int create_socket(struct addrinfo* res);
 //void sendCommandUDP(char* message);
 //void sendCommandTCP(char* message);
 

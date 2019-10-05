@@ -10,6 +10,7 @@
 #include <arpa/inet.h>
 #include <signal.h>
 #include "commands_fs.h"
+#include "parse_fs.h"
 #include "fs.h"
 
 struct addrinfo hintsUDP,*resUDP;
@@ -18,70 +19,23 @@ int fdUDP, fdTCP, errcode, newfd;
 ssize_t n;
 struct sockaddr_in addr;  
 socklen_t addrlen;
-extern int errno;
+/*extern*/ int errno;
 fd_set rfds;
+char buffer[128];
+char port[6];
+int maxDescriptor;
 
-
+ 
 int main(int argc, char *argv[]) {
-    char buffer[128];
-    char port[6];
-    int maxDescriptor;
 
-    struct sigaction act;	
-	memset(&act,0,sizeof act);
-	act.sa_handler=SIG_IGN;	
-	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);
-    
-
-    input_command_server(argc, argv, port);
+    sigpipe_handler();
+    input_command_server(argc, argv, port); //check argv commands
 
     //UDP--------------------------------------------------
-    memset(&hintsUDP,0,sizeof hintsUDP);
-    hintsUDP.ai_family=AF_INET;//IPv4
-    hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
-    hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
-
-    if ((errcode = getaddrinfo(NULL, port, &hintsUDP, &resUDP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
-    }
-
-    fdUDP = createSocket(resUDP);
-    if(fdUDP == -1){
-        printf("creating Server UDP socket failed\n");
-    }
-
-    n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-    if(n == -1){
-        printf("bind not working Server UDP\n");
-    }
+    start_UDP();
     
-    memset(&hintsTCP, 0 ,sizeof hintsTCP);
-    hintsTCP.ai_family = AF_INET; 
-    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
-    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
-
-    if((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
-    }
-
-    fdTCP = createSocket(resTCP);
-    if(fdTCP == -1){
-        printf("creating Server TCP socket failed\n");
-    }
-    if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
-    	printf("setsockopt(SO_REUSEADDR) failed");
-    }
-
-    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    if(n == -1){
-        printf("bind not working Server TCP\n");
-    }
-
-    memset(buffer, 0, strlen(buffer));
-    n = listen(fdTCP, 5);
-    if(n == -1){
-        printf("listen not working Server TCP\n");
-    }
+    //TCP-------------------------------------------------------------------
+    start_TCP();
     
   	while(1){
         FD_ZERO(&rfds);
@@ -110,7 +64,7 @@ int main(int argc, char *argv[]) {
         	close(newfd); 
         	close(fdTCP);
 
-        	fdTCP = createSocket(resTCP);
+        	fdTCP = create_socket(resTCP);
    			if(fdTCP == -1){
         		printf("creating Server TCP socket failed\n");
     		}
@@ -131,28 +85,67 @@ int main(int argc, char *argv[]) {
         }
     }
     freeaddrinfo(resUDP);
-    freeaddrinfo(resTCP);
-     
+    freeaddrinfo(resTCP);   
 }
 
-int createSocket(struct addrinfo* res){ 
+int create_socket(struct addrinfo* res){ 
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
     return fd;
 }
 
-int input_command_server(int argc, char *argv[], char* port) {
-    strcpy(port, DEFAULT_PORT);
-
-    if(argc == 1) {
-        return 0;
-    }
-    else if(argc == 3 && (strcmp(argv[1],"-p") == 0)) {
-        strcpy(port, argv[2]);
-        return 0;
-    }
-    else{
-        printf("Invalid syntax.\n"); 
-        return -1;
-    } 
+void sigpipe_handler(){
+    struct sigaction act;	
+	memset(&act,0,sizeof act);
+	act.sa_handler=SIG_IGN;	
+	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);
 }
 
+void start_UDP(){
+    memset(&hintsUDP,0,sizeof hintsUDP);
+    hintsUDP.ai_family=AF_INET;//IPv4
+    hintsUDP.ai_socktype=SOCK_DGRAM;//UDP socket
+    hintsUDP.ai_flags=AI_PASSIVE|AI_NUMERICSERV;
+
+    if ((errcode = getaddrinfo(NULL, port, &hintsUDP, &resUDP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
+    fdUDP = create_socket(resUDP);
+    if(fdUDP == -1){
+        printf("creating Server UDP socket failed\n");
+    }
+
+    n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
+    if(n == -1){
+        printf("bind not working Server UDP\n");
+    }
+}
+
+void start_TCP(){
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET; 
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
+
+    if((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
+
+    fdTCP = create_socket(resTCP);
+    if(fdTCP == -1){
+        printf("creating Server TCP socket failed\n");
+    }
+    if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
+    	printf("setsockopt(SO_REUSEADDR) failed");
+    }
+
+    n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(n == -1){
+        printf("bind not working Server TCP\n");
+    }
+
+    memset(buffer, 0, strlen(buffer));
+    n = listen(fdTCP, 5);
+    if(n == -1){
+        printf("listen not working Server TCP\n");
+    }
+}
