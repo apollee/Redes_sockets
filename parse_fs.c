@@ -32,8 +32,10 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     char *message = malloc (sizeof (char) * 1024);
     
     if(!strcmp(saveTokens[0], "REG")){
-        if(commandREGOK(numTokens, saveTokens, numberChar))
+        if(commandREGOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "RGR OK\n");
+            printf("user: ip %s\n", saveTokens[1]);
+        }
         else
             strcpy(message, "RGR NOR\n");
         return message;
@@ -43,6 +45,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(commandLTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LTR ");
+        printf("List topics\n");
         //function to execute the command LTR
         strcpy(message, "\n");
         return message;
