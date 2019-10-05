@@ -67,8 +67,7 @@ void send_commandUDP(char *message){
     if(n == -1){
         printf("receiving from UDP server not working\n");
     }
-    write(1, "echo UDP: ", 10);
-    write(1, buffer, n);
+    parse_command_received(buffer);
 }
 
 void send_commandTCP(char* message){

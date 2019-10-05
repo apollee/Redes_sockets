@@ -12,6 +12,8 @@
 #include "parse_user.h"
 #include "commands_user.h"
 
+char id_user[5];
+
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
     strcpy(ip, FLAG);
@@ -35,15 +37,20 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     }
 }
 
-void input_action(int numTokens, char** saveTokens, char* input, long int numberChar) {
-    
-    char message[1024]; 
+void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
+      char message[1024]; 
 
-    if(commandREGOK(numTokens, saveTokens, numberChar)) {
-        strcpy(message, "REG ");
-        strcat(message, saveTokens[1]);
-        strcat(message, "\n");
-        send_commandUDP(message);
+    if((!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) && numTokens == 2) {
+        if(commandREGOK(numTokens, saveTokens, numberChar)){
+            strcpy(id_user, saveTokens[1]);
+            strcpy(message, "REG ");
+            strcat(message, saveTokens[1]);
+            strcat(message, "\n");
+            send_commandUDP(message);
+        }
+        else{
+            printf("User %s not registered\n", saveTokens[1]);
+        }
     }
     else if(commandTLOK(numTokens, saveTokens, numberChar)) {
         send_commandUDP("LTP \n");
@@ -98,6 +105,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     }
 }
 
+
 int parse_command() {
 
     int numTokens = 0;
@@ -122,4 +130,84 @@ int parse_command() {
 }
 
 
+
+void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){
+      char message[1024]; 
+    if((!strcmp(saveTokens[0],"RGR")) && numTokens == 2) {
+        if(!strcmp(saveTokens[1], "OK")){
+            printf("User %s registered\n", id_user);
+        }
+        else if(!strcmp(saveTokens[1], "NOK")){
+            printf("User %s not registered\n", id_user);
+        }
+    }/*
+    else if(commandTLOK(numTokens, saveTokens, numberChar)) {
+        send_commandUDP("LTP \n");
+    }
+    else if(commandTSOK(numTokens, saveTokens, numberChar)){
+        printf("topic select or ts\n");
+        //only works localy   
+    }
+    else if(commandTPOK(numTokens, saveTokens, numberChar)){
+        strcpy(message, "PTP ");
+        //strcat(message, ID(temos que adicionar isto));
+        strcat(message, saveTokens[1]);
+        strcat(message, "\n");
+        send_commandUDP(message);
+    }
+    else if(commandQLOK(numTokens, saveTokens, numberChar)){
+        strcpy(message, "LQU ");
+        //strcat(message, saveTokens[1]);
+        strcat(message, "\n");
+        send_commandUDP(message);
+    }
+    else if(commandQGOK(numTokens, saveTokens, numberChar)){
+        strcpy(message, "GQU ");
+        //adicionar o topico? nao sei de onde vem
+        strcat(message, "\n");
+        send_commandTCP(message);
+    }
+    else if(commandQSOK(numTokens, saveTokens, numberChar)){
+        strcpy(message, "QUS ");
+        //strcat(message, ID(temos que adicionar isto))
+        //adicionar o topico?? nao sei de onde vem?
+        strcat(message, saveTokens[1]);
+        //adicionar qsize, qdata, qimg
+        strcat(message, "\n");
+        send_commandTCP(message);
+    }
+    else if(commandASOK(numTokens, saveTokens, numberChar)){
+        strcpy(message, "ANS ");
+        //strcat(message, ID(temos que adicionar isto))
+        //adicionar o topico?? nao sei de onde vem?
+        //adicionar a questao? nao sei de onde vem
+        //adicionar asize, adata, aIMG
+        strcat(message, "\n");
+        send_commandUDP(message);
+    }
+    else if(!strcmp(saveTokens[0], "exit")){
+        exit(0);
+    }
+    else{
+        strcpy(message, "ERR\n");
+        send_commandUDP(message);
+    }*/
+}
+
+void parse_command_received(char* buffer){
+    int numTokens = 0;
+    char *saveTokens[7];
+    int numberChar;
+    
+    numberChar = strlen(buffer);
+    buffer[strcspn(buffer, "\n")] = 0; /*remove the \n added by fgets*/
+    char *token = strtok(buffer, " ");
+
+    while(token != NULL) {
+        saveTokens[numTokens] = token;
+        numTokens++;
+        token = strtok(NULL, " ");
+    }
+    input_action_received(numTokens, saveTokens, buffer, numberChar);
+}
 

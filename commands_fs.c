@@ -21,10 +21,8 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
         return FALSE;
-    else if(!strcmp(saveTokens[0], "REG"))    
-        return TRUE;
     else
-        return FALSE;
+        return TRUE;
 }
 
 int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){

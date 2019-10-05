@@ -8,5 +8,6 @@
 void input_command_user(int argc, char *argv[], char *port, char *ip);
 void input_action(int numTokens, char** saveTokens, char* input, long int numberCar);
 int parse_command();
-
+void parse_command_received(char* buffer);
+void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar);
 #endif

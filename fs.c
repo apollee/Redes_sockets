@@ -64,28 +64,12 @@ int main(int argc, char *argv[]) {
         	close(newfd); 
         	close(fdTCP);
 
-        	fdTCP = create_socket(resTCP);
-   			if(fdTCP == -1){
-        		printf("creating Server TCP socket failed\n");
-    		}
-    		if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
-    			printf("setsockopt(SO_REUSEADDR) failed");
-    		}
-
-    		n = bind(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    		if(n == -1){
-		        printf("bind not working Server TCP\n");
-		    }
-
-		    memset(buffer, 0, strlen(buffer));
-		    n = listen(fdTCP, 5);
-		    if(n == -1){
-		        printf("listen not working Server TCP\n");
-		    }
+        	start_TCP();
         }
     }
     freeaddrinfo(resUDP);
-    freeaddrinfo(resTCP);   
+    freeaddrinfo(resTCP);
+    close(fdUDP);   
 }
 
 int create_socket(struct addrinfo* res){ 

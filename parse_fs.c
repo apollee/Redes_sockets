@@ -31,14 +31,17 @@ int input_command_server(int argc, char *argv[], char* port) {
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
     char *message = malloc (sizeof (char) * 1024);
     
-    if(commandREGOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "RGR OK\n");
+    if(!strcmp(saveTokens[0], "REG")){
+        if(commandREGOK(numTokens, saveTokens, numberChar))
+            strcpy(message, "RGR OK\n");
+        else
+            strcpy(message, "RGR NOR\n");
         return message;
         //sendCommandUDP(message);
         //function to execute the command RGR
     }
 
-    if(commandLTPOK(numTokens, saveTokens, numberChar)){
+    else if(commandLTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LTR ");
         //function to execute the command LTR
         strcpy(message, "\n");
@@ -46,7 +49,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         //sendCommandUDP(message);
     }
 
-    if(commandPTPOK(numTokens, saveTokens, numberChar)){
+    else if(commandPTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTR ");
         //Pode responder ok, dup ou ful
         strcpy(message, "\n");
@@ -55,7 +58,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         //sendCommandUDP(message);
     }
 
-    if(commandLQUOK(numTokens, saveTokens, numberChar)){
+    else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
         //function to execute the command LQR
         //sendCommandUDP(message);
@@ -63,7 +66,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
     
-    if(commandGQUOK(numTokens, saveTokens, numberChar)){
+    else if(commandGQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QGR ");
         //function to execute the command QGR
         strcpy(message, "\n");
@@ -71,7 +74,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         //sendCommandUDP(message);
     }
 
-    if(commandQUSOK(numTokens, saveTokens, numberChar)){
+    else if(commandQUSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUR ");
         //function to execute the command QUR
         strcpy(message, "\n");
@@ -79,7 +82,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         //sendCommandTCP(message);
     }
     
-    if(commandANSOK(numTokens, saveTokens, numberChar)){
+    else if(commandANSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANR ");
         //function to execute the command ANR
         strcpy(message, "\n");
