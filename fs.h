@@ -7,7 +7,7 @@
 
 int createSocket(struct addrinfo* res);
 int input_command_server(int argc, char *argv[], char* port);
-void sendCommandUDP(char* message);
-void sendCommandTCP(char* message);
+//void sendCommandUDP(char* message);
+//void sendCommandTCP(char* message);
 
 #endif

@@ -12,9 +12,7 @@
 #include "commands_fs.h"
 #include "fs.h"
 
-int parse_command(char* message) {
-
-    printf("Estou no commands_fs e recebi a mensagem: %s", message);
+char* parse_command(char* message) {
 
     int numTokens = 0;
     char *saveTokens[7];
@@ -29,8 +27,7 @@ int parse_command(char* message) {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    command_received(numTokens, saveTokens, message, numberChar);
-    return 0;
+    return command_received(numTokens, saveTokens, message, numberChar);;
 }
 
 int onlyNumbers(char* message) {
@@ -44,68 +41,67 @@ int onlyNumbers(char* message) {
     return 1;
 }
 
-void command_received(int numTokens, char** saveTokens, char* input, long int numberChar){
-
-    char message[1024];
+char* command_received(int numTokens, char** saveTokens, char* input, long int numberChar){
+    printf("%s", saveTokens[0]);
+    char *message = malloc (sizeof (char) * 1024);
     
     if(commandREGOK(numTokens, saveTokens, numberChar)){
-        sendCommandUDP("RGR OK\n");
+        strcpy(message, "RGR OK\n");
+        return message;
+        //sendCommandUDP(message);
         //function to execute the command RGR
-    }else{
-        sendCommandUDP("RGB NOK\n");
     }
 
     if(commandLTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LTR ");
         //function to execute the command LTR
         strcpy(message, "\n");
-        sendCommandUDP(message);
+        return message;
+        //sendCommandUDP(message);
     }
 
     if(commandPTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTR ");
         //Pode responder ok, dup ou ful
         strcpy(message, "\n");
+        return message;
         //function to execute the command PTR
-        sendCommandUDP(message);
-    }else{
-        sendCommandUDP("PTR NOK\n");
+        //sendCommandUDP(message);
     }
 
     if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
         //function to execute the command LQR
-        sendCommandUDP(message);
+        //sendCommandUDP(message);
         strcpy(message, "\n");
+        return message;
     }
     
     if(commandGQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QGR ");
         //function to execute the command QGR
         strcpy(message, "\n");
-        sendCommandUDP(message);
-    }else{
-        sendCommandTCP("QGR EOF\n");
+        return message;
+        //sendCommandUDP(message);
     }
 
     if(commandQUSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUR ");
         //function to execute the command QUR
         strcpy(message, "\n");
-        sendCommandTCP(message);
-    }else{
-        sendCommandTCP("QUR NOK\n");
+        return message;
+        //sendCommandTCP(message);
     }
     
     if(commandANSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANR ");
         //function to execute the command ANR
         strcpy(message, "\n");
-        sendCommandTCP(message);
+        return message;
+        //sendCommandTCP(message);
     }
     
     //sendCommandUDP("ERR\n");
-
 }
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
@@ -117,20 +113,20 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
         return FALSE;
-    else if(!strcmp(saveTokens[0], "REG"))       
+    else if(!strcmp(saveTokens[0], "REG"))    
         return TRUE;
     else
         return FALSE;
 }
 
 int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 1)
+    if(numTokens != 1){
         return FALSE; 
-    else if(numberChar - 1 != strlen(saveTokens[0]))
+    }else if(numberChar - 1 != strlen(saveTokens[0])){
         return FALSE;
-    else if(!strcmp(saveTokens[0],"LTP"))
+    }else if(!strcmp(saveTokens[0],"LTP")){
         return TRUE;
-    else
+    }else
         return FALSE;
 }
 

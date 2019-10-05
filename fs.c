@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <netinet/in.h>
 #include <netdb.h>
+#include <errno.h>
 #include <arpa/inet.h>
 #include <signal.h>
 #include "commands_fs.h"
@@ -33,7 +34,6 @@ int main(int argc, char *argv[]) {
     
 
     input_command_server(argc, argv, port);
-    printf("port: %s\n", port);
 
     //UDP--------------------------------------------------
     memset(&hintsUDP,0,sizeof hintsUDP);
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]) {
     }
     
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
-    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_family = AF_INET; 
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_PASSIVE|AI_NUMERICSERV;
 
@@ -87,20 +87,19 @@ int main(int argc, char *argv[]) {
         FD_ZERO(&rfds);
         FD_SET(fdUDP, &rfds);
         FD_SET(fdTCP, &rfds);       
-
+ 
         maxDescriptor = max(fdTCP, fdUDP);
 
         select(maxDescriptor + 1, &rfds, NULL, NULL, NULL);
 
-        if(FD_ISSET(fdUDP, &rfds)){
-           addrlen = sizeof(addr);
+        if(FD_ISSET(fdUDP, &rfds)){ 
+            addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
-            printf("%s\n", buffer);
-            parse_command(buffer);
-            sendto(fdUDP, buffer, n, 0, (struct sockaddr*)&addr, addrlen);
-        }
-
-        if(FD_ISSET(fdTCP, &rfds)){
+            printf("%s", buffer);
+            sendto(fdUDP, parse_command(buffer), n, 0, (struct sockaddr*)&addr, addrlen);
+        } 
+ 
+        if(FD_ISSET(fdTCP, &rfds)){   
         	addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
             int b = read(newfd, buffer, 128);
@@ -108,7 +107,7 @@ int main(int argc, char *argv[]) {
             write(1, buffer, b); //fs
             parse_command(buffer);
             b = write(newfd, buffer, b); //???
-        	close(newfd);
+        	close(newfd); 
         	close(fdTCP);
 
         	fdTCP = createSocket(resTCP);
@@ -132,10 +131,8 @@ int main(int argc, char *argv[]) {
         }
     }
     freeaddrinfo(resUDP);
-    close(fdUDP); 
-
     freeaddrinfo(resTCP);
-    
+     
 }
 
 int createSocket(struct addrinfo* res){ 
@@ -154,37 +151,8 @@ int input_command_server(int argc, char *argv[], char* port) {
         return 0;
     }
     else{
-        printf("Invalid syntax.\n");
+        printf("Invalid syntax.\n"); 
         return -1;
-    }
-}
-
-void sendCommandUDP(char *message){
-    char buffer[128];
-    n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
-
-    if(n == -1){
-        printf("send to not working UDP\n");
-    }
-}
-
-void sendCommandTCP(char* message){
-    char buffer[128];
-
-    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    if(h == -1){
-        printf("send to not working TCP\n");
     } 
-
-    int b = write(fdTCP, message, strlen(message));
-    if (b == -1){
-        printf("write not working TCP");
-    }
-
-    close(fdTCP);
-
-    fdTCP = createSocket(resTCP);
-    if(fdTCP == -1){
-        printf("creating TCP socket failed\n");
-    }
 }
+

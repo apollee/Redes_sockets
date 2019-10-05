@@ -37,16 +37,16 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
 
 void input_action(int numTokens, char** saveTokens, char* input, long int numberChar) {
     
-    char message[1024]; //AUMENTAR O BUFFER!!!!!
+    char message[1024]; 
 
     if(commandREGOK(numTokens, saveTokens, numberChar)) {
         strcpy(message, "REG ");
         strcat(message, saveTokens[1]);
         strcat(message, "\n");
-        sendCommandUDP(message);
+        send_commandUDP(message);
     }
     else if(commandTLOK(numTokens, saveTokens, numberChar)) {
-        sendCommandUDP("TLP \n");
+        send_commandUDP("LTP \n");
     }
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
@@ -55,22 +55,21 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTP ");
         //strcat(message, ID(temos que adicionar isto));
-        strcat(message, " ");
         strcat(message, saveTokens[1]);
         strcat(message, "\n");
-        sendCommandUDP(message);
+        send_commandUDP(message);
     }
     else if(commandQLOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQU ");
         //strcat(message, saveTokens[1]);
         strcat(message, "\n");
-        sendCommandUDP(message);
+        send_commandUDP(message);
     }
     else if(commandQGOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "GQU ");
         //adicionar o topico? nao sei de onde vem
         strcat(message, "\n");
-        sendCommandTCP(message);
+        send_commandTCP(message);
     }
     else if(commandQSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUS ");
@@ -79,7 +78,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         strcat(message, saveTokens[1]);
         //adicionar qsize, qdata, qimg
         strcat(message, "\n");
-        sendCommandTCP(message);
+        send_commandTCP(message);
     }
     else if(commandASOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANS ");
@@ -88,14 +87,14 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         //adicionar a questao? nao sei de onde vem
         //adicionar asize, adata, aIMG
         strcat(message, "\n");
-        sendCommandUDP(message);
+        send_commandUDP(message);
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
     }
     else{
         strcpy(message, "ERR\n");
-        sendCommandUDP(message);
+        send_commandUDP(message);
     }
 }
 
