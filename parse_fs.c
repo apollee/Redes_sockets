@@ -29,7 +29,6 @@ int input_command_server(int argc, char *argv[], char* port) {
 }
 
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
-    printf("%s", saveTokens[0]);
     char *message = malloc (sizeof (char) * 1024);
     
     if(commandREGOK(numTokens, saveTokens, numberChar)){

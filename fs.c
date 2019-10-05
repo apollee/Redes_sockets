@@ -57,8 +57,6 @@ int main(int argc, char *argv[]) {
         	addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
             int b = read(newfd, buffer, 128);
-            //printf("O que foi recebido: %s\n", buffer);
-            //printf("Hello World!");
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
             parse_command(buffer);
