@@ -141,4 +141,4 @@ void free_and_close(){
     freeaddrinfo(resTCP);
     close(fdUDP); 
     close(fdTCP);  
-}     
+}      

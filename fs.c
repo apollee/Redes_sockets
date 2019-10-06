@@ -103,11 +103,11 @@ void start_UDP(){
     }
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-    if(n == -1){
+    if(n == -1){ 
         printf("bind not working Server UDP\n");
     }
 }
-
+ 
 void start_TCP(){
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET; 

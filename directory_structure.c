@@ -3,6 +3,7 @@
 #include "directory_structure.h"
 #include <sys/stat.h>
 #include <sys/types.h>
+#include <string.h>
 
 int listDir(char *dirname){
     DIR *d;
@@ -12,7 +13,9 @@ int listDir(char *dirname){
     /*searches for stuff inside of TOPICS*/
     if (d){
         while((dir=readdir(d)) != NULL){
-            printf("FILE: %s\n", dir->d_name);
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                printf("FILE: %s\n", dir->d_name);
+            }
         }
         closedir(d);
         return(1);
@@ -48,3 +51,23 @@ void create_directory(char *dirname){
         return NULL;
     }*/
 }
+
+/*int topicList(){
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("TOPICS");
+    char* message = malloc (sizeof (char) * 1024);
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                //strcat()
+                printf("FILE: %s\n", dir->d_name);
+            }
+        }
+        closedir(d);
+        return(1);
+    }
+    else 
+        return (-1);
+}*/

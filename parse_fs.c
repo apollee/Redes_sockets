@@ -47,7 +47,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
             printf("List topics\n");
             checkTopics();
             //function to execute the command LTR
-            strcpy(message, "\n");
+            strcat(message, "\n");
             //sendCommandUDP(message);
         }else{
             strcpy(message, "ERR\n");
@@ -58,7 +58,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(commandPTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTR ");
         //Pode responder ok, dup ou ful
-        strcpy(message, "\n");
+        strcat(message, "\n");
         return message;
         //function to execute the command PTR
         //sendCommandUDP(message);
@@ -68,14 +68,14 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         strcpy(message, "LQR ");
         //function to execute the command LQR
         //sendCommandUDP(message);
-        strcpy(message, "\n");
+        strcat(message, "\n");
         return message;
     }
     
     else if(commandGQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QGR ");
         //function to execute the command QGR
-        strcpy(message, "\n");
+        strcat(message, "\n");
         return message;
         //sendCommandUDP(message);
     }
@@ -83,7 +83,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(commandQUSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QUR ");
         //function to execute the command QUR
-        strcpy(message, "\n");
+        strcat(message, "\n");
         return message;
         //sendCommandTCP(message);
     }
@@ -91,7 +91,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(commandANSOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "ANR ");
         //function to execute the command ANR
-        strcpy(message, "\n");
+        strcat(message, "\n");
         return message;
         //sendCommandTCP(message);
     }

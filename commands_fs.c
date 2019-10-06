@@ -105,4 +105,5 @@ int onlyNumbers(char* message) {
 
 void checkTopics(){
     listDir("TOPICS");
+    
 }
