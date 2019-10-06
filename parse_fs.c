@@ -45,7 +45,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         if(commandLTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "LTR ");
             printf("List topics\n");
-            checkTopics();
+            strcat(message, checkTopics());
             //function to execute the command LTR
             strcat(message, "\n");
             //sendCommandUDP(message);

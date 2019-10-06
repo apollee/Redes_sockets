@@ -135,7 +135,7 @@ int parse_command() {
 
 
 void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){
-      char message[1024]; 
+      //char message[1024]; 
 
     if((!strcmp(saveTokens[0],"RGR")) && numTokens == 2) {
         if(!strcmp(saveTokens[1], "OK")){
@@ -146,7 +146,7 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         }
     }
     else if(!strcmp(saveTokens[0], "LTR")){ 
-        printf("Got the LTR\n");
+        printf("available topics:\n");
     }/*
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");

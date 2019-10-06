@@ -3,7 +3,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <string.h> 
-#include <unistd.h>
+#include <unistd.h> 
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -103,7 +103,12 @@ int onlyNumbers(char* message) {
     return 1;
 }
 
-void checkTopics(){
-    listDir("TOPICS");
-    
+/*for the command TL*/
+char* checkTopics(){
+    char* message = malloc(sizeof (char)* 1024);
+    strcpy(message, number_of_topics());
+    strcat(message, " ");
+    strcat(message, topicList());
+    printf("The message that will be sent to user is: %s\n", message);
+    return message;
 }

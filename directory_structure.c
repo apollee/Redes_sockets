@@ -1,29 +1,10 @@
 #include <dirent.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "directory_structure.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
-
-int listDir(char *dirname){
-    DIR *d;
-    struct dirent *dir;
-    d = opendir(dirname);
-
-    /*searches for stuff inside of TOPICS*/
-    if (d){
-        while((dir=readdir(d)) != NULL){
-            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
-                printf("FILE: %s\n", dir->d_name);
-            }
-        }
-        closedir(d);
-        return(1);
-    }
-    else 
-        return (-1);
-}
-
 
 int check_directory_existence(char *dirname){
     DIR *d;
@@ -52,22 +33,72 @@ void create_directory(char *dirname){
     }*/
 }
 
-/*int topicList(){
+char* topicList(){
     DIR *d;
     struct dirent *dir;
     d = opendir("TOPICS");
     char* message = malloc (sizeof (char) * 1024);
+    strcpy(message, "");
 
     if (d){
         while((dir=readdir(d)) != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
-                //strcat()
-                printf("FILE: %s\n", dir->d_name);
+                strcat(message, dir->d_name);
+                strcat(message, ":");
+                strcat(message, topicID(dir->d_name));
+                strcat(message, " ");
             }
         }
         closedir(d);
-        return(1);
+        return message;
     }
     else 
-        return (-1);
-}*/
+        return NULL;
+}
+
+char* topicID(char* dirname){
+    char* message = malloc (sizeof (char) * 1024);
+    strcpy(message, "TOPICS/");
+    strcat(message, dirname);
+    strcat(message, "/");
+    strcat(message, dirname); 
+    strcat(message, "_UID.txt");
+    FILE* file;
+    ssize_t read;
+    size_t len = 0; 
+    
+    file = fopen(message, "r");
+    char *line = NULL;
+    if(file == NULL){
+        exit(EXIT_FAILURE);
+    }
+    
+    read = getline(&line, &len, file);
+    line[strcspn(line, "\n")] = 0;
+    return line;
+
+}
+
+char* number_of_topics(){
+    char* value = malloc(sizeof (char)* 1024);
+    int number = 0;
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("TOPICS");
+    char* message = malloc (sizeof (char) * 1024);
+    strcpy(message, "");
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                number++;
+            }
+        }
+        closedir(d);
+    }
+    else 
+        return NULL;  
+    
+    sprintf(value, "%d", number);
+    return value;
+}

@@ -103,7 +103,7 @@ void start_UDP(){
     }
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
-    if(n == -1){ 
+    if(n == -1){   
         printf("bind not working Server UDP\n");
     }
 }
@@ -136,4 +136,4 @@ void start_TCP(){
     if(n == -1){
         printf("listen not working Server TCP\n");
     }
-} 
+}       
