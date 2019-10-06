@@ -11,6 +11,7 @@
 #include <signal.h>
 #include "parse_fs.h"
 #include "commands_fs.h"
+#include "directory_structure.h"
 
 int input_command_server(int argc, char *argv[], char* port) {
     strcpy(port, DEFAULT_PORT);
@@ -35,12 +36,11 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         if(commandREGOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "RGR OK\n");
             printf("user: ip %s\n", saveTokens[1]);
+            printf("directory structure: %d\n", ListDir("Lab1"));
         }
         else
             strcpy(message, "RGR NOR\n");
         return message;
-        //sendCommandUDP(message);
-        //function to execute the command RGR
     }
 
     else if(commandLTPOK(numTokens, saveTokens, numberChar)){

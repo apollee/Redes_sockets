@@ -1,7 +1,8 @@
 #include <dirent.h>
+#include <stdio.h>
 
 int ListDir(char *dirname){
-    Dir *d;
+    DIR *d;
     struct dirent *dir;
     d = opendir(dirname);
 

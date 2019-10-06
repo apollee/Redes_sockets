@@ -49,7 +49,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             send_commandUDP(message);
         }
         else{
-            printf("User %s not registered\n", saveTokens[1]);
+            printf("User %s not registered\n", saveTokens[1]); //nao devia ser um ERR tambem?
         }
     }
     else if(commandTLOK(numTokens, saveTokens, numberChar)) {
@@ -135,10 +135,10 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
       char message[1024]; 
     if((!strcmp(saveTokens[0],"RGR")) && numTokens == 2) {
         if(!strcmp(saveTokens[1], "OK")){
-            printf("User %s registered\n", id_user);
+            printf("User \"%s\" registered\n", id_user);
         }
         else if(!strcmp(saveTokens[1], "NOK")){
-            printf("User %s not registered\n", id_user);
+            printf("User %s not registered\n", id_user); //e suposto?
         }
     }/*
     else if(commandTLOK(numTokens, saveTokens, numberChar)) {
