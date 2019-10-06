@@ -11,6 +11,7 @@
 #include <signal.h>
 #include "commands_fs.h"
 #include "fs.h"
+#include "directory_structure.h"
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2 )        
@@ -30,10 +31,8 @@ int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE; 
     }else if(numberChar - 1 != strlen(saveTokens[0])){
         return FALSE;
-    }else if(!strcmp(saveTokens[0],"LTP")){
-        return TRUE;
     }else
-        return FALSE;
+        return TRUE;
 }
 
 int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
@@ -102,4 +101,8 @@ int onlyNumbers(char* message) {
         }
     }
     return 1;
+}
+
+void checkTopics(){
+    listDir("TOPICS");
 }

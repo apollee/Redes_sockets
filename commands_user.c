@@ -29,10 +29,8 @@ int commandTLOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE; 
     else if(numberChar - 1 != strlen(saveTokens[0]))
         return FALSE;
-    else if(!strcmp(saveTokens[0],"topic_list") || !strcmp(saveTokens[0], "tl"))
-        return TRUE;
     else
-        return FALSE;
+        return TRUE;
 }
 
 int commandTSOK(int numTokens, char** saveTokens, long int numberChar){

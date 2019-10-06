@@ -139,6 +139,6 @@ void start_TCP(){
 void free_and_close(){
     freeaddrinfo(resUDP);
     freeaddrinfo(resTCP);
-    close(fdUDP);
+    close(fdUDP); 
     close(fdTCP);  
-}
+}     

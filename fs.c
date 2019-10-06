@@ -12,6 +12,7 @@
 #include "commands_fs.h"
 #include "parse_fs.h"
 #include "fs.h"
+#include "directory_structure.h"
 
 struct addrinfo hintsUDP,*resUDP;
 struct addrinfo hintsTCP,*resTCP;
@@ -21,14 +22,17 @@ struct sockaddr_in addr;
 socklen_t addrlen;
 /*extern*/ int errno;
 fd_set rfds;
-char buffer[128];
+char buffer[128]; 
 char port[6];
-int maxDescriptor;
-
+int maxDescriptor; 
+ 
  
 int main(int argc, char *argv[]) {
 
     sigpipe_handler();
+    if(!check_directory_existence("TOPICS")){
+        create_directory("TOPICS"); //missing checking if its null
+    }
     input_command_server(argc, argv, port); //check argv commands
 
     //UDP--------------------------------------------------
@@ -36,9 +40,9 @@ int main(int argc, char *argv[]) {
     
     //TCP-------------------------------------------------------------------
     start_TCP();
-    
+     
   	while(1){
-        FD_ZERO(&rfds);
+        FD_ZERO(&rfds); 
         FD_SET(fdUDP, &rfds);
         FD_SET(fdTCP, &rfds);       
  
@@ -132,4 +136,4 @@ void start_TCP(){
     if(n == -1){
         printf("listen not working Server TCP\n");
     }
-}
+} 

@@ -52,8 +52,11 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             printf("User %s not registered\n", saveTokens[1]); //nao devia ser um ERR tambem?
         }
     }
-    else if(commandTLOK(numTokens, saveTokens, numberChar)) {
-        send_commandUDP("LTP \n");
+    else if((!strcmp(saveTokens[0], "topic_list") || !strcmp(saveTokens[0], "tl")) && numTokens == 1) {
+        if(commandTLOK(numTokens, saveTokens, numberChar)){
+            strcpy(message, "LTP\n");
+            send_commandUDP(message);
+        }
     }
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
@@ -133,6 +136,7 @@ int parse_command() {
 
 void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){
       char message[1024]; 
+
     if((!strcmp(saveTokens[0],"RGR")) && numTokens == 2) {
         if(!strcmp(saveTokens[1], "OK")){
             printf("User \"%s\" registered\n", id_user);
@@ -140,10 +144,10 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         else if(!strcmp(saveTokens[1], "NOK")){
             printf("User %s not registered\n", id_user); //e suposto?
         }
-    }/*
-    else if(commandTLOK(numTokens, saveTokens, numberChar)) {
-        send_commandUDP("LTP \n");
     }
+    else if(!strcmp(saveTokens[0], "LTR")){ 
+        printf("Got the LTR\n");
+    }/*
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
         //only works localy   
@@ -208,6 +212,7 @@ void parse_command_received(char* buffer){
         numTokens++;
         token = strtok(NULL, " ");
     }
+
     input_action_received(numTokens, saveTokens, buffer, numberChar);
 }
 
