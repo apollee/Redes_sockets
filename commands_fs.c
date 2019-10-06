@@ -109,6 +109,5 @@ char* checkTopics(){
     strcpy(message, number_of_topics());
     strcat(message, " ");
     strcat(message, topicList());
-    printf("The message that will be sent to user is: %s\n", message);
     return message;
 }

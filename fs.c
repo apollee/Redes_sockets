@@ -52,15 +52,15 @@ int main(int argc, char *argv[]) {
 
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
-            n = recvfrom(fdUDP, buffer, 128, 0,(struct sockaddr*)&addr,&addrlen);
+            n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             printf("%s", buffer);
-            sendto(fdUDP, parse_command(buffer), n, 0, (struct sockaddr*)&addr, addrlen);
+            sendto(fdUDP, parse_command(buffer), 1024, 0, (struct sockaddr*)&addr, addrlen);
         } 
  
         if(FD_ISSET(fdTCP, &rfds)){   
         	addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
-            int b = read(newfd, buffer, 128);
+            int b = read(newfd, buffer, 1024);
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
             parse_command(buffer);
@@ -99,7 +99,7 @@ void start_UDP(){
     }
     fdUDP = create_socket(resUDP);
     if(fdUDP == -1){
-        printf("creating Server UDP socket failed\n");
+        printf("creating Server UDP socket failed\n"); 
     }
 
     n = bind(fdUDP,resUDP->ai_addr,resUDP->ai_addrlen);
@@ -118,7 +118,7 @@ void start_TCP(){
         fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
     }
 
-    fdTCP = create_socket(resTCP);
+    fdTCP = create_socket(resTCP); 
     if(fdTCP == -1){
         printf("creating Server TCP socket failed\n");
     }
@@ -135,5 +135,5 @@ void start_TCP(){
     n = listen(fdTCP, 5);
     if(n == -1){
         printf("listen not working Server TCP\n");
-    }
-}       
+    } 
+}        

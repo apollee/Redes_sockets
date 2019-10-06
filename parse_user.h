@@ -10,4 +10,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
 int parse_command();
 void parse_command_received(char* buffer);
 void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar);
+void topics_print(char** saveTokens);
+
+
 #endif

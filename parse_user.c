@@ -147,6 +147,7 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     }
     else if(!strcmp(saveTokens[0], "LTR")){ 
         printf("available topics:\n");
+        topics_print(saveTokens);
     }/*
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
@@ -200,7 +201,7 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
 
 void parse_command_received(char* buffer){
     int numTokens = 0;
-    char *saveTokens[7];
+    char *saveTokens[120];
     int numberChar;
     
     numberChar = strlen(buffer);
@@ -216,3 +217,15 @@ void parse_command_received(char* buffer){
     input_action_received(numTokens, saveTokens, buffer, numberChar);
 }
 
+void topics_print(char** saveTokens){
+    int i;
+    int number = atoi(saveTokens[1]); 
+
+    for(i = 1; i <= number; i++){
+        printf("%d - ", i);
+        char * token = strtok(saveTokens[i+1], ":");
+        printf("%s ", token);
+        token = strtok(NULL, ":");
+        printf("(proposed by %s)\n", token);
+    }
+}

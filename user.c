@@ -55,7 +55,7 @@ int main(int argc, char *argv[]) {
 }
 
 void send_commandUDP(char *message){
-    char buffer[128];
+    char buffer[1024];
     n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
 
     if(n == -1){
@@ -63,7 +63,7 @@ void send_commandUDP(char *message){
     }
 
     addrlen = sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 128, 0, (struct sockaddr*) &addr, &addrlen);
+    n = recvfrom(fdUDP, buffer, 1024, 0, (struct sockaddr*) &addr, &addrlen);
     if(n == -1){
         printf("receiving from UDP server not working\n");
     }
@@ -71,25 +71,25 @@ void send_commandUDP(char *message){
 }
 
 void send_commandTCP(char* message){
-    char buffer[128];
+    char buffer[1024];
 
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
         printf("send to not working TCP\n");
-    } 
+    }  
 
     int b = write(fdTCP, message, strlen(message));
     if (b == -1){
         printf("write not working TCP");
     }
 
-    b = read(fdTCP, buffer, 128);
+    b = read(fdTCP, buffer, 1024); 
     if (b == -1){
         printf("read not working TCP");
     }
 
-    write(1, "echo TCP: ", 10);
-    write(1, buffer, b);
+    write(1, "echo TCP: ", 10);    
+    write(1, buffer, b); 
     close(fdTCP);
 
     fdTCP = create_socket(resTCP);

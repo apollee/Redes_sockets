@@ -5,7 +5,6 @@
 #define FALSE 0
 
 int onlyNumbers(char* message);
-char* parse_command(char* message);
 char* command_received(int numTokens, char** saveTokens, char* input, long int numberChar);
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar);
 int commandLTPOK(int numTokens, char** saveTokens, long int numberChar);
