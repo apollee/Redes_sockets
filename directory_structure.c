@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include "commands_user.h"
 
 int check_directory_existence(char *dirname){
     DIR *d;
@@ -77,6 +78,29 @@ char* topicID(char* dirname){
     line[strcspn(line, "\n")] = 0;
     return line;
 
+}
+
+int getTopic_by_number(int number){
+    DIR *d;
+    struct dirent *dir;
+    int flag = 0;
+
+    d = opendir("TOPICS");
+    int current_topic_number = 0;
+
+    if(d){
+        while((dir = readdir(d)) != NULL){
+            if(current_topic_number == number){
+                strcpy(local_topic, dir->d_name);  
+                flag = 1;  
+            }
+            else if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                current_topic_number++;
+            }    
+        }
+        closedir(d);
+    }
+    return flag;
 }
 
 char* number_of_topics(){

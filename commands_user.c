@@ -10,11 +10,10 @@
 #include <errno.h>
 #include <signal.h>
 #include "commands_user.h"
+#include "directory_structure.h"
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 2 )        
-        return FALSE;
-    else if (strlen(saveTokens[1]) != 5)        
+    if (strlen(saveTokens[1]) != 5)        
         return FALSE;
     else if(!onlyNumbers(saveTokens[1]))        
         return FALSE;
@@ -25,28 +24,33 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandTLOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 1)
-        return FALSE; 
-    else if(numberChar - 1 != strlen(saveTokens[0]))
+    if(numberChar - 1 != strlen(saveTokens[0]))
         return FALSE;
     else
         return TRUE;
 }
 
 int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 2)
-        return FALSE;
-    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+    if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
         return FALSE;
     else if(!strcmp(saveTokens[0], "ts")){
         if(onlyNumbers(saveTokens[1])){
-            return TRUE;
+            if(atoi(saveTokens[1]) > 98){
+                printf("Invalid topic number.\n");
+                return FALSE;
+            } 
+            if(getTopic_by_number(atoi(saveTokens[1])))
+                return TRUE;
+            else
+                return FALSE;
         }else{
             return FALSE;
         }
     }
-    else if(!strcmp(saveTokens[0], "topic_select"))
+    else if(!strcmp(saveTokens[0], "topic_select")){
+        strcpy(local_topic, saveTokens[1]);
         return TRUE;   
+    }
     else
         return FALSE;
 }

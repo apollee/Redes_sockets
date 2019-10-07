@@ -4,6 +4,8 @@
 #define TRUE 1
 #define FALSE 0
 
+char local_topic[120];
+
 int onlyNumbers(char* message);
 int commandREGOK(int numTokens, char** saveTokens, long int numberCar);
 int commandTLOK(int numTokens, char ** saveTokens, long int numberCar);

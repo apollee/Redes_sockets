@@ -56,12 +56,17 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandTLOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "LTP\n");
             send_commandUDP(message);
+        }else{
+            printf("Failed to get the list of topics\n");
         }
     }
-    else if(commandTSOK(numTokens, saveTokens, numberChar)){
-        printf("topic select or ts\n");
-        //only works localy   
-    }
+    else if((!strcmp(saveTokens[0], "topic_select") || !strcmp(saveTokens[0], "ts")) && numTokens == 2) {
+        if(commandTSOK(numTokens, saveTokens, numberChar)){
+            printf("selected topic: %s\n", local_topic);
+        }else{
+            printf("Failed to select the topic\n");
+        }
+    } 
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTP ");
         //strcat(message, ID(temos que adicionar isto));
