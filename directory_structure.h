@@ -10,5 +10,6 @@ char* topicList();
 char* topicID(char* dirname);
 char* number_of_topics();
 int getTopic_by_number(int topic_number);
+int checkExistenceofTopic(char* dirname);
 
 #endif

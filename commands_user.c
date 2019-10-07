@@ -35,10 +35,6 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(!strcmp(saveTokens[0], "ts")){
         if(onlyNumbers(saveTokens[1])){
-            if(atoi(saveTokens[1]) > 98){
-                printf("Invalid topic number.\n");
-                return FALSE;
-            } 
             if(getTopic_by_number(atoi(saveTokens[1])))
                 return TRUE;
             else
@@ -48,8 +44,11 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
         }
     }
     else if(!strcmp(saveTokens[0], "topic_select")){
-        strcpy(local_topic, saveTokens[1]);
-        return TRUE;   
+        if(checkExistenceofTopic(saveTokens[1])){
+            strcpy(local_topic, saveTokens[1]);
+            return TRUE;   
+        }else 
+            return FALSE;
     }
     else
         return FALSE;
