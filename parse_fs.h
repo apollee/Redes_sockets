@@ -3,9 +3,10 @@
 
 #define DEFAULT_PORT "58041"
 
+Link head;
 
 int input_command_server(int argc, char *argv[], char *port);
-char* input_action(int numTokens, char** saveTokens, char* input, long int numberCar);
-char* parse_command(char* message);
+char* input_action(int numTokens, char** saveTokens, char* input, long int numberCar, char* ip);
+char* parse_command(char* message, char* ip);
 
 #endif
