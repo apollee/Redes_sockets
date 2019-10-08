@@ -13,6 +13,7 @@
 #include "parse_fs.h"
 #include "fs.h"
 #include "directory_structure.h"
+#include "vector.h"
 
 struct addrinfo hintsUDP,*resUDP;
 struct addrinfo hintsTCP,*resTCP;
@@ -25,10 +26,11 @@ fd_set rfds;
 char buffer[128]; 
 char port[6];
 int maxDescriptor; 
+struct in_addr *addrUDP;
  
  
 int main(int argc, char *argv[]) {
-
+    char bufferIP[INET_ADDRSTRLEN];
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
         create_directory("TOPICS"); //missing checking if its null
@@ -54,7 +56,9 @@ int main(int argc, char *argv[]) {
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             printf("%s", buffer);
-            sendto(fdUDP, parse_command(buffer), 1024, 0, (struct sockaddr*)&addr, addrlen);
+            addrUDP = &((struct sockaddr_in *)resUDP->ai_addr)->sin_addr;
+            sendto(fdUDP, parse_command(buffer, inet_ntop(resUDP->ai_family,addrUDP,bufferIP,sizeof bufferIP)), 1024, 0, (struct sockaddr*)&addr, addrlen);
+            printf("%s\n", inet_ntop(resUDP->ai_family,addrUDP,bufferIP,sizeof bufferIP));
         } 
  
         if(FD_ISSET(fdTCP, &rfds)){   
@@ -63,7 +67,7 @@ int main(int argc, char *argv[]) {
             int b = read(newfd, buffer, 1024);
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
-            parse_command(buffer);
+            parse_command(buffer, inet_ntop(resTCP->ai_family,addrUDP,bufferIP,sizeof bufferIP));
             b = write(newfd, buffer, b); //???
         	close(newfd); 
         	close(fdTCP);
