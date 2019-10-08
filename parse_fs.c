@@ -12,6 +12,24 @@
 #include "parse_fs.h"
 #include "commands_fs.h"
 
+char* parse_command(char* message) { 
+
+    int numTokens = 0;
+    char *saveTokens[7];
+    int numberChar;
+   
+    numberChar = strlen(message);
+    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
+    char *token = strtok(message, " ");
+
+    while(token != NULL) {
+        saveTokens[numTokens] = token;
+        numTokens++;
+        token = strtok(NULL, " ");
+    }
+    return input_action(numTokens, saveTokens, message, numberChar);
+}
+
 int input_command_server(int argc, char *argv[], char* port) {
     strcpy(port, DEFAULT_PORT);
 
@@ -108,20 +126,3 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     //sendCommandUDP("ERR\n");
 }
 
-char* parse_command(char* message) { 
-
-    int numTokens = 0;
-    char *saveTokens[7];
-    int numberChar;
-   
-    numberChar = strlen(message);
-    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
-    char *token = strtok(message, " ");
-
-    while(token != NULL) {
-        saveTokens[numTokens] = token;
-        numTokens++;
-        token = strtok(NULL, " ");
-    }
-    return input_action(numTokens, saveTokens, message, numberChar);
-}
