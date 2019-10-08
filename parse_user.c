@@ -257,7 +257,8 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         //only works localy   
     }*/
     else if(!strcmp(saveTokens[0], "PTR")){
-       printf("%s", saveTokens[1]);
+       printf("%s\n", saveTokens[1]);
+       
     }/*
     else if(commandQLOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQU ");

@@ -58,7 +58,6 @@ int main(int argc, char *argv[]) {
             printf("%s", buffer);
             addrUDP = &((struct sockaddr_in *)resUDP->ai_addr)->sin_addr;
             sendto(fdUDP, parse_command(buffer, inet_ntop(resUDP->ai_family,addrUDP,bufferIP,sizeof bufferIP)), 1024, 0, (struct sockaddr*)&addr, addrlen);
-            printf("%s\n", inet_ntop(resUDP->ai_family,addrUDP,bufferIP,sizeof bufferIP));
         } 
  
         if(FD_ISSET(fdTCP, &rfds)){   

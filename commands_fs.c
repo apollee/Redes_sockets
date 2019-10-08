@@ -117,11 +117,13 @@ char* selectTopic(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024); 
     
     if (check_directory_existence(saveTokens[2]))
-        strcpy(message, "DUP");
-    else if (check_directory_size())
-        strcpy(message, "FUL");
-    else 
-        strcpy(message, "OK");
+        strcpy(message, "DUP\n");
+    else if (!check_directory_size())
+        strcpy(message, "FUL\n");
+    else {
+        create_topic_directory(saveTokens[2], saveTokens[1]);
+        strcpy(message, "OK\n");
+    }
     return message;
 }
 

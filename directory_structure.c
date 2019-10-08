@@ -45,11 +45,32 @@ int check_directory_size(){
     else
         return FALSE;
 }
-
-void create_directory(char *dirname){
-    /*DIR *d;
-    int success =*/
+void create_directory(char* dirname){
     mkdir(dirname, 0700);
+}
+
+void create_topic_directory(char *dirname, char* userID){
+    int id = atoi(userID);
+    DIR *d;
+    d = opendir("TOPICS");
+    int fd = dirfd(d);
+    mkdirat(fd, dirname, 0700);
+    FILE* file;
+    char* path = malloc (sizeof (char) * 1024);
+    strcat(path, "/TOPICS/");
+    strcat(path, dirname);
+    strcat(path, "/");
+    strcat(path, dirname); 
+    strcat(path, "_UID.txt");
+    printf("-----------path: %s\n", path);
+    file = fopen(path, "w");
+    if(file == NULL){
+      printf("Error a abrir o ficheiro!\n");   
+      exit(1);             
+    }
+    printf("---------não falhou ate aqui\n");
+    fprintf(file,"%d", id);
+    fclose(file);
     /*if(!success){
         printf("created directory.\n");
         d = opendir(dirname);

@@ -5,7 +5,8 @@
 #define TRUE 1
 
 int check_directory_existence(char *dirname);
-void create_directory(char *dirname);
+void create_directory(char* dirname);
+void create_topic_directory(char *dirname, char *userID);
 char* topicList();
 char* topicID(char* dirname);
 char* number_of_topics();
