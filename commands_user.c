@@ -130,3 +130,12 @@ int onlyNumbers(char* message) {
     }
     return 1;
 }
+
+int isREG(char* id_user){
+	if(strcmp(id_user,"flag")){
+		return TRUE;
+	}
+	else{
+		return FALSE;
+	}
+}

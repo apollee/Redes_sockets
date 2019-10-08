@@ -11,11 +11,15 @@
 #include <signal.h>
 #include "parse_fs.h"
 #include "commands_fs.h"
+#include "vector.h"
 
-char* parse_command(char* message) { 
+Link headUser;
+
+char* parse_command(char* message, const char* ip) { 
 
     int numTokens = 0;
     char *saveTokens[7];
+
     int numberChar;
    
     numberChar = strlen(message);
@@ -27,12 +31,12 @@ char* parse_command(char* message) {
         numTokens++;
         token = strtok(NULL, " ");
     }
-    return input_action(numTokens, saveTokens, message, numberChar);
+    return input_action(numTokens, saveTokens, message, numberChar, ip);
 }
 
 int input_command_server(int argc, char *argv[], char* port) {
     strcpy(port, DEFAULT_PORT);
-
+    headUser = NULL;
     if(argc == 1) {
         return 0;
     }
@@ -46,13 +50,14 @@ int input_command_server(int argc, char *argv[], char* port) {
     } 
 }
 
-char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
+char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char *message = malloc (sizeof (char) * 1024);
-    
+
     if(!strcmp(saveTokens[0], "REG")){
         if(commandREGOK(numTokens, saveTokens, numberChar)){
+            headUser = insertUser(headUser, atoi(saveTokens[1]), ip);
             strcpy(message, "RGR OK\n");
-            printf("user: ip %s\n", saveTokens[1]); //missing ip
+            printf("user: %s %s\n", ip, saveTokens[1]); //missing ip
         }
         else
             strcpy(message, "RGR NOR\n");
