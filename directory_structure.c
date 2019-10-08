@@ -84,12 +84,12 @@ int getTopic_by_number(int number){ //get the topic by the number
     struct dirent *dir;
     int flag = 0;
 
-    if(number > 98){
+    if(number > 99 && number == 0){
         return flag;
     } 
 
     d = opendir("TOPICS");
-    int current_topic_number = 0;
+    int current_topic_number = 1;
     if(d){
         while((dir = readdir(d)) != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
@@ -144,3 +144,8 @@ int checkExistenceofTopic(char* dirname){ //check if a topic exists
     }
     return 0;
 }
+
+
+
+
+
