@@ -69,7 +69,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     } 
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTP ");
-        //strcat(message, ID(temos que adicionar isto));
+        strcat(message, id_user);
+        strcat(message, " ");
         strcat(message, saveTokens[1]);
         strcat(message, "\n");
         send_commandUDP(message);

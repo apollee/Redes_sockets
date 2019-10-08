@@ -36,10 +36,11 @@ int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 2)
+    if(numTokens != 3)
         return FALSE;
-    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+    else if(numberChar - 3 != strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2])){
         return FALSE;
+    }
     else if(!strcmp(saveTokens[0], "PTP"))
         return TRUE;
     else 
@@ -111,3 +112,17 @@ char* checkTopics(){
     strcat(message, topicList());
     return message;
 }
+
+char* selectTopic(char** saveTokens){
+    char* message = malloc(sizeof (char)* 1024); 
+    
+    if (check_directory_existence(saveTokens[2]))
+        strcpy(message, "OK");
+    else 
+        strcpy(message, "merda");
+    return message;
+}
+
+// char* checkQuestions(){
+//     char* message = malloc(sizeof (char)* 1024);
+// }

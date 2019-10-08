@@ -58,6 +58,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(commandPTPOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "PTR ");
         //Pode responder ok, dup ou ful
+        //printf("Topic selected");
+        strcat(message, selectTopic(saveTokens));
         strcat(message, "\n");
         return message;
         //function to execute the command PTR
@@ -66,6 +68,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
+        //strcat(message, checkQuestions());
         //function to execute the command LQR
         //sendCommandUDP(message);
         strcat(message, "\n");
