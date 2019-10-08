@@ -176,7 +176,7 @@ int parse_command() {
 
 void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){
       //char message[1024]; 
-
+    //Mudar esta funcao para fazer so uma chamada ao saveTokens[0]
     if((!strcmp(saveTokens[0],"RGR")) && numTokens == 2) {
         if(!strcmp(saveTokens[1], "OK")){
             printf("User \"%s\" registered\n", id_user);
@@ -192,14 +192,10 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     else if(commandTSOK(numTokens, saveTokens, numberChar)){
         printf("topic select or ts\n");
         //only works localy   
-    }
-    else if(commandTPOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "PTP ");
-        //strcat(message, ID(temos que adicionar isto));
-        strcat(message, saveTokens[1]);
-        strcat(message, "\n");
-        send_commandUDP(message);
-    }
+    }*/
+    else if(!strcmp(saveTokens[0], "PTR")){
+       printf("%s", saveTokens[1]);
+    }/*
     else if(commandQLOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQU ");
         //strcat(message, saveTokens[1]);

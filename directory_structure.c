@@ -20,6 +20,32 @@ int check_directory_existence(char *dirname){
     }
 }
 
+int numberOfdirectories(){
+    int number = 0;
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("TOPICS");
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                number++;
+            }
+        }
+        closedir(d);
+    }
+    else 
+        return -1;  
+
+    return number;
+}
+
+int check_directory_size(){
+    if (numberOfdirectories < 99)
+        return TRUE;
+    else
+        return FALSE;
+}
+
 void create_directory(char *dirname){
     /*DIR *d;
     int success =*/
