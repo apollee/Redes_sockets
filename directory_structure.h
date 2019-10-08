@@ -11,5 +11,6 @@ char* topicID(char* dirname);
 char* number_of_topics();
 int getTopic_by_number(int topic_number);
 int checkExistenceofTopic(char* dirname);
+int check_directory_size();
 
 #endif

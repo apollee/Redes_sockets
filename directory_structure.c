@@ -40,7 +40,7 @@ int numberOfdirectories(){
 }
 
 int check_directory_size(){
-    if (numberOfdirectories < 99)
+    if (numberOfdirectories() < 99)
         return TRUE;
     else
         return FALSE;

@@ -138,3 +138,4 @@ int isREG(char* id_user){
 	else{
 		return FALSE;
 	}
+}   

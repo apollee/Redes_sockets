@@ -54,6 +54,7 @@ int main(int argc, char *argv[]) {
     free_and_close(); 
 }
 
+
 void send_commandUDP(char *message){
     char buffer[1024];
     n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);

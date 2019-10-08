@@ -78,8 +78,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         }
     } 
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
-<<<<<<< HEAD
-	    if(!isREG(id_user)){
+	    /*if(!isREG(id_user)){
            	printf("You should regist first\n");
         }
         else{
@@ -140,7 +139,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
 	        strcat(message, "\n");
 	        send_commandUDP(message);
     	}
-/*
+*/
         if(!isREG(id_user)){
             printf("You need to register first\n");
         }
@@ -202,7 +201,6 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             strcat(message, "\n");
             send_commandUDP(message);
         }
-*/
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);
