@@ -4,6 +4,7 @@
 #define FLAG "flag"
 #define DEFAULT_PORT "58041"
 
+char id_user[5];
 
 void input_command_user(int argc, char *argv[], char *port, char *ip);
 void input_action(int numTokens, char** saveTokens, char* input, long int numberCar);
