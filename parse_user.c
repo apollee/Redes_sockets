@@ -12,12 +12,10 @@
 #include "parse_user.h"
 #include "commands_user.h"
 
-char id_user[5];
-
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
     strcpy(ip, FLAG);
-
+    strcpy(id_user, FLAG);
     if(argc == 1){
         return;
     }
@@ -38,7 +36,7 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
 }
 
 void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){
-      char message[1024]; 
+    char message[1024]; 
 
     if((!strcmp(saveTokens[0], "register") || !strcmp(saveTokens[0],"reg")) && numTokens == 2) {
         if(commandREGOK(numTokens, saveTokens, numberChar)){
@@ -54,56 +52,92 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     }
     else if((!strcmp(saveTokens[0], "topic_list") || !strcmp(saveTokens[0], "tl")) && numTokens == 1) {
         if(commandTLOK(numTokens, saveTokens, numberChar)){
-            strcpy(message, "LTP\n");
-            send_commandUDP(message);
-        }else{
+            if(!isREG(id_user)){
+                printf("You need to register first\n");
+            }
+            else{
+                strcpy(message, "LTP\n");
+                send_commandUDP(message);
+            }
+        }
+        else{
             printf("Failed to get the list of topics\n");
         }
     }
     else if((!strcmp(saveTokens[0], "topic_select") || !strcmp(saveTokens[0], "ts")) && numTokens == 2) {
         if(commandTSOK(numTokens, saveTokens, numberChar)){
-            printf("selected topic: %s\n", local_topic);
+            if(!isREG(id_user)){
+                printf("You need to register first\n");
+            }
+            else{
+                printf("selected topic: %s\n", local_topic);
+            }
         }else{
             printf("Failed to select the topic\n");
         }
     } 
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "PTP ");
-        strcat(message, id_user);
-        strcat(message, " ");
-        strcat(message, saveTokens[1]);
-        strcat(message, "\n");
-        send_commandUDP(message);
+        if(!isREG(id_user)){
+            printf("You need to register first\n");
+        }
+        else{
+            strcpy(message, "PTP ");
+            strcat(message, id_user);
+            strcat(message, " ");
+            strcat(message, saveTokens[1]);
+            strcat(message, "\n");
+            send_commandUDP(message);
+        }
     }
     else if(commandQLOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "LQU ");
-        //strcat(message, saveTokens[1]);
-        strcat(message, "\n");
-        send_commandUDP(message);
+        if(!isREG(id_user)){
+            printf("You need to register first\n");
+        }
+        else{
+            strcpy(message, "LQU ");
+            //strcat(message, saveTokens[1]);
+            strcat(message, "\n");
+            send_commandUDP(message);
+        }
     }
     else if(commandQGOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "GQU ");
-        //adicionar o topico? nao sei de onde vem
-        strcat(message, "\n");
-        send_commandTCP(message);
+        if(!isREG(id_user)){
+            printf("You need to register first\n");
+        }
+        else{
+            strcpy(message, "GQU ");
+            //adicionar o topico? nao sei de onde vem
+            strcat(message, "\n");
+            send_commandTCP(message);
+        }
     }
     else if(commandQSOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "QUS ");
-        //strcat(message, ID(temos que adicionar isto))
-        //adicionar o topico?? nao sei de onde vem?
-        strcat(message, saveTokens[1]);
-        //adicionar qsize, qdata, qimg
-        strcat(message, "\n");
-        send_commandTCP(message);
+        if(!isREG(id_user)){
+            printf("You need to register first\n");
+        }
+        else{
+            strcpy(message, "QUS ");
+            //strcat(message, ID(temos que adicionar isto))
+            //adicionar o topico?? nao sei de onde vem?
+            strcat(message, saveTokens[1]);
+            //adicionar qsize, qdata, qimg
+            strcat(message, "\n");
+            send_commandTCP(message);
+        }
     }
     else if(commandASOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "ANS ");
-        //strcat(message, ID(temos que adicionar isto))
-        //adicionar o topico?? nao sei de onde vem?
-        //adicionar a questao? nao sei de onde vem
-        //adicionar asize, adata, aIMG
-        strcat(message, "\n");
-        send_commandUDP(message);
+        if(!isREG(id_user)){
+            printf("You need to register first\n");
+        }
+        else{
+            strcpy(message, "ANS ");
+            //strcat(message, ID(temos que adicionar isto))
+            //adicionar o topico?? nao sei de onde vem?
+            //adicionar a questao? nao sei de onde vem
+            //adicionar asize, adata, aIMG
+            strcat(message, "\n");
+            send_commandUDP(message);
+        }
     }
     else if(!strcmp(saveTokens[0], "exit")){
         exit(0);

@@ -6,6 +6,7 @@
 
 char local_topic[120];
 
+int isREG(char* id_user);
 int onlyNumbers(char* message);
 int commandREGOK(int numTokens, char** saveTokens, long int numberCar);
 int commandTLOK(int numTokens, char ** saveTokens, long int numberCar);
