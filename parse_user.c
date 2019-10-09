@@ -158,7 +158,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         }
         else{
             strcpy(message, "LQU ");
-            //strcat(message, saveTokens[1]);
+            strcat(message, local_topic);
             strcat(message, "\n");
             send_commandUDP(message);
         }
