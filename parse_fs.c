@@ -78,15 +78,22 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
-    else if(commandPTPOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "PTR ");
-        //Pode responder ok, dup ou ful
-        //printf("Topic selected");
-        strcat(message, selectTopic(saveTokens));
-        strcat(message, "\n");
+
+    //Falta so verificacao de erros para quando nao foi dado REG
+    else if(!strcmp(saveTokens[0], "PTP")){
+        if (commandPTPOK(numTokens, saveTokens, numberChar)){
+            strcpy(message, "PTR ");
+            //Pode responder ok, dup ou ful
+            //printf("Topic selected");
+            strcat(message, selectTopic(saveTokens));
+            strcat(message, "\n");
+            //function to execute the command PTR
+            //sendCommandUDP(message);
+        }
+        else{
+            strcpy(message, "PTR NOK");
+        }
         return message;
-        //function to execute the command PTR
-        //sendCommandUDP(message);
     }
 
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){

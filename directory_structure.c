@@ -20,6 +20,19 @@ int check_directory_existence(char *dirname){
     }
 }
 
+//Esta funcao é parecida com a check_directory_existence, tentar junta-las
+int check_topic_existence(char* dirname){
+    char* path = malloc (sizeof (char) * 1024);
+    sprintf(path, "TOPICS/%s", dirname); 
+    DIR* d = opendir(path);
+    if(d){
+        //printf("directory exists\n");
+        closedir(d);
+        return TRUE;
+    }else
+        return FALSE;
+}
+
 int numberOfdirectories(){
     int number = 0;
     DIR *d;
@@ -52,25 +65,26 @@ void create_directory(char* dirname){
 void create_topic_directory(char *dirname, char* userID){
     int id = atoi(userID);
     DIR *d;
+
+    //Create topic folder
     d = opendir("TOPICS");
     int fd = dirfd(d);
     mkdirat(fd, dirname, 0700);
+    
+    //Criar ficheiro
     FILE* file;
     char* path = malloc (sizeof (char) * 1024);
-    strcat(path, "/TOPICS/");
-    strcat(path, dirname);
-    strcat(path, "/");
-    strcat(path, dirname); 
-    strcat(path, "_UID.txt");
-    printf("-----------path: %s\n", path);
+    //sprintf(path, "/TOPICS/%s/%s_UID.txt", dirname, dirname);
+    sprintf(path, "TOPICS/%s/%s_UID.txt", dirname, dirname);
     file = fopen(path, "w");
-    if(file == NULL){
-      printf("Error a abrir o ficheiro!\n");   
-      exit(1);             
-    }
-    printf("---------não falhou ate aqui\n");
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }   
     fprintf(file,"%d", id);
     fclose(file);
+     
+
     /*if(!success){
         printf("created directory.\n");
         d = opendir(dirname);
@@ -105,7 +119,7 @@ char* topicList(){ //get the list of topics
 }
 
 char* topicID(char* dirname){ //get the id of the person that created a topic
-    char* message = malloc (sizeof (char) * 1024);
+    char* message = malloc (sizeof (char) * 1024); 
     strcpy(message, "TOPICS/");
     strcat(message, dirname);
     strcat(message, "/");

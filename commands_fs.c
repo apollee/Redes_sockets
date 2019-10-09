@@ -41,10 +41,8 @@ int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
     else if(numberChar - 3 != strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2])){
         return FALSE;
     }
-    else if(!strcmp(saveTokens[0], "PTP"))
-        return TRUE;
     else 
-        return FALSE;     
+        return TRUE;     
 }
 
 int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
@@ -116,7 +114,7 @@ char* checkTopics(){
 char* selectTopic(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024); 
     
-    if (check_directory_existence(saveTokens[2]))
+    if (check_topic_existence(saveTokens[2]))
         strcpy(message, "DUP\n");
     else if (!check_directory_size())
         strcpy(message, "FUL\n");
