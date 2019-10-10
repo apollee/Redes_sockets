@@ -23,6 +23,7 @@ int check_directory_existence(char *dirname){
 void create_directory(char* dirname){
     mkdir(dirname, 0700);
 }
+
 //MAIN FS---------------------------------------------------------
 
 

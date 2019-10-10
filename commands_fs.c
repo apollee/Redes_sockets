@@ -14,7 +14,7 @@
 #include "directory_structure.h"
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 2 )        
+    if(numTokens != 2)        
         return FALSE;
     else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
         return FALSE;
@@ -51,15 +51,13 @@ int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
     else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1])){
         return FALSE;
     }
-    else if(!strcmp(saveTokens[0], "LQU"))
-        return TRUE;
     else
-        return FALSE; 
+        return TRUE; 
 }
 
 
 //--------------------------------------------------------------------
-// BELLOW - TCP CMDS
+// TCP CMDS
 //--------------------------------------------------------------------
 int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
@@ -69,7 +67,7 @@ int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
     else if(!strcmp(saveTokens[0], "GQU"))
         return TRUE;
     else 
-        return FALSE;
+        return TRUE;
 }
 
 int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
@@ -78,10 +76,8 @@ int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "QUS"))
-        return TRUE;
     else  
-        return FALSE;
+        return TRUE;
 }
 
 int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
@@ -90,15 +86,9 @@ int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "ANS"))
-        return TRUE;
     else 
-        return FALSE;
+        return TRUE;
 }
-
-
-
-
 
 //Outras funções
 int onlyNumbers(char* message) {
@@ -145,7 +135,3 @@ char* checkQuestions(char** saveTokens){
     strcat(message, questionList(saveTokens[1]));
     return message;
 }
-//TODO----------------------------------------------------------------
-
-
-

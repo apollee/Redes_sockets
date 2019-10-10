@@ -23,9 +23,11 @@ char host_name[128];
 char port[6];
 char ip[INET_ADDRSTRLEN];
 
+ 
 int main(int argc, char *argv[]) {
     
     sigpipe_handler();
+    initialize_flags();
     if(gethostname(host_name,128) == -1) {
         fprintf(stderr, "error: %s\n", strerror(errno));
     }
@@ -52,8 +54,41 @@ int main(int argc, char *argv[]) {
     }
 
     free_and_close(); 
+}  
+
+void initialize_flags(){
+    strcpy(port, DEFAULT_PORT);
+    strcpy(ip, FLAG);
+    strcpy(id_user, FLAG);
+    strcpy(local_topic, FLAG);
 }
 
+void sigpipe_handler(){
+    struct sigaction act;    
+    memset(&act,0,sizeof act);
+    act.sa_handler=SIG_IGN;
+    if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);   
+}
+
+int create_socket(struct addrinfo* res){ 
+    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
+    return fd;
+}
+
+void start_UDP(){
+    memset(&hintsUDP, 0 ,sizeof hintsUDP);
+    hintsUDP.ai_family = AF_INET;
+    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
+    hintsUDP.ai_flags = AI_NUMERICSERV;
+  
+    if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
+     
+    if(!strcmp(ip, FLAG)){
+        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
+}
 
 void send_commandUDP(char *message){
     char buffer[1024];
@@ -70,6 +105,17 @@ void send_commandUDP(char *message){
     }
     parse_command_received(buffer);
 }
+
+void start_TCP(){
+    memset(&hintsTCP, 0 ,sizeof hintsTCP);
+    hintsTCP.ai_family = AF_INET;
+    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
+    hintsTCP.ai_flags = AI_NUMERICSERV;
+
+    if ((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
+        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    }
+} 
 
 void send_commandTCP(char* message){
     char buffer[1024];
@@ -97,49 +143,11 @@ void send_commandTCP(char* message){
     if(fdTCP == -1){
         printf("creating TCP socket failed\n");
     }
-}
-
-int create_socket(struct addrinfo* res){ 
-    int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
-    return fd;
-}
-
-void sigpipe_handler(){
-    struct sigaction act;    
-    memset(&act,0,sizeof act);
-    act.sa_handler=SIG_IGN;
-    if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);   
-}
-
-void start_UDP(){
-    memset(&hintsUDP, 0 ,sizeof hintsUDP);
-    hintsUDP.ai_family = AF_INET;
-    hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
-    hintsUDP.ai_flags = AI_NUMERICSERV;
-  
-    if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
-    }
-     
-    if(!strcmp(ip, FLAG)){
-        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
-    }
-}
-
-void start_TCP(){
-    memset(&hintsTCP, 0 ,sizeof hintsTCP);
-    hintsTCP.ai_family = AF_INET;
-    hintsTCP.ai_socktype = SOCK_STREAM; //TCP
-    hintsTCP.ai_flags = AI_NUMERICSERV;
-
-    if ((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
-    }
-}
+} 
 
 void free_and_close(){
     freeaddrinfo(resUDP);
     freeaddrinfo(resTCP);
     close(fdUDP); 
     close(fdTCP);  
-}          
+} 

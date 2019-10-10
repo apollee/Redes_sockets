@@ -17,25 +17,24 @@
 
 struct addrinfo hintsUDP,*resUDP;
 struct addrinfo hintsTCP,*resTCP;
-int fdUDP, fdTCP, errcode, newfd;
-ssize_t n;
-struct sockaddr_in addr;  
+struct sockaddr_in addr;
+struct in_addr *addrUDP;
+int errno;
+int fdUDP, fdTCP, errcode, newfd, maxDescriptor;
 socklen_t addrlen;
-/*extern*/ int errno;
+ssize_t n;
 fd_set rfds;
 char buffer[128]; 
 char port[6];
-int maxDescriptor; 
-struct in_addr *addrUDP;
- 
- 
+
+
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
         create_directory("TOPICS"); //missing checking if its null
     }
-    input_command_server(argc, argv, port); //check argv commands
+    input_command_server(argc, argv, port); //checks argv commands
 
     start_UDP();
     
@@ -87,7 +86,7 @@ void sigpipe_handler(){
     struct sigaction act;	
 	memset(&act,0,sizeof act);
 	act.sa_handler=SIG_IGN;	
-	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/
+	if(sigaction(SIGPIPE,&act,NULL)==-1)
         exit(1);
 }
 
@@ -125,6 +124,7 @@ void start_TCP(){
     if(fdTCP == -1){
         printf("creating Server TCP socket failed\n");
     }
+
     if(setsockopt(fdTCP, SOL_SOCKET, SO_REUSEADDR, &(int){1}, sizeof(int)) < 0){
     	printf("setsockopt(SO_REUSEADDR) failed");
     }
@@ -139,4 +139,5 @@ void start_TCP(){
     if(n == -1){
         printf("listen not working Server TCP\n");
     } 
+    
 }        

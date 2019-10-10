@@ -11,8 +11,11 @@
 #include <signal.h>
 #include "commands_user.h"
 #include "directory_structure.h"
+#include "user.h"
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 2)
+        return FALSE;
     if (strlen(saveTokens[1]) != 5)        
         return FALSE;
     else if(!onlyNumbers(saveTokens[1]))        
@@ -24,6 +27,8 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandTLOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 1)
+        return FALSE;
     if(numberChar - 1 != strlen(saveTokens[0]))
         return FALSE;
     else
@@ -31,6 +36,8 @@ int commandTLOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
+    if(numTokens != 2)
+        return FALSE;
     if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
         return FALSE;
     else if(!strcmp(saveTokens[0], "ts")){
@@ -59,10 +66,8 @@ int commandTPOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))
-        return TRUE;
     else 
-        return FALSE;     
+        return TRUE;     
 }
 
 int commandQLOK(int numTokens, char** saveTokens, long int numberChar){
@@ -70,10 +75,8 @@ int commandQLOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE; 
     else if(numberChar - 1 != strlen(saveTokens[0]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))
-        return TRUE;
     else
-        return FALSE; 
+        return TRUE; 
 }
 
 int commandQGOK(int numTokens, char** saveTokens, long int numberChar){
@@ -102,10 +105,8 @@ int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
     else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3]))){
         return FALSE;
     }
-    else if(!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))
-        return TRUE;
     else 
-        return FALSE;
+        return TRUE;
 }
 
 int commandASOK(int numTokens, char** saveTokens, long int numberChar){
@@ -114,10 +115,61 @@ int commandASOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(numberChar - 3 != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
         return FALSE;
-    else if(!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as"))
-        return TRUE;
     else 
-        return FALSE;
+        return TRUE;
+}
+
+void send_message_reg(char* id, char* message){
+    strcpy(id_user, id);
+    strcpy(message, "REG ");
+    strcat(message, id);
+    strcat(message, "\n");
+    send_commandUDP(message);
+}
+
+void send_message_tl(char* message){
+    strcpy(message, "LTP\n");
+    send_commandUDP(message);
+}
+
+void send_message_tp(char* topic, char* message){
+    strcpy(message, "PTP ");
+    strcat(message, id_user);
+    strcat(message, " ");
+    strcat(message, topic);
+    strcat(message, "\n");
+    send_commandUDP(message);
+}
+
+void send_message_ql(char* message){
+    strcpy(message, "LQU ");
+    strcat(message, local_topic);
+    strcat(message, "\n");
+    send_commandUDP(message);
+}
+
+void send_message_qg(char* message){
+    strcpy(message, "GQU ");
+    strcat(message, "\n");
+    send_commandTCP(message);
+}
+
+void send_message_qs(char* question, char* message){
+    strcpy(message, "QUS ");
+    strcat(message, question);
+    strcat(message, "\n");
+    send_commandTCP(message);
+}
+
+void send_message_as(char* message){
+    strcpy(message, "ANS ");
+    strcat(message, "\n");
+    send_commandUDP(message);
+}
+
+void send_message_err(char* message){
+    strcpy(message, "ERR\n");
+    send_commandUDP(message);
 }
 
 int onlyNumbers(char* message) {
@@ -138,4 +190,4 @@ int isREG(char* id_user){
 	else{
 		return FALSE;
 	}
-}   
+}

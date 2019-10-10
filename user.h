@@ -6,6 +6,7 @@
 
 struct addrinfo;
 void sigpipe_handler();
+void initialize_flags();
 void start_UDP();
 void start_TCP();
 int create_socket(struct addrinfo* res);

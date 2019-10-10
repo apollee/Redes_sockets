@@ -46,13 +46,15 @@ char* parse_command(char* message, const char* ip) {
     return input_action(numTokens, saveTokens, message, numberChar, ip);
 }
 
-char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
+char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){ //malloc needs a free
     char *message = malloc (sizeof (char) * 1024);
 
-    //Register
+    //--------------------------------------------------------------------
+    // UDP CMDS
+    //--------------------------------------------------------------------
     if(!strcmp(saveTokens[0], "REG")){
         if(commandREGOK(numTokens, saveTokens, numberChar)){
-            headUser = insertUser(headUser, atoi(saveTokens[1]), ip);
+            headUser = insertUser(headUser, atoi(saveTokens[1]), ip); //dados utilizador
             strcpy(message, "RGR OK\n");
             printf("user: %s %s\n", ip, saveTokens[1]);
         }
@@ -61,7 +63,6 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
-    //Topic List
     else if(!strcmp(saveTokens[0], "LTP")){
         if(commandLTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "LTR ");
@@ -75,9 +76,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     }
 
     //Falta so verificacao de erros para quando nao foi dado REG
-    //Topic Propose
     else if(!strcmp(saveTokens[0], "PTP")){
-        if (commandPTPOK(numTokens, saveTokens, numberChar)){
+        if(commandPTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "PTR ");
             strcat(message, selectTopic(saveTokens));
             strcat(message, "\n");
@@ -88,48 +88,54 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
-    //Trazer a comparacao do comando para aqui tambem
-    //Question List
-    else if(commandLQUOK(numTokens, saveTokens, numberChar)){
-        printf("List questions for topic: %s\n", saveTokens[1]);
-        strcpy(message, "LQR ");
-        strcat(message, checkQuestions(saveTokens));
-        strcat(message, "\n");
+    else if(!strcmp(saveTokens[0], "LQU")){
+        if(commandLQUOK(numTokens, saveTokens, numberChar)){
+            printf("List questions for topic: %s\n", saveTokens[1]);
+            strcpy(message, "LQR ");
+            strcat(message, checkQuestions(saveTokens));
+            strcat(message, "\n");
+        }else{
+            strcpy(message, "ERR\n");
+        }
+        return message;
+    }
+
+    //--------------------------------------------------------------------
+    // TCP CMDS
+    //--------------------------------------------------------------------
+    else if(!strcmp(saveTokens[0], "GQU")){
+        if(commandGQUOK(numTokens, saveTokens, numberChar)){
+            strcpy(message, "QGR ");
+            strcat(message, "\n");
+        }else{
+            strcpy(message, "ERR\n");
+        }
+        return message;
+    }
+
+    else if(!strcmp(saveTokens[0], "QUS")){
+        if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
+            strcpy(message, "QUR ");
+            strcat(message, "\n");
+        }else{
+            strcpy(message, "ERR\n");
+        }
         return message;
     }
     
-
-    //--------------------------------------------------------------------
-    // BELLOW - TCP CMDS
-    //--------------------------------------------------------------------
-    else if(commandGQUOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "QGR ");
-        //function to execute the command QGR
-        strcat(message, "\n");
+    else if(!strcmp(saveTokens[0], "ANS")){
+        if(commandANSOK(numTokens, saveTokens, numberChar)){
+            strcpy(message, "ANR ");
+            strcat(message, "\n");
+        }else{
+            strcpy(message, "ERR\n");
+        }
         return message;
-        //sendCommandUDP(message);
-    }
-
-    else if(commandQUSOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "QUR ");
-        //function to execute the command QUR
-        strcat(message, "\n");
-        return message;
-        //sendCommandTCP(message);
     }
     
-    else if(commandANSOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "ANR ");
-        //function to execute the command ANR
-        strcat(message, "\n");
-        return message;
-        //sendCommandTCP(message);
-    }
     else{
         strcpy(message, "ERR\n");
         return message;
-    }
-    
-    //sendCommandUDP("ERR\n");
+    }   
 }
 
