@@ -14,6 +14,7 @@ int commandGQUOK(int numTokens, char** saveTokens, long int numberChar);
 int commandQUSOK(int numTokens, char** saveTokens, long int numberChar);
 int commandANSOK(int numTokens, char** saveTokens, long int numberChar);
 char* checkTopics();
+char* checkQuestions();
 char* selectTopic();
 
 #endif

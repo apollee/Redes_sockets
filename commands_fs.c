@@ -46,10 +46,11 @@ int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 1)
+    if(numTokens != 2)
         return FALSE; 
-    else if(numberChar - 1 != strlen(saveTokens[0]))
+    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1])){
         return FALSE;
+    }
     else if(!strcmp(saveTokens[0], "LQU"))
         return TRUE;
     else
@@ -108,6 +109,15 @@ char* checkTopics(){
     strcpy(message, number_of_topics());
     strcat(message, " ");
     strcat(message, topicList());
+    return message;
+}
+
+char* checkQuestions(char** saveTokens){
+    char* message = malloc(sizeof (char)* 1024);
+    strcpy(message, number_of_questions(saveTokens[1]));
+   
+    strcat(message, " ");
+    strcat(message, questionList(saveTokens[1]));
     return message;
 }
 

@@ -259,13 +259,11 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     else if(!strcmp(saveTokens[0], "PTR")){
        printf("%s\n", saveTokens[1]);
        
-    }/*
-    else if(commandQLOK(numTokens, saveTokens, numberChar)){
-        strcpy(message, "LQU ");
-        //strcat(message, saveTokens[1]);
-        strcat(message, "\n");
-        send_commandUDP(message);
     }
+    else if(!strcmp(saveTokens[0], "LQR")){
+        printf("available questions for topic %s:\n", local_topic);
+        questions_print(saveTokens);
+    }/*
     else if(commandQGOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "GQU ");
         //adicionar o topico? nao sei de onde vem
@@ -322,6 +320,19 @@ void topics_print(char** saveTokens){
     int number = atoi(saveTokens[1]); 
 
     for(i = 1; i <= number; i++){
+        printf("%d - ", i);
+        char * token = strtok(saveTokens[i+1], ":");
+        printf("%s ", token);
+        token = strtok(NULL, ":");
+        printf("(proposed by %s)\n", token);
+    }
+}
+
+void questions_print(char** saveTokens){
+    int i;
+    int number = atoi(saveTokens[1]); 
+
+     for(i = 1; i <= number; i++){
         printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
         printf("%s ", token);

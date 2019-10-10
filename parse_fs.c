@@ -98,6 +98,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
+        printf("List questions for topic: wifi\n");
+        strcat(message, checkQuestions(saveTokens));
         //strcat(message, checkQuestions());
         //function to execute the command LQR
         //sendCommandUDP(message);
@@ -132,6 +134,15 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         //Porque é que aqui o \n esta no mesmo strcpy do ERR e não num a 
         //parte como no resto das funcoes
         strcpy(message, "ERR\n");
+        if (commandLQUOK(numTokens, saveTokens, numberChar)){
+            printf("true\n");
+        }
+        else
+        {
+            printf("false\n");
+            //printf("CMD: %s\n", !strcmp(saveTokens[0], "LQU"));
+        }
+        
         return message;
     }
     
