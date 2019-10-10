@@ -98,7 +98,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "LQR ");
-        printf("List questions for topic: wifi\n");
+        printf("List questions for topic: %s\n", saveTokens[1]);
         strcat(message, checkQuestions(saveTokens));
         //strcat(message, checkQuestions());
         //function to execute the command LQR

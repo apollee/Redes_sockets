@@ -261,7 +261,7 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
        
     }
     else if(!strcmp(saveTokens[0], "LQR")){
-        printf("available questions for topic %s:\n", local_topic);
+        printf("available questions about %s:\n", local_topic);
         questions_print(saveTokens);
     }/*
     else if(commandQGOK(numTokens, saveTokens, numberChar)){
@@ -335,8 +335,6 @@ void questions_print(char** saveTokens){
      for(i = 1; i <= number; i++){
         printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
-        printf("%s ", token);
-        token = strtok(NULL, ":");
-        printf("(proposed by %s)\n", token);
+        printf("%s\n", token);
     }
 }
