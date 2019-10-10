@@ -50,13 +50,15 @@ int main(int argc, char *argv[]) {
 
         select(maxDescriptor + 1, &rfds, NULL, NULL, NULL);
 
+        //UDP
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             printf("%s", buffer);
             sendto(fdUDP, parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024, 0, (struct sockaddr*)&addr, addrlen);
         } 
- 
+
+        //TCP
         if(FD_ISSET(fdTCP, &rfds)){   
         	addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
@@ -85,7 +87,8 @@ void sigpipe_handler(){
     struct sigaction act;	
 	memset(&act,0,sizeof act);
 	act.sa_handler=SIG_IGN;	
-	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);
+	if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/
+        exit(1);
 }
 
 void start_UDP(){

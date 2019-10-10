@@ -15,25 +15,6 @@
 
 Link headUser;
 
-char* parse_command(char* message, const char* ip) { 
-
-    int numTokens = 0;
-    char *saveTokens[7];
-
-    int numberChar;
-   
-    numberChar = strlen(message);
-    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
-    char *token = strtok(message, " ");
-
-    while(token != NULL) {
-        saveTokens[numTokens] = token;
-        numTokens++;
-        token = strtok(NULL, " ");
-    }
-    return input_action(numTokens, saveTokens, message, numberChar, ip);
-}
-
 int input_command_server(int argc, char *argv[], char* port) {
     strcpy(port, DEFAULT_PORT);
     headUser = NULL;
@@ -50,6 +31,21 @@ int input_command_server(int argc, char *argv[], char* port) {
     } 
 }
 
+char* parse_command(char* message, const char* ip) { 
+    int numberChar, numTokens;
+    char *saveTokens[7];
+
+    numberChar = strlen(message);
+    message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
+    char *token = strtok(message, " ");
+
+    for (numTokens = 0; token != NULL; numTokens++){
+        saveTokens[numTokens] = token;
+        token = strtok(NULL, " ");
+    }
+    return input_action(numTokens, saveTokens, message, numberChar, ip);
+}
+
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char *message = malloc (sizeof (char) * 1024);
 
@@ -57,7 +53,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         if(commandREGOK(numTokens, saveTokens, numberChar)){
             headUser = insertUser(headUser, atoi(saveTokens[1]), ip);
             strcpy(message, "RGR OK\n");
-            printf("user: %s %s\n", ip, saveTokens[1]); //missing ip
+            printf("user: %s %s\n", ip, saveTokens[1]);
         }
         else
             strcpy(message, "RGR NOR\n");
@@ -76,7 +72,6 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
-
     //Falta so verificacao de erros para quando nao foi dado REG
     else if(!strcmp(saveTokens[0], "PTP")){
         if (commandPTPOK(numTokens, saveTokens, numberChar)){
@@ -90,6 +85,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
+    //Trazer a comparacao do comando para aqui tambem
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         printf("List questions for topic: %s\n", saveTokens[1]);
         strcpy(message, "LQR ");

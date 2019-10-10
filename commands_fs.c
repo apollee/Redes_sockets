@@ -16,11 +16,11 @@
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2 )        
         return FALSE;
+    else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
+        return FALSE;
     else if (strlen(saveTokens[1]) != 5)        
         return FALSE;
     else if(!onlyNumbers(saveTokens[1]))        
-        return FALSE;
-    else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
         return FALSE;
     else
         return TRUE;
@@ -103,13 +103,12 @@ int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
 //Outras funções
 int onlyNumbers(char* message) {
     int i;
-
     for(i = 0; i < strlen(message);i++){
         if(message[i] < 48 || message[i] > 57){
-            return 0;
+            return FALSE;
         }
     }
-    return 1;
+    return TRUE;
 }
 
 /*for the command TL*/

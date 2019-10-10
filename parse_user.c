@@ -16,6 +16,7 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     strcpy(port, DEFAULT_PORT);
     strcpy(ip, FLAG);
     strcpy(id_user, FLAG);
+    strcpy(local_topic, FLAG);
     if(argc == 1){
         return;
     }
@@ -94,6 +95,9 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(!isREG(id_user)){
             printf("You need to register first\n");
         }
+        else if (!isREG(local_topic)){
+            printf("You have to select a topic first\n");
+        }
         else{
             strcpy(message, "LQU ");
             strcat(message, local_topic);
@@ -101,6 +105,12 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             send_commandUDP(message);
         }
     }
+
+
+
+    //--------------------------------------------------------------------
+    // BELLOW - TCP CMDS
+    //--------------------------------------------------------------------
     else if(commandQGOK(numTokens, saveTokens, numberChar)){
         if(!isREG(id_user)){
             printf("You need to register first\n");
