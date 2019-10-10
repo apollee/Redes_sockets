@@ -111,7 +111,8 @@ int onlyNumbers(char* message) {
     return TRUE;
 }
 
-/*for the command TL*/
+//TODO: Podemos passar estas funcões para o parse---------------------
+//TOPIC LIST
 char* checkTopics(){
     char* message = malloc(sizeof (char)* 1024);
     strcpy(message, number_of_topics());
@@ -120,15 +121,7 @@ char* checkTopics(){
     return message;
 }
 
-char* checkQuestions(char** saveTokens){
-    char* message = malloc(sizeof (char)* 1024);
-    strcpy(message, number_of_questions(saveTokens[1]));
-   
-    strcat(message, " ");
-    strcat(message, questionList(saveTokens[1]));
-    return message;
-}
-
+//TOPIC PROPOSE
 char* selectTopic(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024); 
     
@@ -143,6 +136,16 @@ char* selectTopic(char** saveTokens){
     return message;
 }
 
-// char* checkQuestions(){
-//     char* message = malloc(sizeof (char)* 1024);
-// }
+//QUESTION LIST
+char* checkQuestions(char** saveTokens){
+    char* message = malloc(sizeof (char)* 1024);
+    strcpy(message, number_of_questions(saveTokens[1]));
+   
+    strcat(message, " ");
+    strcat(message, questionList(saveTokens[1]));
+    return message;
+}
+//TODO----------------------------------------------------------------
+
+
+

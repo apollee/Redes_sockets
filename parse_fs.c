@@ -49,6 +49,7 @@ char* parse_command(char* message, const char* ip) {
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char *message = malloc (sizeof (char) * 1024);
 
+    //Register
     if(!strcmp(saveTokens[0], "REG")){
         if(commandREGOK(numTokens, saveTokens, numberChar)){
             headUser = insertUser(headUser, atoi(saveTokens[1]), ip);
@@ -60,6 +61,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
 
+    //Topic List
     else if(!strcmp(saveTokens[0], "LTP")){
         if(commandLTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "LTR ");
@@ -73,6 +75,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     }
 
     //Falta so verificacao de erros para quando nao foi dado REG
+    //Topic Propose
     else if(!strcmp(saveTokens[0], "PTP")){
         if (commandPTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "PTR ");
@@ -86,6 +89,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     }
 
     //Trazer a comparacao do comando para aqui tambem
+    //Question List
     else if(commandLQUOK(numTokens, saveTokens, numberChar)){
         printf("List questions for topic: %s\n", saveTokens[1]);
         strcpy(message, "LQR ");
