@@ -71,6 +71,7 @@ void send_commandUDP(char *message){
     parse_command_received(buffer);
 }
 
+
 void send_commandTCP(char* message){
     char buffer[1024];
 

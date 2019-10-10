@@ -135,7 +135,7 @@ char* questionList(char* currTopic){
                 strcat(message, ":");
                 strcat(message, questionID(currTopic, dir->d_name));
                 strcat(message, ":");
-                strcat(message, numberOfAnswers());
+                strcat(message, numberOfAnswers(currTopic, dir->d_name));
                 strcat(message, " ");
             }
         }
@@ -146,8 +146,30 @@ char* questionList(char* currTopic){
         return NULL;
 }
 
-char* numberOfAnswers(){
-    char* value = "6";
+//Duplicao de codigo
+char* numberOfAnswers(char* currTopic, char* currQuestion){
+    int number = 0;
+    DIR *d;
+    struct dirent *dir;
+    char* value = malloc(sizeof (char)* 1024);
+    char* path = malloc(sizeof (char)* 1024);
+    sprintf(path, "TOPICS/%s/%s/", currTopic, currQuestion);
+
+    d = opendir(path);
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && dir->d_type == DT_DIR){             
+                number++;
+            }
+        }
+        closedir(d);
+    }
+    else{
+        sprintf(value, "%d", -1);
+        return value;
+    }
+    sprintf(value, "%d", number);
     return value;
 }
 
@@ -273,7 +295,6 @@ char* number_of_questions(char* currTopic){
     sprintf(value, "%d", number);
     return value;
 }
-
 
 int checkExistenceofTopic(char* dirname){ //check if a topic exists
     DIR *d;
