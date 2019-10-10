@@ -70,7 +70,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             	printf("You should regist first\n");
             }
             else{
-            	printf("selected topic: %s\n", local_topic);
+            	printf("selected topic: %s (%s)\n", local_topic, id_user);
 
             }
         }else{
@@ -78,68 +78,6 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         }
     } 
     else if(commandTPOK(numTokens, saveTokens, numberChar)){
-	    /*if(!isREG(id_user)){
-           	printf("You should regist first\n");
-        }
-        else{
-	        strcpy(message, "PTP ");
-	        strcat(message, id_user);
-	        strcat(message, " ");
-	        strcat(message, saveTokens[1]);
-	        strcat(message, "\n");
-	        send_commandUDP(message);
-    	}
-    }
-    else if(commandQLOK(numTokens, saveTokens, numberChar)){
-        if(!isREG(id_user)){
-           	printf("You should regist first\n");
-        }
-        else{
-	        strcpy(message, "LQU ");
-	        //strcat(message, saveTokens[1]);
-	        strcat(message, "\n");
-	        send_commandUDP(message);
-    	}
-    }
-    else if(commandQGOK(numTokens, saveTokens, numberChar)){
-        if(!isREG(id_user)){
-           	printf("You should regist first\n");
-        }
-        else{
-        	strcpy(message, "GQU ");
-        	//adicionar o topico? nao sei de onde vem
-        	strcat(message, "\n");
-        	send_commandTCP(message);
-    	}
-    }
-    else if(commandQSOK(numTokens, saveTokens, numberChar)){
-	    if(!isREG(id_user)){
-           	printf("You should regist first\n");
-        }
-        else{    
-	        strcpy(message, "QUS ");
-	        //strcat(message, ID(temos que adicionar isto))
-	        //adicionar o topico?? nao sei de onde vem?
-	        strcat(message, saveTokens[1]);
-	        //adicionar qsize, qdata, qimg
-	        strcat(message, "\n");
-	        send_commandTCP(message);
-    	}
-    }
-    else if(commandASOK(numTokens, saveTokens, numberChar)){
-	    if(!isREG(id_user)){
-           	printf("You should regist first\n");
-        }
-        else{
-	        strcpy(message, "ANS ");
-	        //strcat(message, ID(temos que adicionar isto))
-	        //adicionar o topico?? nao sei de onde vem?
-	        //adicionar a questao? nao sei de onde vem
-	        //adicionar asize, adata, aIMG
-	        strcat(message, "\n");
-	        send_commandUDP(message);
-    	}
-*/
         if(!isREG(id_user)){
             printf("You need to register first\n");
         }
@@ -338,3 +276,69 @@ void questions_print(char** saveTokens){
         printf("%s\n", token);
     }
 }
+
+
+
+//Não sei se isto ainda é preciso:
+	    /*if(!isREG(id_user)){
+           	printf("You should regist first\n");
+        }
+        else{
+	        strcpy(message, "PTP ");
+	        strcat(message, id_user);
+	        strcat(message, " ");
+	        strcat(message, saveTokens[1]);
+	        strcat(message, "\n");
+	        send_commandUDP(message);
+    	}
+    }
+    else if(commandQLOK(numTokens, saveTokens, numberChar)){
+        if(!isREG(id_user)){
+           	printf("You should regist first\n");
+        }
+        else{
+	        strcpy(message, "LQU ");
+	        //strcat(message, saveTokens[1]);
+	        strcat(message, "\n");
+	        send_commandUDP(message);
+    	}
+    }
+    else if(commandQGOK(numTokens, saveTokens, numberChar)){
+        if(!isREG(id_user)){
+           	printf("You should regist first\n");
+        }
+        else{
+        	strcpy(message, "GQU ");
+        	//adicionar o topico? nao sei de onde vem
+        	strcat(message, "\n");
+        	send_commandTCP(message);
+    	}
+    }
+    else if(commandQSOK(numTokens, saveTokens, numberChar)){
+	    if(!isREG(id_user)){
+           	printf("You should regist first\n");
+        }
+        else{    
+	        strcpy(message, "QUS ");
+	        //strcat(message, ID(temos que adicionar isto))
+	        //adicionar o topico?? nao sei de onde vem?
+	        strcat(message, saveTokens[1]);
+	        //adicionar qsize, qdata, qimg
+	        strcat(message, "\n");
+	        send_commandTCP(message);
+    	}
+    }
+    else if(commandASOK(numTokens, saveTokens, numberChar)){
+	    if(!isREG(id_user)){
+           	printf("You should regist first\n");
+        }
+        else{
+	        strcpy(message, "ANS ");
+	        //strcat(message, ID(temos que adicionar isto))
+	        //adicionar o topico?? nao sei de onde vem?
+	        //adicionar a questao? nao sei de onde vem
+	        //adicionar asize, adata, aIMG
+	        strcat(message, "\n");
+	        send_commandUDP(message);
+    	}
+*/

@@ -37,10 +37,8 @@ int main(int argc, char *argv[]) {
     }
     input_command_server(argc, argv, port); //check argv commands
 
-    //UDP--------------------------------------------------
     start_UDP();
     
-    //TCP-------------------------------------------------------------------
     start_TCP();
      
   	while(1){

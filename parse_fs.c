@@ -69,9 +69,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
             strcpy(message, "LTR ");
             printf("List topics\n");
             strcat(message, checkTopics());
-            //function to execute the command LTR
             strcat(message, "\n");
-            //sendCommandUDP(message);
         }else{
             strcpy(message, "ERR\n");
         }
@@ -83,12 +81,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(!strcmp(saveTokens[0], "PTP")){
         if (commandPTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "PTR ");
-            //Pode responder ok, dup ou ful
-            //printf("Topic selected");
             strcat(message, selectTopic(saveTokens));
             strcat(message, "\n");
-            //function to execute the command PTR
-            //sendCommandUDP(message);
         }
         else{
             strcpy(message, "PTR NOK");
@@ -104,6 +98,10 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         return message;
     }
     
+
+    //--------------------------------------------------------------------
+    // BELLOW - TCP CMDS
+    //--------------------------------------------------------------------
     else if(commandGQUOK(numTokens, saveTokens, numberChar)){
         strcpy(message, "QGR ");
         //function to execute the command QGR

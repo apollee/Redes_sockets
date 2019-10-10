@@ -57,6 +57,10 @@ int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE; 
 }
 
+
+//--------------------------------------------------------------------
+// BELLOW - TCP CMDS
+//--------------------------------------------------------------------
 int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
         return FALSE;
@@ -92,6 +96,11 @@ int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
 }
 
+
+
+
+
+//Outras funções
 int onlyNumbers(char* message) {
     int i;
 
