@@ -71,11 +71,11 @@ int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
 
 int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
-    if(numTokens != 4)
+    /*if(numTokens != 4)
         return FALSE;
     else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])))
         return FALSE;
-    else  
+    else  */
         return TRUE;
 }
 

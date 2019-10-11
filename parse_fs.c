@@ -60,7 +60,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
             printf("user: %s %s\n", ip, saveTokens[1]);
         }
         else
-            strcpy(message, "RGR NOR\n");
+            strcpy(message, "RGR NOK\n");
         return message;
     }
 
@@ -70,8 +70,6 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
             printf("List topics\n");
             strcat(message, checkTopics());
             strcat(message, "\n");
-        }else{
-            strcpy(message, "ERR\n");
         }
         return message;
     }

@@ -126,8 +126,9 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandQSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
                 printf("You need to register first\n");
-            else
+            else{
                 send_message_qs(message, saveTokens[1]);
+            }
         }
     }
 
@@ -167,7 +168,7 @@ void parse_command_received(char* buffer){
 }
 
 void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){ //message from the server
-    char command[4];
+    char command[5];
     strcpy(command, saveTokens[0]);
 
     if((!strcmp(command,"RGR")) && numTokens == 2) {
@@ -189,18 +190,18 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     else if(!strcmp(command, "LQR")){
         printf("available questions about %s:\n", local_topic);
         questions_print(saveTokens);
-    }/*
-    else if(commandQGOK(numTokens, saveTokens, numberChar)){
-        
     }
+    /*else if(commandQGOK(numTokens, saveTokens, numberChar)){
+            
+    }*/
     else if(commandQSOK(numTokens, saveTokens, numberChar)){
-        
-    }
+        printf("tou a receber isto: %s", command);    
+    }/*
     else if(commandASOK(numTokens, saveTokens, numberChar)){
         
-    }
-    else{
-        strcpy(message, "ERR\n");
-        send_commandUDP(message);
     }*/
+    else{
+        strcpy(command, "ERR\n");
+        //send_commandUDP(command);
+    }
 }
