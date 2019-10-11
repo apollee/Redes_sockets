@@ -145,7 +145,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         exit(0);
 
     else
-        send_message_err(message);
+        //send_message_err(message);
+       printf("Invalid command\n");
 }
 
 //comand that the user got from the server
@@ -201,7 +202,6 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         
     }*/
     else{
-        strcpy(command, "ERR\n");
-        //send_commandUDP(command);
+        printf("Unexpected server response\n");
     }
 }
