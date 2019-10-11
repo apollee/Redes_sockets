@@ -4,6 +4,7 @@
 #include <sys/socket.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <netinet/in.h>
 #include <netdb.h>
 #include <arpa/inet.h>
@@ -11,6 +12,8 @@
 #include "user.h"
 #include "parse_user.h"
 #include "commands_user.h"
+
+struct stat st;
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
 
@@ -133,6 +136,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             if(!isREG(id_user))
                 printf("You need to register first\n");
             else{
+                stat(saveTokens[2], &st);
+                printf("Size: %ld", st.st_size);
                 send_message_qs(message, saveTokens[1]);
             }
         }else{

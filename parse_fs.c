@@ -115,7 +115,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(!strcmp(saveTokens[0], "QUS")){
         if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
             strcpy(message, "QUR ");
-            strcat(message, "\n");
+            strcat(message, "\n\0");
         }else{
             strcpy(message, "ERR\n");
         }
