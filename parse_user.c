@@ -121,12 +121,13 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 send_message_qg(message);
         }
     }
-
+    
     else if((!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))){
         if(commandQSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
                 printf("You need to register first\n");
             else{
+                printf("saveTokens: %s\n", saveTokens[1]);
                 send_message_qs(message, saveTokens[1]);
             }
         }
