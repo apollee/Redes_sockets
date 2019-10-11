@@ -25,14 +25,14 @@ socklen_t addrlen;
 ssize_t n;
 fd_set rfds;
 char buffer[128]; 
-char port[6];
+char port[6]; 
 
 
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
-        create_directory("TOPICS"); //missing checking if its null
+        create_directory("TOPICS");
     }
     input_command_server(argc, argv, port); //checks argv commands
 

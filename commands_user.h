@@ -17,6 +17,8 @@ void send_message_qg(char* message);
 void send_message_qs(char* question, char* message);
 void send_message_as(char* message);
 void send_message_err(char* message);
+void questions_print(char** saveTokens);
+void topics_print(char** saveTokens);
 int commandREGOK(int numTokens, char** saveTokens, long int numberCar);
 int commandTLOK(int numTokens, char ** saveTokens, long int numberCar);
 int commandTSOK(int numTokens, char** saveTokens, long int numberCar);

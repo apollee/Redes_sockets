@@ -191,3 +191,27 @@ int isREG(char* id_user){
 		return FALSE;
 	}
 }
+
+void topics_print(char** saveTokens){
+    int i;
+    int number = atoi(saveTokens[1]); 
+
+    for(i = 1; i <= number; i++){
+        printf("%d - ", i);
+        char * token = strtok(saveTokens[i+1], ":");
+        printf("%s ", token);
+        token = strtok(NULL, ":");
+        printf("(proposed by %s)\n", token);
+    }
+}
+
+void questions_print(char** saveTokens){
+    int i;
+    int number = atoi(saveTokens[1]); 
+
+     for(i = 1; i <= number; i++){
+        printf("%d - ", i);
+        char * token = strtok(saveTokens[i+1], ":");
+        printf("%s\n", token);
+    }
+}

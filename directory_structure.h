@@ -16,8 +16,8 @@ char* number_of_topics();
 char* number_of_questions();
 int getTopic_by_number(int topic_number);
 int checkExistenceofTopic(char* dirname);
-int check_directory_size();
-int numberOfdirectories();
+int check_max_directory_size();
+char* numberOfdirectories();
 char* numberOfAnswers(char* currTopic, char* currQuestion);
 
 #endif

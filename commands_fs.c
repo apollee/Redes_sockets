@@ -55,7 +55,6 @@ int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE; 
 }
 
-
 //--------------------------------------------------------------------
 // TCP CMDS
 //--------------------------------------------------------------------
@@ -114,10 +113,12 @@ char* checkTopics(){
 //TOPIC PROPOSE
 char* selectTopic(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024); 
+    char* path = malloc (sizeof (char) * 1024);
+    sprintf(path, "TOPICS/%s", saveTokens[2]);
     
-    if (check_topic_existence(saveTokens[2]))
+    if (check_directory_existence(path))
         strcpy(message, "DUP\n");
-    else if (!check_directory_size())
+    else if (!check_max_directory_size())
         strcpy(message, "FUL\n");
     else {
         create_topic_directory(saveTokens[2], saveTokens[1]);
@@ -129,9 +130,12 @@ char* selectTopic(char** saveTokens){
 //QUESTION LIST
 char* checkQuestions(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024);
-    strcpy(message, number_of_questions(saveTokens[1]));
+    char* path = malloc(sizeof (char)* 1024);
+    sprintf(path, "TOPICS/%s/", saveTokens[1]);
+    strcpy(message, numberOfdirectories(path));
    
     strcat(message, " ");
     strcat(message, questionList(saveTokens[1]));
+    free(path);
     return message;
 }

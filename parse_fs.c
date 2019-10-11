@@ -31,7 +31,7 @@ int input_command_server(int argc, char *argv[], char* port) {
     } 
 }
 
-char* parse_command(char* message, const char* ip) { 
+char* parse_command(char* message, const char* ip) { // command that is received
     int numberChar, numTokens;
     char *saveTokens[7];
 
@@ -46,7 +46,8 @@ char* parse_command(char* message, const char* ip) {
     return input_action(numTokens, saveTokens, message, numberChar, ip);
 }
 
-char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){ //malloc needs a free
+//
+char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char *message = malloc (sizeof (char) * 1024);
 
     //--------------------------------------------------------------------

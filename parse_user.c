@@ -56,7 +56,8 @@ int parse_command() { // command that the user wrote
     return 0;
 }
 
-void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){ //action that the user wrote
+//action that the user requested
+void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){ 
     char message[1024]; 
 
     //--------------------------------------------------------------------
@@ -146,7 +147,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         send_message_err(message);
 }
 
-void parse_command_received(char* buffer){ //comand that the user got from the server
+//comand that the user got from the server
+void parse_command_received(char* buffer){ 
     int numTokens = 0;
     char *saveTokens[120];
     int numberChar;
@@ -201,28 +203,4 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         strcpy(message, "ERR\n");
         send_commandUDP(message);
     }*/
-}
-
-void topics_print(char** saveTokens){
-    int i;
-    int number = atoi(saveTokens[1]); 
-
-    for(i = 1; i <= number; i++){
-        printf("%d - ", i);
-        char * token = strtok(saveTokens[i+1], ":");
-        printf("%s ", token);
-        token = strtok(NULL, ":");
-        printf("(proposed by %s)\n", token);
-    }
-}
-
-void questions_print(char** saveTokens){
-    int i;
-    int number = atoi(saveTokens[1]); 
-
-     for(i = 1; i <= number; i++){
-        printf("%d - ", i);
-        char * token = strtok(saveTokens[i+1], ":");
-        printf("%s\n", token);
-    }
 }
