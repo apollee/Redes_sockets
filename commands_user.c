@@ -8,10 +8,13 @@
 #include <netdb.h>
 #include <arpa/inet.h>
 #include <errno.h>
+#include <sys/stat.h>
 #include <signal.h>
 #include "commands_user.h"
 #include "directory_structure.h"
 #include "user.h"
+
+struct stat qsize, isize;
 
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
@@ -158,14 +161,36 @@ void send_message_qg(char* message){
     send_commandTCP(message);
 }
 
-void send_message_qs(char* message, char* question){
+void send_message_qs(char* message, int numTokens, char** saveTokens){
+    char var1[1024]; 
+    char var2[1024];
     strcpy(message, "QUS ");
     strcat(message, id_user);
     strcat(message, " ");
     strcat(message, local_topic);
     strcat(message, " ");
-    strcat(message, question);
-    strcat(message, "\n");
+    strcat(message, saveTokens[1]); //question
+    strcat(message, " ");
+    stat(saveTokens[2], &qsize);
+    sprintf(var1, "%ld", qsize.st_size); //Size of text doc
+    strcat(message, var1);
+    strcat(message, " ");
+    //Doc itself
+    //strcat(message, " ");
+    if (numTokens == 4){
+        strcat(message, "1");
+        strcat(message, " ");
+        //Missing extension of image
+        //strcat(message, " ");
+        stat(saveTokens[3], &isize);
+        sprintf(var2, "%ld", isize.st_size); //Size of image
+        strcat(message, var2);
+        //Image itself
+    }else {
+        strcat(message, "0");
+    }
+    strcat(message, "\n\0");
+    printf("------------Message: %s\n", message);
     send_commandTCP(message);
 }
 

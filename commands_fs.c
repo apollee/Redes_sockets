@@ -59,9 +59,9 @@ int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
 // TCP CMDS
 //--------------------------------------------------------------------
 int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 2)
+    if(numTokens != 3)
         return FALSE;
-    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1]))
+    else if(numberChar - 3 != strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]))
         return FALSE;
     else if(!strcmp(saveTokens[0], "GQU"))
         return TRUE;

@@ -14,7 +14,7 @@ void send_message_tl(char* message);
 void send_message_tp(char* topic, char* message);
 void send_message_ql(char* message);
 void send_message_qg(char* message);
-void send_message_qs(char* question, char* message);
+void send_message_qs(char* message, int numTokens, char** saveTokens);
 void send_message_as(char* message);
 void send_message_err(char* message);
 void questions_print(char** saveTokens);
