@@ -67,7 +67,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandREGOK(numTokens, saveTokens, numberChar))
             send_message_reg(saveTokens[1], message);
         else
-            printf("User %s not registered\n", saveTokens[1]); //nao devia ser um ERR tambem?
+            printf("Invalid arguments\n"); //nao devia ser um ERR tambem?
     }
 
     else if((!strcmp(saveTokens[0], "topic_list") || !strcmp(saveTokens[0], "tl"))) {
@@ -78,7 +78,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 send_message_tl(message);
         }
         else
-            printf("Failed to get the list of topics\n"); 
+            printf("Invalid arguments\n"); 
     }
 
     else if((!strcmp(saveTokens[0], "topic_select") || !strcmp(saveTokens[0], "ts"))) {
@@ -88,7 +88,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             else
             	printf("selected topic: %s (%s)\n", local_topic, id_user);
         }else
-            printf("Failed to select the topic\n");
+            printf("Invalid arguments\n");
     } 
 
     else if((!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))) {
@@ -97,6 +97,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 printf("You need to register first\n");
             else
                 send_message_tp(saveTokens[1], message);
+        }else{
+            printf("Invalid arguments\n");
         }
     }
 
@@ -108,6 +110,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 printf("You have to select a topic first\n");
             else
                 send_message_ql(message);
+        }else{
+            printf("Invalid arguments\n");
         }
     }
     //--------------------------------------------------------------------
@@ -119,6 +123,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 printf("You need to register first\n");
             else
                 send_message_qg(message);
+        }else{
+            printf("Invalid arguments\n");
         }
     }
     
@@ -127,9 +133,10 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             if(!isREG(id_user))
                 printf("You need to register first\n");
             else{
-                printf("saveTokens: %s\n", saveTokens[1]);
                 send_message_qs(message, saveTokens[1]);
             }
+        }else{
+            printf("Invalid arguments\n");
         }
     }
 
@@ -139,6 +146,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
                 printf("You need to register first\n");
             else
                 send_message_as(message);
+        }else{
+            printf("Invalid arguments\n");
         }
     }
 

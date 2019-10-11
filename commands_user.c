@@ -100,10 +100,6 @@ int commandQGOK(int numTokens, char** saveTokens, long int numberChar){
 
 int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
-    printf("number of tookens: %d\n", numTokens);
-    for (int i = 0; i < numTokens; i++){
-        printf("tooken %d: %s\n", numTokens, saveTokens[i]);
-    }
     if(numTokens < 3 || numTokens > 4){
         return FALSE;
     }
@@ -162,14 +158,13 @@ void send_message_qg(char* message){
     send_commandTCP(message);
 }
 
-void send_message_qs(char* question, char* message){
+void send_message_qs(char* message, char* question){
     strcpy(message, "QUS ");
     strcat(message, id_user);
     strcat(message, " ");
     strcat(message, local_topic);
     strcat(message, " ");
     strcat(message, question);
-    printf("-------------------------%s\n", question);
     strcat(message, "\n");
     send_commandTCP(message);
 }

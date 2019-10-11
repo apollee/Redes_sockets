@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
             int b = read(newfd, buffer, 1024);
             write(1, "received: \n", 11);
             write(1, buffer, b); //fs
-            b = write(newfd, parse_command(buffer, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP)), b); //ta a escrever para o user?
+            b = write(newfd, parse_command(buffer, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024); //ta a escrever para o user?
         	close(newfd); 
         	close(fdTCP);
 
