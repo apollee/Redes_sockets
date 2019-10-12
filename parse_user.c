@@ -209,10 +209,12 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     }*/
     else if(!strcmp(command, "QUR")){
         printf("%s %s\n", command, saveTokens[1]);    
-    }/*
-    else if(commandASOK(numTokens, saveTokens, numberChar)){
-        
-    }*/
+    }
+    else if(!strcmp(command, "ANR")){
+        // for (int i = 0; i < numTokens; i++){
+        //     printf("Token %d: %s\n", i, saveTokens[i]);
+        // }
+    }
     else{
         printf("Unexpected server response\n");
     }

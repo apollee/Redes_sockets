@@ -118,8 +118,9 @@ int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
 
 int commandASOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
-    if(numTokens < 2 || numTokens > 3)
+    if(numTokens < 2 || numTokens > 3){
         return FALSE;
+    }
     else if (numTokens == 2 && numberChar - numTokens != (strlen(saveTokens[0]) + strlen(saveTokens[1]))){
         return FALSE;
     }
