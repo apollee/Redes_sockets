@@ -189,8 +189,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     }else {
         strcat(message, "0");
     }
-    strcat(message, "\n\0");
-    printf("------------Message: %s\n", message);
+    strcat(message, "\n\0"); //atencao ao \0
     send_commandTCP(message);
 }
 

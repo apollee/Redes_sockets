@@ -11,7 +11,7 @@
 #include "user.h"
 #include "parse_user.h"
 #include "commands_user.h"
-
+#include "directory_structure.h"
 
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
@@ -88,7 +88,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             if(!isREG(id_user))
             	printf("You should register first\n");
             else
-            	printf("selected topic: %s (%s)\n", local_topic, id_user);
+            	printf("selected topic: %s (%s)\n", local_topic, topicID(local_topic));
         }else
             printf("Invalid arguments\n");
     } 

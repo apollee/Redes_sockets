@@ -135,13 +135,13 @@ void send_commandTCP(char* message){
         printf("read not working TCP");
     }
 
-    write(1, "echo TCP: ", 1024);    
+    write(1, "echo TCP: ", 10);    
     write(1, buffer, 1024); 
     close(fdTCP);
 
     fdTCP = create_socket(resTCP);
     if(fdTCP == -1){
-        printf("creating TCP socket failed\n");
+        printf("creating TCP socket failed\n"); 
     }
 } 
 
