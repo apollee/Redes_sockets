@@ -118,10 +118,14 @@ int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
 
 int commandASOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
-    if(numTokens != 3)
+    if(numTokens < 2 || numTokens > 3)
         return FALSE;
-    else if(numberChar - numTokens != strlen(saveTokens[0])  + strlen(saveTokens[1]) + strlen(saveTokens[2]))
+    else if (numTokens == 2 && numberChar - numTokens != (strlen(saveTokens[0]) + strlen(saveTokens[1]))){
         return FALSE;
+    }
+    else if (numTokens == 3 && numberChar - numTokens != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]))){
+        return FALSE;
+    }
     else 
         return TRUE;
 }
@@ -186,9 +190,30 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     send_commandTCP(message);
 }
 
-void send_message_as(char* message){
-    strcpy(message, "ANS ");
-    strcat(message, "\n");
+void send_message_as(char* message, int numTokens, char** saveTokens){
+    char var[1024]; 
+
+    sprintf(message, "ANS %s %s %s ", id_user, local_topic, local_question);
+    stat(saveTokens[1], &qsize);
+    sprintf(var, "%ld", qsize.st_size); //Size of text doc
+    strcat(message, var);
+    strcat(message, " ");
+    //Doc itself
+    //strcat(message, " ");
+    //strcat(message, " ");
+    if (numTokens == 3){
+        strcat(message, "1 ");
+        //Missing extension of image
+        //strcat(message, " ");
+        stat(saveTokens[2], &isize);
+        sprintf(var, "%ld", isize.st_size); //Size of image
+        strcat(message, var);
+        //strcat(message, " ");
+        //Image itself
+    }else {
+        strcat(message, "0");
+    }
+    strcat(message, "\n\0"); //atencao ao \0
     send_commandUDP(message);
 }
 
