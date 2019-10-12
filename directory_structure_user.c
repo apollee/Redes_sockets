@@ -1,7 +1,7 @@
 #include <dirent.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include "directory_structure.h"
+#include "directory_structure_user.h"
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>

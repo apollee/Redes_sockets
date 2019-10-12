@@ -54,11 +54,11 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
         }
     }
     else if(!strcmp(saveTokens[0], "topic_select")){
-        if(checkExistenceofTopic(saveTokens[1])){
+       // if(checkExistenceofTopic(saveTokens[1])){
             strcpy(local_topic, saveTokens[1]);
-            return TRUE;   
-        }else 
-            return FALSE;
+    //    //     return TRUE;   
+    //     }else 
+    //         return FALSE;
     }
     else
         return FALSE;
@@ -166,14 +166,74 @@ void send_message_qg(char* message){
     send_commandTCP(message);
 }
 
+// void send_message_qs(char* message, int numTokens, char** saveTokens){
+//     char var[1024]; 
+//     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
+//     stat(saveTokens[2], &qsize);
+//     sprintf(var, "%ld", qsize.st_size); //Size of text doc
+//     strcat(message, var);
+//     strcat(message, " ");
+//     //Doc itself
+//     //strcat(message, " ");
+//     if (numTokens == 4){
+//         strcat(message, "1 ");
+//         //Missing extension of image
+//         //strcat(message, " ");
+//         stat(saveTokens[3], &isize);
+//         sprintf(var, "%ld", isize.st_size); //Size of image
+//         strcat(message, var);
+//         //Image itself
+//     }else {
+//         strcat(message, "0");
+//     }
+//     strcat(message, "\n\0"); //atencao ao \0
+//     send_commandTCP(message);
+// }
+
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     char var[1024]; 
+    char buffer[DEFAULT_BUFFER_SIZE];
+    int offset = 0;
+    FILE* fd;
 
     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
     stat(saveTokens[2], &qsize);
     sprintf(var, "%ld", qsize.st_size); //Size of text doc
-    strcat(message, var);
-    strcat(message, " ");
+
+
+    fd = fopen(saveTokens[2], "rb");
+    if (fd == NULL){
+        fprintf(stderr, "cannot open input file\n");
+    }
+    int i, c, max;
+    for (i = 0, max = 4900; i < max && (c = getc(fd)) != EOF; i++) {
+        printf("%02x", c);
+        if (i % 16 == 15)
+            putchar('\n');  // 16 bytes per line
+    }
+    if (i % 16 != 0)
+        putchar('\n');  // output a newline if needed
+
+    fclose(fd);
+
+
+
+
+    connectTCP();
+    
+    // while(qsize.st_size != offset){
+    //     strcat(message, var);
+    //     strcat(message, " ");
+        
+    //     offset += writeTCP(message);
+    //     var -= offset;
+    // }
+
+
+
+
+   
+    
     //Doc itself
     //strcat(message, " ");
     if (numTokens == 4){
