@@ -56,22 +56,25 @@ char* topicList(){ //get the list of topics
     char* message = (char*)malloc (sizeof (char)* 1024);
     char* finalMessage;
     strcpy(message, "");
-    int final = 0;
-
+    //printf("message antes do topicList: !%s!\n", message);
     if (d){
-        while(!final){
-            dir=readdir(d);
-            if (dir == NULL){
-                final = 1;
-            }
-            else if ((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+        dir=readdir(d);
+        while(dir != NULL){
+            //printf("dirName: %s\n", dir->d_name);
+           if ((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                //printf("currMessage: !%s!\n", message);
                 strcat(message, dir->d_name);
                 strcat(message, ":");
                 strcat(message, topicID(dir->d_name));
+                //strcat(message, " ");
+            }
+            dir=readdir(d);
+            if ((dir != NULL) && strcmp(dir->d_name, "..") && strcmp(dir->d_name, ".")){
                 strcat(message, " ");
             }
         }
         closedir(d);
+        printf("topicList final: !%s!\n", message);
         finalMessage = (char*)realloc(message, strlen(message));
         return finalMessage;
     }

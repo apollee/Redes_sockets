@@ -54,7 +54,9 @@ int main(int argc, char *argv[]) {
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
-            printf("Buffer UDP: %s\n", buffer);
+            printf("----------ola\n");
+            printf("Buffer user: %s|\n", buffer);
+            printf("----------adeus\n");
             sendto(fdUDP, parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024, 0, (struct sockaddr*)&addr, addrlen);
         } 
 

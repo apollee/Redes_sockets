@@ -34,7 +34,6 @@ int input_command_server(int argc, char *argv[], char* port) {
 char* parse_command(char* message, const char* ip) { // command that is received
     int numberChar, numTokens;
     char *saveTokens[7];
-
     numberChar = strlen(message);
     message[strcspn(message, "\n")] = 0; /*remove the \n added by fgets*/
     char *token = strtok(message, " ");
@@ -43,6 +42,7 @@ char* parse_command(char* message, const char* ip) { // command that is received
         saveTokens[numTokens] = token;
         token = strtok(NULL, " ");
     }
+    
     return input_action(numTokens, saveTokens, message, numberChar, ip);
 }
 
@@ -53,7 +53,11 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     //--------------------------------------------------------------------
     // UDP CMDS
-    //--------------------------------------------------------------------
+    //--------------------------------------------------------------------    
+    for(int i = 0; i < numTokens; i++){
+        printf("Token %d: %s|\n", i, saveTokens[i]);
+    }
+
     if(!strcmp(saveTokens[0], "REG")){
         if(commandREGOK(numTokens, saveTokens, numberChar)){
             headUser = insertUser(headUser, atoi(saveTokens[1]), ip); //dados utilizador
@@ -65,12 +69,15 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     }
 
     else if(!strcmp(saveTokens[0], "LTP")){
-        if(commandLTPOK(numTokens, saveTokens, numberChar)){
-            strcpy(message, "LTR ");
-            printf("List topics\n");
-            strcat(message, checkTopics());
-            strcat(message, "\n");
-        }
+        // if(commandLTPOK(numTokens, saveTokens, numberChar)){
+        //     strcpy(message, "LTR ");
+        //     printf("List topics\n");
+        //     strcat(message, checkTopics());
+        //     printf("antes do barra n: !%s!\n", message);
+        //     strcat(message, "\n");
+        // }
+        char* var = "LTR 0\n";
+        strncpy(message, var, 6);
     }
 
     //Falta so verificacao de erros para quando nao foi dado REG
@@ -130,7 +137,13 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else{
         strcpy(message, "ERR\n");
     }   
+    //printf("Message: %s", message);
     finalMessage = (char*)realloc(message, strlen(message));
+    // finalMessage = "";
+    // printf("TAMANHO: %ld,", strlen(message));
+    // strncpy(finalMessage, message, strlen(message));
+    printf("Final Message: !%s!", finalMessage);
+    printf("Final Message: !%s!", finalMessage);
     return finalMessage;
 }
 
