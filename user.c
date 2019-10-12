@@ -136,7 +136,8 @@ void send_commandTCP(char* message){
     }
 
     write(1, "echo TCP: ", 10);    
-    write(1, buffer, 1024); 
+    write(1, buffer, strlen(buffer)); 
+    parse_command_received(buffer);
     close(fdTCP);
 
     fdTCP = create_socket(resTCP);

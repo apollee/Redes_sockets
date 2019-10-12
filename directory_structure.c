@@ -93,8 +93,8 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
 
 //TOPIC PROPOSE---------------------------------------------------
 
-int check_max_directory_size(){
-    if (atoi(numberOfdirectories()) < 99)
+int check_max_directory_size(char* path){
+    if (atoi(numberOfdirectories(path)) < 99)
         return TRUE;
     else
         return FALSE;

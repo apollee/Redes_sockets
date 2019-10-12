@@ -197,7 +197,7 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
         topics_print(saveTokens);
     }
     else if(!strcmp(command, "PTR")){
-       printf("%s\n", saveTokens[1]);
+       printf("%s %s\n", saveTokens[0], saveTokens[1]);
        
     }
     else if(!strcmp(command, "LQR")){
@@ -207,8 +207,8 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
     /*else if(commandQGOK(numTokens, saveTokens, numberChar)){
             
     }*/
-    else if(commandQSOK(numTokens, saveTokens, numberChar)){
-        printf("tou a receber isto: %s", command);    
+    else if(!strcmp(command, "QUR")){
+        printf("%s %s\n", command, saveTokens[1]);    
     }/*
     else if(commandASOK(numTokens, saveTokens, numberChar)){
         

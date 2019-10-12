@@ -111,21 +111,40 @@ char* checkTopics(){
 }
 
 //TOPIC PROPOSE
-char* selectTopic(char** saveTokens){
+char* proposeTopic(char** saveTokens){
     char* message = malloc(sizeof (char)* 1024); 
     char* path = malloc (sizeof (char) * 1024);
     sprintf(path, "TOPICS/%s", saveTokens[2]);
     
     if (check_directory_existence(path))
-        strcpy(message, "DUP\n");
-    else if (!check_max_directory_size())
-        strcpy(message, "FUL\n");
+        strcpy(message, "DUP");
+    else if (!check_max_directory_size(path))
+        strcpy(message, "FUL");
     else {
         create_topic_directory(saveTokens[2], saveTokens[1]);
-        strcpy(message, "OK\n");
+        strcpy(message, "OK");
     }
+    free(path);
     return message;
 }
+
+char* checkSubmitQuestion(char** saveTokens){
+    char* message = malloc(sizeof (char)* 1024);
+    char* path = malloc(sizeof (char)* 1024);
+    sprintf(path, "TOPICS/%s/%s", saveTokens[3], saveTokens[4]);
+
+    if(check_directory_existence(path))
+        strcpy(message, "DUP");
+    else if(!check_max_directory_size(path))
+        strcpy(message, "FUL");
+    else
+        strcpy(message, "OK");
+    
+    free(path);
+    return message;
+
+}
+
 
 //QUESTION LIST
 char* checkQuestions(char** saveTokens){

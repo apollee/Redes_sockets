@@ -78,11 +78,11 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(!strcmp(saveTokens[0], "PTP")){
         if(commandPTPOK(numTokens, saveTokens, numberChar)){
             strcpy(message, "PTR ");
-            strcat(message, selectTopic(saveTokens));
+            strcat(message, proposeTopic(saveTokens));
             strcat(message, "\n");
         }
         else{
-            strcpy(message, "PTR NOK");
+            strcpy(message, "PTR NOK\n");
         }
         return message;
     }
@@ -115,9 +115,10 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else if(!strcmp(saveTokens[0], "QUS")){
         if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
             strcpy(message, "QUR ");
+            strcat(message, checkSubmitQuestion(saveTokens));
             strcat(message, "\n\0");
         }else{
-            strcpy(message, "ERR\n");
+            strcpy(message, "QUR NOK\n");
         }
         return message;
     }
