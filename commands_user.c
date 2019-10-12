@@ -162,29 +162,22 @@ void send_message_qg(char* message){
 }
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
-    char var1[1024]; 
-    char var2[1024];
-    strcpy(message, "QUS ");
-    strcat(message, id_user);
-    strcat(message, " ");
-    strcat(message, local_topic);
-    strcat(message, " ");
-    strcat(message, saveTokens[1]); //question
-    strcat(message, " ");
+    char var[1024]; 
+
+    sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
     stat(saveTokens[2], &qsize);
-    sprintf(var1, "%ld", qsize.st_size); //Size of text doc
-    strcat(message, var1);
+    sprintf(var, "%ld", qsize.st_size); //Size of text doc
+    strcat(message, var);
     strcat(message, " ");
     //Doc itself
     //strcat(message, " ");
     if (numTokens == 4){
-        strcat(message, "1");
-        strcat(message, " ");
+        strcat(message, "1 ");
         //Missing extension of image
         //strcat(message, " ");
         stat(saveTokens[3], &isize);
-        sprintf(var2, "%ld", isize.st_size); //Size of image
-        strcat(message, var2);
+        sprintf(var, "%ld", isize.st_size); //Size of image
+        strcat(message, var);
         //Image itself
     }else {
         strcat(message, "0");
