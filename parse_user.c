@@ -11,7 +11,8 @@
 #include "user.h"
 #include "parse_user.h"
 #include "commands_user.h"
-#include "directory_structure.h"
+#include "directory_structure_user.h"
+
 
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {

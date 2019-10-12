@@ -11,7 +11,7 @@
 #include <sys/stat.h>
 #include <signal.h>
 #include "commands_user.h"
-#include "directory_structure.h"
+#include "directory_structure_user.h"
 #include "user.h"
 
 struct stat qsize, isize;

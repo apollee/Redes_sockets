@@ -14,10 +14,12 @@ char* topicID(char* dirname);
 char* questionID(char* currTopic, char* dirname);
 char* number_of_topics();
 char* number_of_questions();
-int getTopic_by_number(int topic_number);
-int checkExistenceofTopic(char* dirname);
 int check_max_directory_size(char* dirname);
 char* numberOfdirectories(char* dirname);
 char* numberOfAnswers(char* currTopic, char* currQuestion);
+
+//User functions
+// int getTopic_by_number(int topic_number);
+// int checkExistenceofTopic(char* dirname);
 
 #endif

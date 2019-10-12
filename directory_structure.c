@@ -198,44 +198,44 @@ char* questionID(char* currTopic, char* dirname){
 }
 
 //USER FUNCTIONS--------------------------------------------------
-int getTopic_by_number(int number){ //get the topic by the number
-    DIR *d;
-    struct dirent *dir;
-    int flag = 0;
+// int getTopic_by_number(int number){ //get the topic by the number
+//     DIR *d;
+//     struct dirent *dir;
+//     int flag = 0;
 
-    if(number > 99 && number == 0){
-        return flag;
-    } 
+//     if(number > 99 && number == 0){
+//         return flag;
+//     } 
 
-    d = opendir("TOPICS");
-    int current_topic_number = 1;
-    if(d){
-        while((dir = readdir(d)) != NULL){
-            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
-                if(current_topic_number == number){
-                    strcpy(local_topic, dir->d_name); 
-                    return 1;
-                }else
-                    current_topic_number++;            
-            }   
-        }
-        closedir(d);
-    }
-    return flag;
-}
+//     d = opendir("TOPICS");
+//     int current_topic_number = 1;
+//     if(d){
+//         while((dir = readdir(d)) != NULL){
+//             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+//                 if(current_topic_number == number){
+//                     strcpy(local_topic, dir->d_name); 
+//                     return 1;
+//                 }else
+//                     current_topic_number++;            
+//             }   
+//         }
+//         closedir(d);
+//     }
+//     return flag;
+// }
 
-int checkExistenceofTopic(char* dirname){ //check if a topic exists
-    DIR *d;
-    struct dirent *dir;
-    d = opendir("TOPICS");
+// int checkExistenceofTopic(char* dirname){ //check if a topic exists
+//     DIR *d;
+//     struct dirent *dir;
+//     d = opendir("TOPICS");
 
-    if (d){
-        while((dir=readdir(d)) != NULL){
-            if(!(strcmp(dir->d_name, dirname))){
-                return 1;
-            }
-        }
-        closedir(d);
-    }
-    return 0;
-}
+//     if (d){
+//         while((dir=readdir(d)) != NULL){
+//             if(!(strcmp(dir->d_name, dirname))){
+//                 return 1;
+//             }
+//         }
+//         closedir(d);
+//     }
+//     return 0;
+// }
