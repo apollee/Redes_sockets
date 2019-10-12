@@ -4,6 +4,7 @@
 #define TRUE 1
 #define FALSE 0
 
+char local_question[120];
 char local_topic[120];
 char id_user[5];
 
@@ -15,7 +16,7 @@ void send_message_tp(char* topic, char* message);
 void send_message_ql(char* message);
 void send_message_qg(char* message);
 void send_message_qs(char* message, int numTokens, char** saveTokens);
-void send_message_as(char* message);
+void send_message_as(char* message, int numTokens, char** saveTokens);
 void send_message_err(char* message);
 void questions_print(char** saveTokens);
 void topics_print(char** saveTokens);

@@ -147,7 +147,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             if(!isREG(id_user))
                 printf("You need to register first\n");
             else
-                send_message_as(message);
+                send_message_as(message, numTokens, saveTokens);
         }else{
             printf("Invalid arguments\n");
         }
