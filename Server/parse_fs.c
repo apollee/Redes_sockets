@@ -130,7 +130,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     else{
         strcpy(message, "ERR\n");
     }
-    
-    return message;
+    char* finalMessage = realloc(message, strlen(message));
+    return finalMessage;
 }
 

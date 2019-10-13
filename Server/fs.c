@@ -25,12 +25,14 @@ int fdUDP, fdTCP, errcode, newfd, maxDescriptor;
 socklen_t addrlen;
 ssize_t n;
 fd_set rfds;
-char buffer[1024]; 
+char *buffer; 
 char port[6]; 
 
 
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];
+    buffer = (char*)malloc(sizeof(char)*1024);
+    memset(buffer, 0, 1024);
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
         create_directory("TOPICS");
@@ -54,12 +56,10 @@ int main(int argc, char *argv[]) {
         //UDP
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
-            memset(buffer, 0, 1024);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             char* buf =  parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
-   			memset(buffer, 0, 1024);
-            sendto(fdUDP,buf, strlen(buf), 0, (struct sockaddr*)&addr, addrlen);
-        	memset(buf, 0, 1024);
+   			char* newbuf = realloc(buf, strlen(buf));
+            sendto(fdUDP,newbuf, strlen(newbuf), 0, (struct sockaddr*)&addr, addrlen);
         } 	
 
         //TCP

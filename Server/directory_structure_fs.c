@@ -95,7 +95,7 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
     }
     fscanf(file, "%5s", id);
     
-    //free(message);
+    free(message);
     return id;
 }
 //TOPIC PROPOSE---------------------------------------------------
@@ -217,6 +217,7 @@ char* questionID(char* currTopic, char* dirname){
     }
     fscanf(file, "%s", id);
     strcat(id, "\0");
+
     return id;
 }
 

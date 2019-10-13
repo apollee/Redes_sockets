@@ -115,8 +115,8 @@ char* checkTopics(){
     memset(message, 0, 1024);
     char* finalMessage;
     char* numTopics;
-    strcpy(message, number_of_topics());
     numTopics = number_of_topics();
+    strcpy(message, numTopics);
     if (strcmp(numTopics, "0")){
         strcat(message, " ");
         strcat(message, topicList(numTopics));
