@@ -74,7 +74,6 @@ char* topicList(){ //get the list of topics
             }
         }
         closedir(d);
-        printf("topicList final: !%s!\n", message);
         finalMessage = (char*)realloc(message, strlen(message));
         return finalMessage;
     }

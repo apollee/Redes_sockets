@@ -27,19 +27,15 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandLTPOK(int numTokens, char** saveTokens, long int numberChar){
-    printf("AMIGO\n");
     if(numTokens != 1){
-        printf("ola1\n");
         return FALSE; 
     }
     //     else if(numberChar != strlen(saveTokens[0])){
     //     printf("numberChar: %ld\n", numberChar);
     //     printf("strlen(saveTokens[0]): %ld\n", strlen(saveTokens[0]));
-    //     printf("ola2\n");
     //     return FALSE;
     //}
     else{
-        printf("ola3\n");
         return TRUE;
     }
 }
@@ -114,10 +110,9 @@ int onlyNumbers(char* message) {
 char* checkTopics(){
     char* message = (char*)malloc(sizeof (char)* 1024);
     char* finalMessage;
+
     strcpy(message, number_of_topics());
-    //printf("message no checkTopics: %s!\n", message);
-    //strcat(message, " ");
-    //printf("message no checkTopics: %s!\n", message);
+    strcat(message, " ");
     if (strcmp(number_of_topics(), "0"))
         strcat(message, topicList());
     finalMessage = (char*)realloc(message, strlen(message));

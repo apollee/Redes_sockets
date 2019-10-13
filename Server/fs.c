@@ -54,11 +54,10 @@ int main(int argc, char *argv[]) {
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
-            printf("----------ola\n");
-            printf("Buffer user: %s|\n", buffer);
-            printf("----------adeus\n");
-            sendto(fdUDP, parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024, 0, (struct sockaddr*)&addr, addrlen);
-        } 
+            char* buf =  parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
+            printf("%s", buf);
+            sendto(fdUDP,buf, strlen(buf), 0, (struct sockaddr*)&addr, addrlen);
+        } 	
 
         //TCP
         if(FD_ISSET(fdTCP, &rfds)){   

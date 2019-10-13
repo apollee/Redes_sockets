@@ -49,15 +49,11 @@ char* parse_command(char* message, const char* ip) { // command that is received
 //
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char* message = (char*)malloc (sizeof (char) * 1024);
-    char* finalMessage;
 
     //--------------------------------------------------------------------
     // UDP CMDS
     //--------------------------------------------------------------------    
-    for(int i = 0; i < numTokens; i++){
-        printf("Token %d: %s|\n", i, saveTokens[i]);
-    }
-
+    
     if(!strcmp(saveTokens[0], "REG")){
         if(commandREGOK(numTokens, saveTokens, numberChar)){
             headUser = insertUser(headUser, atoi(saveTokens[1]), ip); //dados utilizador
@@ -69,15 +65,12 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     }
 
     else if(!strcmp(saveTokens[0], "LTP")){
-        // if(commandLTPOK(numTokens, saveTokens, numberChar)){
-        //     strcpy(message, "LTR ");
-        //     printf("List topics\n");
-        //     strcat(message, checkTopics());
-        //     printf("antes do barra n: !%s!\n", message);
-        //     strcat(message, "\n");
-        // }
-        char* var = "LTR 0\n";
-        strncpy(message, var, 6);
+        if(commandLTPOK(numTokens, saveTokens, numberChar)){
+            strcpy(message, "LTR ");
+            printf("List topics\n");
+            strcat(message, checkTopics());
+            strcat(message, "\n");
+        }
     }
 
     //Falta so verificacao de erros para quando nao foi dado REG
@@ -136,14 +129,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     
     else{
         strcpy(message, "ERR\n");
-    }   
-    //printf("Message: %s", message);
-    finalMessage = (char*)realloc(message, strlen(message));
-    // finalMessage = "";
-    // printf("TAMANHO: %ld,", strlen(message));
-    // strncpy(finalMessage, message, strlen(message));
-    printf("Final Message: !%s!", finalMessage);
-    printf("Final Message: !%s!", finalMessage);
-    return finalMessage;
+    }
+    
+    return message;
 }
 
