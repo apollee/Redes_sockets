@@ -159,17 +159,20 @@ void create_topic_directory(char *dirname, char* userID){
 
 //QUESTION LIST---------------------------------------------------
 
-char* questionList(char* currTopic){
+char* questionList(char* currTopic, char* numDirec){
     char* path = (char*)malloc(sizeof (char)* 1024);
     DIR *d;
     struct dirent *dir;
     sprintf(path, "TOPICS/%s/", currTopic);
     d = opendir(path);
+    int num = atoi(numDirec);
+    int count = 0;
     //free(path);
     char* message = (char*)malloc (sizeof (char) * 1024);
     memset(message, 0, 1024);
     char* finalMessage;
-    strcpy(message, "");
+    strcpy(message, " ");
+
     char* userID = (char*)malloc(sizeof (char)* 1024);
     sprintf(userID, "%s_UID.txt", currTopic);
     if (d){
@@ -182,12 +185,12 @@ char* questionList(char* currTopic){
                 strcat(message, ":");
                 sprintf(path, "TOPICS/%s/%s/", currTopic, dir->d_name);
                 strcat(message, numberOfdirectories(path));
+                count++;
+                if (num != count){
+                    strcat(message, " ");
+                } 
             }
             dir=readdir(d);
-            if ((dir != NULL) && strcmp(dir->d_name, "..") && strcmp(dir->d_name, ".")  && (strcmp(dir->d_name, userID))){
-                strcat(message, " ");
-            }
-
         }
         strncpy(message, message, strlen(message) - 1);
 

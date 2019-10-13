@@ -8,7 +8,7 @@ typedef struct node* Link;
 typedef struct user User;
 
 int searchID(Link head, int id);
-int searchIP(Link head, char* ip);
+int searchIP(Link head, const char* ip);
 void printVector(Link head);
 Link insertUser(Link head, int id, const char* ip);
 Link newLink(Link head, int id, const char* ip);

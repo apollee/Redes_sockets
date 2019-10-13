@@ -61,8 +61,6 @@ int main(int argc, char *argv[]) {
             char* buf = (char*)malloc(sizeof(char)*1024);
             buf =  parse_command(newbuf, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
             char* nbuf = realloc(buf, strlen(buf) + 1);
-            printf("buf %s!\n",nbuf);
-            printf("buf %ld!\n",strlen(nbuf));
             sendto(fdUDP, nbuf, strlen(nbuf), 0, (struct sockaddr*)&addr, addrlen);
         } 	
 

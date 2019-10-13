@@ -42,14 +42,14 @@ int searchID(Link head, int id){
 	return FALSE;
 }
 
-int searchIP(Link head, char* ip){
+int searchIP(Link head, const char* ip){
 	Link t;
 	for(t = head; t != NULL;t = t->next){
 		if(!strcmp(t->user.ip, ip)){
 			return TRUE; 
 		}
 	}
-	return FALSE;
+	return TRUE;
 }
 
 void printVector(Link head){

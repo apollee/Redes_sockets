@@ -6,5 +6,5 @@
 int input_command_server(int argc, char *argv[], char *port);
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberCar, const char* ip);
 char* parse_command(char* message, const char* ip);
-
+int isREG(const char* ip);
 #endif

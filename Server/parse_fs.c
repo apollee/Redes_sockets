@@ -66,20 +66,30 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(!strcmp(saveTokens[0], "LTP")){
         if(commandLTPOK(numTokens, saveTokens, numberChar)){
+            if(isREG(ip)){
             strcpy(message, "LTR ");
             printf("List topics\n");
             strcat(message, checkTopics());
             strcat(message, "\n");
+        	}
+        	else{
+        		strcpy(message, "ERR\n");
+        	}
         }
     }
 
     //Falta so verificacao de erros para quando nao foi dado REG
     else if(!strcmp(saveTokens[0], "PTP")){
         if(commandPTPOK(numTokens, saveTokens, numberChar)){
-            strcpy(message, "PTR ");
-            strcat(message, proposeTopic(saveTokens));
-            strcat(message, "\n");
-        }
+            if(isREG(ip)){
+	            strcpy(message, "PTR ");
+	            strcat(message, proposeTopic(saveTokens));
+	            strcat(message, "\n");
+	        }
+	        else{
+	        	strcpy(message, "ERR\n");
+	        }
+	    }    
         else{
             strcpy(message, "PTR NOK\n");
         }
@@ -87,10 +97,15 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(!strcmp(saveTokens[0], "LQU")){
         if(commandLQUOK(numTokens, saveTokens, numberChar)){
-            printf("List questions for topic: %s\n", saveTokens[1]);
-            strcpy(message, "LQR ");
-            strcat(message, checkQuestions(saveTokens));
-            strcat(message, "\n");
+	        if(isREG(ip)){
+	            printf("List questions for topic: %s\n", saveTokens[1]);
+	            strcpy(message, "LQR ");
+	            strcat(message, checkQuestions(saveTokens));
+	            strcat(message, "\n");
+    		}
+    		else{
+    			strcpy(message, "ERR\n");
+    		}
         }else{
             strcpy(message, "ERR\n");
         }
@@ -101,8 +116,13 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     //--------------------------------------------------------------------
     else if(!strcmp(saveTokens[0], "GQU")){
         if(commandGQUOK(numTokens, saveTokens, numberChar)){
-            strcpy(message, "QGR ");
-            strcat(message, "\n");
+            if(isREG(ip)){
+            	strcpy(message, "QGR ");
+            	strcat(message, "\n");
+        	}
+        	else{
+        		strcpy(message, "ERR\n");
+        	}
         }else{
             strcpy(message, "ERR\n");
         }
@@ -110,9 +130,14 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 
     else if(!strcmp(saveTokens[0], "QUS")){
         if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
-            strcpy(message, "QUR ");
-            strcat(message, checkSubmitQuestion(saveTokens));
-            strcat(message, "\n");
+        	if(isREG(ip)){
+            	strcpy(message, "QUR ");
+            	strcat(message, checkSubmitQuestion(saveTokens));
+            	strcat(message, "\n");
+			}
+			else{
+				strcpy(message, "ERR\n");
+			}        	
         }else{
             strcpy(message, "QUR NOK\n");
         }
@@ -120,8 +145,13 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     
     else if(!strcmp(saveTokens[0], "ANS")){
         if(commandANSOK(numTokens, saveTokens, numberChar)){
-            strcpy(message, "ANR ");
-            strcat(message, "\n");
+            if(isREG(ip)){
+            	strcpy(message, "ANR ");
+            	strcat(message, "\n");
+        	}
+        	else{
+        		strcpy(message, "ERR\n");
+        	}
         }else{
             strcpy(message, "ERR\n");
         }
@@ -134,3 +164,6 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
     return finalMessage;
 }
 
+int isREG(const char* ip){
+	return searchIP(headUser, ip);
+}

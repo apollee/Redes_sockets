@@ -174,12 +174,13 @@ char* checkQuestions(char** saveTokens){
     char* finalMessage;
     char* path = malloc(sizeof (char)* 1024);
     sprintf(path, "TOPICS/%s/", saveTokens[1]);
-    strcpy(message, numberOfdirectories(path));
+    char* numDirec = numberOfdirectories(path); 
+    strcpy(message, numDirec);
     if(!strcmp(message, "0")){
         message = (char*)realloc(message, strlen(message)+1);
         return message;
     }
-    strcat(message, questionList(saveTokens[1]));
+    strcat(message, questionList(saveTokens[1], numDirec));
     //free(path);
     finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
