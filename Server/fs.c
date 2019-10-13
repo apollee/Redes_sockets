@@ -57,9 +57,13 @@ int main(int argc, char *argv[]) {
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
-            char* buf =  parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
-   			char* newbuf = realloc(buf, strlen(buf));
-            sendto(fdUDP,newbuf, strlen(newbuf), 0, (struct sockaddr*)&addr, addrlen);
+            char* newbuf = realloc(buffer, n+1);
+            char* buf = (char*)malloc(sizeof(char)*1024);
+            buf =  parse_command(newbuf, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
+            char* nbuf = realloc(buf, strlen(buf) + 1);
+            printf("buf %s!\n",nbuf);
+            printf("buf %ld!\n",strlen(nbuf));
+            sendto(fdUDP, nbuf, strlen(nbuf), 0, (struct sockaddr*)&addr, addrlen);
         } 	
 
         //TCP

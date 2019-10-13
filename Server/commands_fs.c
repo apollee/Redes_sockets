@@ -121,7 +121,7 @@ char* checkTopics(){
         strcat(message, " ");
         strcat(message, topicList(numTopics));
     }
-    finalMessage = (char*)realloc(message, strlen(message));
+    finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
 }
 
@@ -142,7 +142,7 @@ char* proposeTopic(char** saveTokens){
         strcpy(message, "OK");
     }
     //free(path);
-    finalMessage = (char*)realloc(message, strlen(message));
+    finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
 }
 
@@ -161,7 +161,7 @@ char* checkSubmitQuestion(char** saveTokens){
         strcpy(message, "OK");
     
     //free(path);
-    finalMessage = (char*)realloc(message, strlen(message));
+    finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
 
 }
@@ -176,11 +176,11 @@ char* checkQuestions(char** saveTokens){
     sprintf(path, "TOPICS/%s/", saveTokens[1]);
     strcpy(message, numberOfdirectories(path));
     if(!strcmp(message, "0")){
-        message = (char*)realloc(message, strlen(message));
+        message = (char*)realloc(message, strlen(message)+1);
         return message;
     }
     strcat(message, questionList(saveTokens[1]));
     //free(path);
-    finalMessage = (char*)realloc(message, strlen(message));
+    finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
 }

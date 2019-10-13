@@ -45,7 +45,7 @@ char* number_of_topics(){ //get the number of total topics
         return NULL;  
     
     sprintf(value, "%d", number);
-    finalValue = realloc(value, strlen(value));
+    finalValue = realloc(value, strlen(value)+1);
     return finalValue;
 }
 
@@ -77,7 +77,7 @@ char* topicList(char* numTopics){ //get the list of topics
             dir=readdir(d);
         }
         closedir(d);
-        finalMessage = realloc(message, strlen(message));
+        finalMessage = realloc(message, strlen(message)+1);
         return finalMessage;
     }
     else 
@@ -129,7 +129,7 @@ char* numberOfdirectories(char* path){
         return value;
     }
     sprintf(value, "%d", number);
-    finalValue = (char*)realloc(value, strlen(value));
+    finalValue = (char*)realloc(value, strlen(value)+1);
     return finalValue;
 }
 
@@ -193,7 +193,7 @@ char* questionList(char* currTopic){
 
         //free(userID);
         closedir(d);
-        finalMessage = (char*)realloc(message, strlen(message));
+        finalMessage = (char*)realloc(message, strlen(message)+1);
         return finalMessage;
     }
     else{
