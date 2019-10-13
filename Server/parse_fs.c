@@ -112,7 +112,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
         if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
             strcpy(message, "QUR ");
             strcat(message, checkSubmitQuestion(saveTokens));
-            strcat(message, "\n\0");
+            strcat(message, "\n");
         }else{
             strcpy(message, "QUR NOK\n");
         }

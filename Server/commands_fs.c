@@ -53,9 +53,12 @@ int commandPTPOK(int numTokens, char** saveTokens, long int numberChar){
 int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
         return FALSE; 
-    else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1])){
+    /*else if(numberChar - 2 != strlen(saveTokens[0]) + strlen(saveTokens[1])){
+        printf("%ld\n", numberChar);
+        printf("%ld\n",strlen(saveTokens[0]));
+        printf("%ld\n",strlen(saveTokens[1]));
         return FALSE;
-    }
+    }*/
     else
         return TRUE; 
 }
@@ -112,9 +115,10 @@ char* checkTopics(){
     char* finalMessage;
 
     strcpy(message, number_of_topics());
-    strcat(message, " ");
-    if (strcmp(number_of_topics(), "0"))
+    if (strcmp(number_of_topics(), "0")){
+        strcat(message, " ");
         strcat(message, topicList());
+    }
     finalMessage = (char*)realloc(message, strlen(message));
     return finalMessage;
 }
@@ -166,8 +170,10 @@ char* checkQuestions(char** saveTokens){
     char* path = malloc(sizeof (char)* 1024);
     sprintf(path, "TOPICS/%s/", saveTokens[1]);
     strcpy(message, numberOfdirectories(path));
-   
-    strcat(message, " ");
+    if(!strcmp(message, "0")){
+        message = (char*)realloc(message, strlen(message));
+        return message;
+    }
     strcat(message, questionList(saveTokens[1]));
     //free(path);
     finalMessage = (char*)realloc(message, strlen(message));

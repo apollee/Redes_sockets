@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
     start_UDP();
     
     start_TCP();
-     
+
   	while(1){
         FD_ZERO(&rfds); 
         FD_SET(fdUDP, &rfds);
@@ -55,7 +55,6 @@ int main(int argc, char *argv[]) {
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             char* buf =  parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
-            printf("%s", buf);
             sendto(fdUDP,buf, strlen(buf), 0, (struct sockaddr*)&addr, addrlen);
         } 	
 

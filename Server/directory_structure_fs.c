@@ -58,7 +58,7 @@ char* topicList(){ //get the list of topics
     strcpy(message, "");
     //printf("message antes do topicList: !%s!\n", message);
     if (d){
-        dir=readdir(d);
+        dir = readdir(d);
         while(dir != NULL){
             //printf("dirName: %s\n", dir->d_name);
            if ((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
@@ -85,20 +85,16 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
     char* message = (char*)malloc (sizeof (char)* 1024); 
     sprintf(message, "TOPICS/%s/%s_UID.txt", dirname, dirname);
     FILE* file;
-    size_t len = 0; 
-    
+    char* id = (char*) malloc(sizeof(char)*6);
     file = fopen(message, "r");
-    char *line = NULL;
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
+    fscanf(file, "%s", id);
     
-    getline(&line, &len, file);
-    line[strcspn(line, "\n")] = 0;
     //free(message);
-    return line;
+    return id;
 }
-
 //TOPIC PROPOSE---------------------------------------------------
 
 int check_max_directory_size(char* path){
@@ -116,7 +112,6 @@ char* numberOfdirectories(char* path){
     char* finalValue;
     d = opendir(path);
     //free(path);
-
     if (d){
         while((dir=readdir(d)) != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && dir->d_type == DT_DIR){             
@@ -135,9 +130,7 @@ char* numberOfdirectories(char* path){
 }
 
 void create_topic_directory(char *dirname, char* userID){
-    int id = atoi(userID);
     DIR *d;
-
     //Open topic folder
     d = opendir("TOPICS");
     int fd = dirfd(d);
@@ -152,8 +145,9 @@ void create_topic_directory(char *dirname, char* userID){
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
-    }   
-    fprintf(file,"%d", id);
+    }
+    strcat(userID, "\0");
+    fprintf(file,"%s", userID);
     fclose(file);
     //free(path);
     closedir(d);
@@ -174,7 +168,8 @@ char* questionList(char* currTopic){
     char* userID = (char*)malloc(sizeof (char)* 1024);
     sprintf(userID, "%s_UID.txt", currTopic);
     if (d){
-        while((dir=readdir(d)) != NULL){
+        dir=readdir(d);
+        while(dir != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && (strcmp(dir->d_name, userID))){
                 strcat(message, dir->d_name);
                 strcat(message, ":");
@@ -182,9 +177,15 @@ char* questionList(char* currTopic){
                 strcat(message, ":");
                 sprintf(path, "TOPICS/%s/%s/", currTopic, dir->d_name);
                 strcat(message, numberOfdirectories(path));
+            }
+            dir=readdir(d);
+            if ((dir != NULL) && strcmp(dir->d_name, "..") && strcmp(dir->d_name, ".")  && (strcmp(dir->d_name, userID))){
                 strcat(message, " ");
             }
+
         }
+        strncpy(message, message, strlen(message) - 1);
+
         //free(userID);
         closedir(d);
         finalMessage = (char*)realloc(message, strlen(message));
@@ -195,6 +196,7 @@ char* questionList(char* currTopic){
         return NULL;
     }
 }
+
 
 char* questionID(char* currTopic, char* dirname){
     char* path = (char*)malloc (sizeof (char) * 1024); 
