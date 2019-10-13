@@ -80,13 +80,17 @@ void start_UDP(){
     hintsUDP.ai_family = AF_INET;
     hintsUDP.ai_socktype = SOCK_DGRAM; //UDP
     hintsUDP.ai_flags = AI_NUMERICSERV;
-  
-    if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
-    }
-     
+    
     if(!strcmp(ip, FLAG)){
+        if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
+            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+        }
         inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+    }
+    else{
+        if((errcode = getaddrinfo(ip, port, &hintsUDP, &resUDP)) != 0){
+            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+        }
     }
 }
 

@@ -305,14 +305,16 @@ int isREG(char* id_user){
 
 void topics_print(char** saveTokens){
     int i;
-    int number = atoi(saveTokens[1]); 
+    int number = atoi(saveTokens[1]);
+    create_directory("TOPICS"); 
 
     for(i = 1; i <= number; i++){
         printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
         printf("%s ", token);
-        token = strtok(NULL, ":");
-        printf("(proposed by %s)\n", token);
+        char * token2 = strtok(NULL, "");
+        printf("(proposed by %s)\n", token2);
+        create_topic_directory(token, token2);
     }
 }
 
