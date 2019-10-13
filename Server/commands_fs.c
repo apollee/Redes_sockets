@@ -112,12 +112,14 @@ int onlyNumbers(char* message) {
 //TOPIC LIST
 char* checkTopics(){
     char* message = (char*)malloc(sizeof (char)* 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
-
+    char* numTopics;
     strcpy(message, number_of_topics());
-    if (strcmp(number_of_topics(), "0")){
+    numTopics = number_of_topics();
+    if (strcmp(numTopics, "0")){
         strcat(message, " ");
-        strcat(message, topicList());
+        strcat(message, topicList(numTopics));
     }
     finalMessage = (char*)realloc(message, strlen(message));
     return finalMessage;
@@ -126,6 +128,7 @@ char* checkTopics(){
 //TOPIC PROPOSE
 char* proposeTopic(char** saveTokens){
     char* message = (char*)malloc(sizeof (char)* 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
     char* path = malloc (sizeof (char) * 1024);
     sprintf(path, "TOPICS/%s", saveTokens[2]);
@@ -145,6 +148,7 @@ char* proposeTopic(char** saveTokens){
 
 char* checkSubmitQuestion(char** saveTokens){
     char* message = (char*)malloc(sizeof (char)* 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
     char* path = malloc(sizeof (char)* 1024);
     sprintf(path, "TOPICS/%s/%s", saveTokens[3], saveTokens[4]);
@@ -166,6 +170,7 @@ char* checkSubmitQuestion(char** saveTokens){
 //QUESTION LIST
 char* checkQuestions(char** saveTokens){
     char* message = (char*)malloc(sizeof (char)* 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
     char* path = malloc(sizeof (char)* 1024);
     sprintf(path, "TOPICS/%s/", saveTokens[1]);

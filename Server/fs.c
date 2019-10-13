@@ -25,7 +25,7 @@ int fdUDP, fdTCP, errcode, newfd, maxDescriptor;
 socklen_t addrlen;
 ssize_t n;
 fd_set rfds;
-char buffer[128]; 
+char buffer[1024]; 
 char port[6]; 
 
 
@@ -41,6 +41,7 @@ int main(int argc, char *argv[]) {
     
     start_TCP();
 
+
   	while(1){
         FD_ZERO(&rfds); 
         FD_SET(fdUDP, &rfds);
@@ -53,9 +54,12 @@ int main(int argc, char *argv[]) {
         //UDP
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
+            memset(buffer, 0, 1024);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             char* buf =  parse_command(buffer, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
+   			memset(buffer, 0, 1024);
             sendto(fdUDP,buf, strlen(buf), 0, (struct sockaddr*)&addr, addrlen);
+        	memset(buf, 0, 1024);
         } 	
 
         //TCP

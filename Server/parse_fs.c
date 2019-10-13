@@ -49,7 +49,7 @@ char* parse_command(char* message, const char* ip) { // command that is received
 //
 char* input_action(int numTokens, char** saveTokens, char* input, long int numberChar, const char* ip){
     char* message = (char*)malloc (sizeof (char) * 1024);
-
+    memset(message, 0, 1024);
     //--------------------------------------------------------------------
     // UDP CMDS
     //--------------------------------------------------------------------    

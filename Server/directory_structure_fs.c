@@ -49,13 +49,16 @@ char* number_of_topics(){ //get the number of total topics
     return finalValue;
 }
 
-char* topicList(){ //get the list of topics
+char* topicList(char* numTopics){ //get the list of topics
     DIR *d;
     struct dirent *dir;
     d = opendir("TOPICS");
     char* message = (char*)malloc (sizeof (char)* 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
     strcpy(message, "");
+    int num = atoi(numTopics);
+    int count = 0;
     //printf("message antes do topicList: !%s!\n", message);
     if (d){
         dir = readdir(d);
@@ -66,15 +69,15 @@ char* topicList(){ //get the list of topics
                 strcat(message, dir->d_name);
                 strcat(message, ":");
                 strcat(message, topicID(dir->d_name));
-                //strcat(message, " ");
+                count++;
+                if(num != count){
+                    strcat(message, " ");
+                }
             }
             dir=readdir(d);
-            if ((dir != NULL) && strcmp(dir->d_name, "..") && strcmp(dir->d_name, ".")){
-                strcat(message, " ");
-            }
         }
         closedir(d);
-        finalMessage = (char*)realloc(message, strlen(message));
+        finalMessage = realloc(message, strlen(message));
         return finalMessage;
     }
     else 
@@ -90,7 +93,7 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
-    fscanf(file, "%s", id);
+    fscanf(file, "%5s", id);
     
     //free(message);
     return id;
@@ -109,6 +112,7 @@ char* numberOfdirectories(char* path){
     DIR *d;
     struct dirent *dir;
     char* value = (char*)malloc(sizeof (char)* 1024);
+    memset(value, 0, 1024);
     char* finalValue;
     d = opendir(path);
     //free(path);
@@ -163,6 +167,7 @@ char* questionList(char* currTopic){
     d = opendir(path);
     //free(path);
     char* message = (char*)malloc (sizeof (char) * 1024);
+    memset(message, 0, 1024);
     char* finalMessage;
     strcpy(message, "");
     char* userID = (char*)malloc(sizeof (char)* 1024);
@@ -203,18 +208,16 @@ char* questionID(char* currTopic, char* dirname){
     sprintf(path, "TOPICS/%s/%s/%s_UID.txt", currTopic, dirname, dirname);
   
     FILE* file;
-    size_t len = 0; 
+    char* id = (char*)malloc(sizeof(char)*6);
     
     file = fopen(path, "r");
     //free(path);
-    char *line = NULL;
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
-    
-    getline(&line, &len, file);
-    line[strcspn(line, "\n")] = 0;
-    return line;
+    fscanf(file, "%s", id);
+    strcat(id, "\0");
+    return id;
 }
 
 //USER FUNCTIONS--------------------------------------------------
