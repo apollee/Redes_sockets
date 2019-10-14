@@ -123,6 +123,7 @@ void start_TCP(){
 } 
 
 
+//divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo whyle
 int connectTCP(){
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
@@ -148,17 +149,33 @@ char* readTCP(){
 }
 
 //Esta funcao e para ser chamada depois de tudo ter sido enviado
-void send_commandTCP(char* message){
-    // write(1, "echo TCP: ", 10);    
-    // write(1, buffer, strlen(buffer)); 
-    // parse_command_received(buffer);
-    // close(fdTCP);
+// void send_commandTCP(char* message){
+//     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+//     if(h == -1){
+//         printf("send to not working TCP\n");
+//     } 
 
-    // fdTCP = create_socket(resTCP);
-    // if(fdTCP == -1){
-    //     printf("creating TCP socket failed\n"); 
-    // }
-} 
+//     int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
+//     if (b == -1){
+//         printf("write not working TCP");
+//     }
+
+//     char buffer[1024];
+//     b = read(fdTCP, buffer, 1024); 
+//     if (b == -1){
+//         printf("read not working TCP");
+//     }
+
+//     write(1, "echo TCP: ", 10);    
+//     write(1, buffer, strlen(buffer)); 
+//     parse_command_received(buffer);
+//     close(fdTCP);
+
+//     fdTCP = create_socket(resTCP);
+//     if(fdTCP == -1){
+//         printf("creating TCP socket failed\n"); 
+//     }
+// } 
 
 void free_and_close(){
     freeaddrinfo(resUDP);

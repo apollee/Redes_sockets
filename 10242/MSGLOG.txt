@@ -1,0 +1,1 @@
+UDPC:REG 97023$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 6 topic3:21432 topic6:12342 topic4:12342 topic2:80953 topic1:12345 ewqter:12342$TCPC:QUS 97023 topic3 teste 32 [--> 32 bytes of data -->]

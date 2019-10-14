@@ -251,6 +251,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         strcat(message, "0");
     }
     strcat(message, "\n\0"); //atencao ao \0
+    //sprintf(message, "QUS 53035 topic questao 10 Ola");
     send_commandTCP(message);
 }
 

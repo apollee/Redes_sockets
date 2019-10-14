@@ -192,7 +192,7 @@ char* questionList(char* currTopic, char* numDirec){
             }
             dir=readdir(d);
         }
-        strncpy(message, message, strlen(message) - 1);
+        //strncpy(message, message, strlen(message) - 1);
 
         //free(userID);
         closedir(d);

@@ -167,6 +167,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 int isREG(const char* ip){
 	return searchIP(headUser, ip);
 }
+
 char* parse_commandTCP(char* message, const char* ip){
     int i;
     
@@ -179,17 +180,36 @@ char* parse_commandTCP(char* message, const char* ip){
         memset(saveTokens[i], 0, 50);
     }
     
-    int count = 0;
+    int nSpaces = 0;
     int j = 0;
     int k = 0;
+    int error = 0;
+
+    int sizes[5] = {3,5,10,10,10}; 
+    int nSizes = 0;
 
     for(i = 0; i < 50; i++){
         if(message[i] == ' '){
-            count++;
+            if (strlen(saveTokens[j]) == 0){
+                error = 1;
+            }
+            else{
+                if (nSizes < 2){
+                    if (strlen(saveTokens[nSizes]) != sizes[nSizes])
+                        error = 1;
+                }
+                else {
+                    if (strlen(saveTokens[nSizes]) > sizes[nSizes])
+                        error = 1;
+                }
+            }
+
+            nSizes++;
+            nSpaces++;
             j++;
             k = 0;
         }
-        else if(count == 5){
+        else if(nSpaces == 5){
             break;
         }
         else{
@@ -198,24 +218,29 @@ char* parse_commandTCP(char* message, const char* ip){
         }
     }
 
-    for(i = 0; i < j;i++){
-        printf("%s\n", saveTokens[i]);
-    }
-    strcpy(newMessage, "");
-    if(!strcmp(saveTokens[0],"GQU ")){
-        printf("qg\n");
-    }
-    else if(!strcmp(saveTokens[0],"QUS ")){
-        if(commandQUSOK(saveTokens, , i)){}
 
-        strcpy(newMessage, "QUR DUP\n");
+    if (error){
+        strcpy(newMessage, "ERR\n");
     }
-    else if(!strcmp(saveTokens[0],"ANS ")){
-        printf("answer_submit\n");
+    else {
+        if(!strcmp(saveTokens[0],"GQU")){
+            printf("qg\n");
+        }
+
+        else if(!strcmp(saveTokens[0],"QUS")){
+            //if(commandQUSOK(saveTokens, , i)){}
+
+            strcpy(newMessage, "QUR OK\n");
+        }
+        else if(!strcmp(saveTokens[0],"ANS")){
+            printf("answer_submit\n");
+        }
+        else{
+            printf("lou e gay\n");
+        }
     }
-    else{
-        printf("lou e gay\n");
-    }
+
+
     char* finalMessage = realloc(newMessage, strlen(newMessage) + 1); 
     return finalMessage;
 }
