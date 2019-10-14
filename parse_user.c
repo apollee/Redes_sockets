@@ -202,7 +202,6 @@ void input_action_received(int numTokens, char** saveTokens, char* buffer, long 
        
     }
     else if(!strcmp(command, "LQR")){
-        printf("available questions about %s:\n", local_topic);
         questions_print(saveTokens);
     }
     /*else if(commandQGOK(numTokens, saveTokens, numberChar)){

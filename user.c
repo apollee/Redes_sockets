@@ -95,13 +95,14 @@ void start_UDP(){
 }
 
 void send_commandUDP(char *message){
-    char buffer[1024];
-    n = sendto(fdUDP, message, strlen(message) + 1,0,resUDP->ai_addr,resUDP->ai_addrlen);
+    
+    n = sendto(fdUDP, message, strlen(message),0,resUDP->ai_addr,resUDP->ai_addrlen);
 
     if(n == -1){
         printf("send to not working UDP\n");
     }
-
+    char* buffer = (char*)malloc(sizeof( char)*1024);
+    memset(buffer, 0, 1024);
     addrlen = sizeof(addr);
     n = recvfrom(fdUDP, buffer, 1024, 0, (struct sockaddr*) &addr, &addrlen);
     if(n == -1){

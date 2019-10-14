@@ -6,5 +6,6 @@ int checkExistenceofTopic(char* dirname);
 char* topicID(char* dirname);
 void create_topic_directory(char *dirname, char* userID);
 void create_directory(char* dirname);
+void topicList();
 
 #endif

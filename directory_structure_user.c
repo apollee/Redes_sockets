@@ -95,3 +95,31 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
     free(message);
     return line;
 }
+
+void topicList(){ //get the list of topics
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("TOPICS");
+    int count = 0;
+    //printf("message antes do topicList: !%s!\n", message);
+    if (d){
+        dir = readdir(d);
+        while(dir != NULL){
+            //printf("dirName: %s\n", dir->d_name);
+           if ((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                count++;
+           		printf("%d - ", count);
+                printf("%s (proposed by ", dir->d_name);
+                printf("%s)\n", topicID(dir->d_name));
+                //if(num != count){
+                  //  strcat(message, " ");
+                //}
+            }
+            dir=readdir(d);
+        }
+        closedir(d);
+	}
+	else{
+		exit(1);
+	}
+}

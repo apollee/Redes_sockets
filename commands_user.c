@@ -54,14 +54,17 @@ int commandTSOK(int numTokens, char** saveTokens, long int numberChar){
         }
     }
     else if(!strcmp(saveTokens[0], "topic_select")){
-       // if(checkExistenceofTopic(saveTokens[1])){
+       if(checkExistenceofTopic(saveTokens[1])){
             strcpy(local_topic, saveTokens[1]);
-    //    //     return TRUE;   
-    //     }else 
-    //         return FALSE;
+            return TRUE;   
+        }
+        else{ 
+            return FALSE;
+        }
     }
-    else
+    else{
         return FALSE;
+    }
 }
 
 int commandTPOK(int numTokens, char** saveTokens, long int numberChar){
@@ -192,8 +195,8 @@ void send_message_qg(char* message){
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     char var[1024]; 
-    char buffer[DEFAULT_BUFFER_SIZE];
-    int offset = 0;
+    //char buffer[DEFAULT_BUFFER_SIZE];
+    //int offset = 0;
     FILE* fd;
 
     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
@@ -309,20 +312,26 @@ void topics_print(char** saveTokens){
     create_directory("TOPICS"); 
 
     for(i = 1; i <= number; i++){
-        printf("%d - ", i);
+        //printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
-        printf("%s ", token);
+        //printf("%s ", token);
         char * token2 = strtok(NULL, "");
-        printf("(proposed by %s)\n", token2);
+        //printf("(proposed by %s)\n", token2);
         create_topic_directory(token, token2);
     }
+    topicList();
 }
 
 void questions_print(char** saveTokens){
     int i;
     int number = atoi(saveTokens[1]); 
-
-     for(i = 1; i <= number; i++){
+    if(number == 0){
+        printf("No questions available\n");
+    }
+    else{
+        printf("available questions about %s:\n", local_topic);
+    }
+    for(i = 1; i <= number; i++){
         printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
         printf("%s\n", token);
