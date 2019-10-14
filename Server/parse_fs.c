@@ -167,3 +167,55 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 int isREG(const char* ip){
 	return searchIP(headUser, ip);
 }
+char* parse_commandTCP(char* message, const char* ip){
+    int i;
+    
+    char* newMessage = (char*) malloc(sizeof(char)* 9);
+    
+    char** saveTokens = (char **) malloc(sizeof (char*) * 5);
+    
+    for(i = 0; i < 5; i++){
+        saveTokens[i] = (char *) malloc(sizeof(char)*50);
+        memset(saveTokens[i], 0, 50);
+    }
+    
+    int count = 0;
+    int j = 0;
+    int k = 0;
+
+    for(i = 0; i < 50; i++){
+        if(message[i] == ' '){
+            count++;
+            j++;
+            k = 0;
+        }
+        else if(count == 5){
+            break;
+        }
+        else{
+            saveTokens[j][k] = message[i];
+            k++;
+        }
+    }
+
+    for(i = 0; i < j;i++){
+        printf("%s\n", saveTokens[i]);
+    }
+    strcpy(newMessage, "");
+    if(!strcmp(saveTokens[0],"GQU ")){
+        printf("qg\n");
+    }
+    else if(!strcmp(saveTokens[0],"QUS ")){
+        if(commandQUSOK(saveTokens, , i)){}
+
+        strcpy(newMessage, "QUR DUP\n");
+    }
+    else if(!strcmp(saveTokens[0],"ANS ")){
+        printf("answer_submit\n");
+    }
+    else{
+        printf("lou e gay\n");
+    }
+    char* finalMessage = realloc(newMessage, strlen(newMessage) + 1); 
+    return finalMessage;
+}
