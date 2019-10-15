@@ -170,9 +170,7 @@ int isREG(const char* ip){
 
 char* parse_commandTCP(char* message, const char* ip){
     int i;
-    
-    char* newMessage = (char*) malloc(sizeof(char)* 9);
-    
+        
     char** saveTokens = (char **) malloc(sizeof (char*) * 5);
     
     for(i = 0; i < 5; i++){
@@ -188,6 +186,7 @@ char* parse_commandTCP(char* message, const char* ip){
     int sizes[5] = {3,5,10,10,10}; 
     int nSizes = 0;
 
+    //First part of parse until data
     for(i = 0; i < 50; i++){
         if(message[i] == ' '){
             if (strlen(saveTokens[j]) == 0){
@@ -218,11 +217,16 @@ char* parse_commandTCP(char* message, const char* ip){
         }
     }
 
-
+    char* newMessage = (char*) malloc(sizeof(char)* 9);
     if (error){
         strcpy(newMessage, "ERR\n");
     }
     else {
+        //char* data = (char*) malloc(sizeof(char)* saveTokens[4]);
+        
+        printf("Message: %s\n", &message[2]);
+
+
         if(!strcmp(saveTokens[0],"GQU")){
             printf("qg\n");
         }
@@ -240,7 +244,8 @@ char* parse_commandTCP(char* message, const char* ip){
         }
     }
 
-
+    free(saveTokens);
     char* finalMessage = realloc(newMessage, strlen(newMessage) + 1); 
+    printf("Final Message: %s\n", finalMessage);
     return finalMessage;
 }

@@ -43,6 +43,14 @@ int main(int argc, char *argv[]) {
     
     start_TCP();
 
+    char* bufferBeforeParsing;
+    char* bufferAfterParsing;
+    char* bufferFinal;
+
+    // char* bufferBeforeParsingTCP;
+    // char* bufferAfterParsingTCP;
+    // char* bufferFinalTCP;
+    
 
   	while(1){
         FD_ZERO(&rfds); 
@@ -57,16 +65,19 @@ int main(int argc, char *argv[]) {
         if(FD_ISSET(fdUDP, &rfds)){ 
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
-            char* newbuf = realloc(buffer, n+1);
-            char* buf = (char*)malloc(sizeof(char)*1024);
-            buf =  parse_command(newbuf, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
-            char* nbuf = realloc(buf, strlen(buf) + 1);
-            sendto(fdUDP, nbuf, strlen(nbuf), 0, (struct sockaddr*)&addr, addrlen);
+            
+            bufferBeforeParsing = realloc(buffer, n+1);
+            bufferAfterParsing = (char*)malloc(sizeof(char)*1024);
+
+            bufferAfterParsing =  parse_command(bufferBeforeParsing, inet_ntop(resUDP->ai_family,&addr,bufferIP,sizeof bufferIP)); 
+
+            bufferFinal = realloc(bufferAfterParsing, strlen(bufferAfterParsing) + 1);  
+            sendto(fdUDP, bufferFinal, strlen(bufferFinal), 0, (struct sockaddr*)&addr, addrlen);
         } 	
 
         //TCP
         if(FD_ISSET(fdTCP, &rfds)){   
-        	addrlen = sizeof(addr);
+            addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
             memset(buffer, 0, 1024);
             read(newfd, buffer, 1024);
@@ -76,8 +87,33 @@ int main(int argc, char *argv[]) {
         	close(fdTCP);
 
         	start_TCP();
+        	// addrlen = sizeof(addr);
+            // int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
+            // n = read(newfd, buffer, 1024);
+
+            // //bufferBeforeParsingTCP = realloc(buffer, strlen(buffer)+1);
+            // strcpy();
+            // bufferAfterParsingTCP = (char*)malloc(sizeof(char)*1024);
+            
+            // printf("Buffer inicial: %s!\n", bufferBeforeParsingTCP);
+
+            // //memset(buffer, 0, 1024);
+            // //char* nbuf = realloc(buffer, strlen(buffer) + 1);
+            // bufferAfterParsingTCP = parse_commandTCP(bufferBeforeParsingTCP, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP));
+            
+            // bufferFinalTCP = realloc(bufferAfterParsingTCP, strlen(bufferAfterParsingTCP) + 1); 
+            // write(newfd, bufferFinalTCP, 1024); //ta a escrever para o user?
+        	
+            // close(newfd); 
+        	// close(fdTCP);
+
+        	// start_TCP();
         }
     }
+    // free(bufferBeforeParsing);
+    // free(bufferAfterParsing);
+    // free(bufferFinal);
+
     freeaddrinfo(resUDP);
     freeaddrinfo(resTCP);
     close(fdUDP);   
