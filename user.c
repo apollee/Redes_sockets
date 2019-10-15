@@ -154,9 +154,6 @@ char* readTCP(){
 void send_commandTCP(char* message){ 
     //resTCP->ai_addrlen = sizeof(resTCP->ai_addr);
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    if(h == -1){
-        printf("send to not working TCP\n");
-    } 
 
     int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
     if (b == -1){
