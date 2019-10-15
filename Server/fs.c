@@ -31,8 +31,6 @@ char port[6];
 
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];
-    buffer = (char*)malloc(sizeof(char)*1024);
-    memset(buffer, 0, 1024);
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
         create_directory("TOPICS");
@@ -63,6 +61,8 @@ int main(int argc, char *argv[]) {
 
         //UDP
         if(FD_ISSET(fdUDP, &rfds)){ 
+            buffer = (char*)malloc(sizeof(char)*1024);
+            memset(buffer, 0, 1024);
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             
@@ -79,10 +79,12 @@ int main(int argc, char *argv[]) {
         if(FD_ISSET(fdTCP, &rfds)){   
             addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
+            buffer = (char*)malloc(sizeof(char)* 1024);
             memset(buffer, 0, 1024);
             read(newfd, buffer, 1024);
-            printf("%s!\n", buffer);
-            write(newfd, parse_commandTCP(buffer, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024); //ta a escrever para o user?
+            char* newBuffer = realloc(buffer, strlen(buffer) + 1);
+            printf("%s!\n", newBuffer);
+            write(newfd, parse_commandTCP(newBuffer, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024); //ta a escrever para o user?
         	close(newfd); 
         	close(fdTCP);
 

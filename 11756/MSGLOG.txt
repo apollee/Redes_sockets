@@ -1,1 +1,0 @@
-UDPC:REG 12345$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 6 topic3:21432 topic6:12342 topic4:12342 topic2:80953 topic1:12345 ewqter:12342$TCPC:QUS 12345 topic3 ola 32 [--> 32 bytes of data -->] 0$

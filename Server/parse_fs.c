@@ -224,7 +224,7 @@ char* parse_commandTCP(char* message, const char* ip){
     else {
         //char* data = (char*) malloc(sizeof(char)* saveTokens[4]);
         
-        printf("Message: %s\n", &message[2]);
+        printf("Message: %s\n", message);
 
 
         if(!strcmp(saveTokens[0],"GQU")){

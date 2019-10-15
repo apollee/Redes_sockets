@@ -1,1 +1,0 @@
-UDPC:REG 12346$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 5 topic3:21432 topic6:12342 topic4:12342 topic2:80953 topic1:12345$TCPC:QUS 12346 topic1 merda 32 [--> 32 bytes of data -->] 0$
