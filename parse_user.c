@@ -61,7 +61,9 @@ int parse_command() { // command that the user wrote
 
 //action that the user requested
 void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){ 
-    char message[1024]; 
+    char* message = (char*)malloc(sizeof(char)*1024); 
+    memset(message, 0, 1024);
+    strcpy(message, "");
 
     //--------------------------------------------------------------------
     // UDP CMDS
@@ -165,8 +167,16 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
 //comand that the user got from the server
 void parse_command_received(char* buffer){ 
     int numTokens = 0;
-    char *saveTokens[120];
+    int i;
+    //char *saveTokens[120];
     int numberChar;
+
+    char** saveTokens = (char **) malloc(sizeof (char*) * 120);
+    
+    for(i = 0; i < 120; i++){
+        saveTokens[i] = (char *) malloc(sizeof(char)*100);
+        memset(saveTokens[i], 0, 100);
+    }
     
     numberChar = strlen(buffer);
     buffer[strcspn(buffer, "\n")] = 0; 
@@ -177,11 +187,11 @@ void parse_command_received(char* buffer){
         numTokens++;
         token = strtok(NULL, " ");
     }
-
-    input_action_received(numTokens, saveTokens, buffer, numberChar);
+    //free(buffer);
+    input_action_received(numTokens, saveTokens, numberChar);
 }
 
-void input_action_received(int numTokens, char** saveTokens, char* buffer, long int numberChar){ //message from the server
+void input_action_received(int numTokens, char** saveTokens, long int numberChar){ //message from the server
     char command[5];
     strcpy(command, saveTokens[0]);
 

@@ -101,10 +101,10 @@ void send_commandUDP(char *message){
     if(n == -1){
         printf("send to not working UDP\n");
     }
-    char* buffer = (char*)malloc(sizeof( char)*1024);
-    memset(buffer, 0, 1024);
+    char* buffer = (char*)malloc(sizeof( char)*2048);
+    memset(buffer, 0, 2048);
     addrlen = sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 1024, 0, (struct sockaddr*) &addr, &addrlen);
+    n = recvfrom(fdUDP, buffer, 2048, 0, (struct sockaddr*) &addr, &addrlen);
     if(n == -1){
         printf("receiving from UDP server not working\n");
     }
@@ -121,7 +121,6 @@ void start_TCP(){
         fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
     }
 } 
-
 
 //divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo whyle
 int connectTCP(){
@@ -152,7 +151,8 @@ char* readTCP(){
 }
 
 //Esta funcao e para ser chamada depois de tudo ter sido enviado
-void send_commandTCP(char* message){
+void send_commandTCP(char* message){ 
+    //resTCP->ai_addrlen = sizeof(resTCP->ai_addr);
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
         printf("send to not working TCP\n");
@@ -160,13 +160,16 @@ void send_commandTCP(char* message){
 
     int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
     if (b == -1){
-        printf("write not working TCP");
+        printf("write not working TCP\n");
     }
 
-    char buffer[1024];
-    b = read(fdTCP, buffer, 1024); 
+    char* buffer = (char*)malloc(sizeof(char)*2048);
+    memset(buffer, 0, 2048);
+    strcpy(buffer, "");
+
+    b = read(fdTCP, buffer, 2048); 
     if (b == -1){
-        printf("read not working TCP");
+        printf("read not working TCP\n");
     }
 
     write(1, "echo TCP: ", 10);    

@@ -15,7 +15,6 @@
 #include "directory_structure_fs.h"
 #include "vector.h"
 
-
 struct addrinfo hintsUDP,*resUDP;
 struct addrinfo hintsTCP,*resTCP;
 struct sockaddr_in addr;
@@ -27,7 +26,6 @@ ssize_t n;
 fd_set rfds;
 char *buffer; 
 char port[6]; 
-
 
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];

@@ -196,6 +196,7 @@ void send_message_qg(char* message){
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     char var[1024]; 
     char buffer[1024];
+    strcpy(buffer, "");
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
     FILE* fd;
