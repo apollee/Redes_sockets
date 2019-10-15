@@ -9,7 +9,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <signal.h>
-#include "parse_user.h"
+#include "parse_user.h" 
 #include "user.h"
 #include "commands_user.h"
 
@@ -141,41 +141,44 @@ int writeTCP(char* message){
 }
 
 char* readTCP(){
-    char buffer[1024];
+    char* buffer = (char*) malloc(sizeof(char)*1024);
+    char* bufferFinal;
     int b = read(fdTCP, buffer, 1024); 
     if (b == -1){
         printf("read not working TCP");
     }
+    bufferFinal = realloc(buffer, strlen(buffer)+1);
+    return bufferFinal;
 }
 
 //Esta funcao e para ser chamada depois de tudo ter sido enviado
-// void send_commandTCP(char* message){
-//     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-//     if(h == -1){
-//         printf("send to not working TCP\n");
-//     } 
+void send_commandTCP(char* message){
+    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(h == -1){
+        printf("send to not working TCP\n");
+    } 
 
-//     int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
-//     if (b == -1){
-//         printf("write not working TCP");
-//     }
+    int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
+    if (b == -1){
+        printf("write not working TCP");
+    }
 
-//     char buffer[1024];
-//     b = read(fdTCP, buffer, 1024); 
-//     if (b == -1){
-//         printf("read not working TCP");
-//     }
+    char buffer[1024];
+    b = read(fdTCP, buffer, 1024); 
+    if (b == -1){
+        printf("read not working TCP");
+    }
 
-//     write(1, "echo TCP: ", 10);    
-//     write(1, buffer, strlen(buffer)); 
-//     parse_command_received(buffer);
-//     close(fdTCP);
+    write(1, "echo TCP: ", 10);    
+    write(1, buffer, strlen(buffer)); 
+    parse_command_received(buffer);
+    close(fdTCP);
 
-//     fdTCP = create_socket(resTCP);
-//     if(fdTCP == -1){
-//         printf("creating TCP socket failed\n"); 
-//     }
-// } 
+    fdTCP = create_socket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n"); 
+    }
+} 
 
 void free_and_close(){
     freeaddrinfo(resUDP);
