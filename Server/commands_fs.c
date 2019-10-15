@@ -77,16 +77,20 @@ int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE;
 }
 
-int commandQUSOK(int numTokens, char** saveTokens, long int numberChar){
-    //Nao sei se nao temos que verificar os ficheiros 
-    /*if(numTokens != 4)
+int commandQUSOK(int numTokens, char** saveTokens, int numberChar){
+    if(!strlen(saveTokens[0]) || !strlen(saveTokens[1]) || !strlen(saveTokens[2]) || !strlen(saveTokens[3])|| !strlen(saveTokens[4]))
         return FALSE;
-    else if(numberChar - 4 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])))
+    else if(numberChar - 5 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])+strlen(saveTokens[4])))
         return FALSE;
-    else  */
+    else if(strlen(saveTokens[1]) != 5 || !onlyNumbers(saveTokens[1]))
+        return FALSE;
+    else if(strlen(saveTokens[2])>10 || strlen(saveTokens[3])>10)
+        return FALSE;
+    else if(!onlyNumbers(saveTokens[1]))
+        return FALSE;
+    else
         return TRUE;
 }
-
 int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
     // if(numTokens != 3)

@@ -29,6 +29,9 @@ char port[6];
 
 int main(int argc, char *argv[]) {
     char bufferIP[INET_ADDRSTRLEN];
+    int indice;
+    buffer = (char*)malloc(sizeof(char)*1024);
+    memset(buffer, 0, 1024);
     sigpipe_handler();
     if(!check_directory_existence("TOPICS")){
         create_directory("TOPICS");
@@ -59,8 +62,6 @@ int main(int argc, char *argv[]) {
 
         //UDP
         if(FD_ISSET(fdUDP, &rfds)){ 
-            buffer = (char*)malloc(sizeof(char)*1024);
-            memset(buffer, 0, 1024);
             addrlen = sizeof(addr);
             n = recvfrom(fdUDP, buffer, 1024, 0,(struct sockaddr*)&addr,&addrlen);
             
@@ -80,14 +81,63 @@ int main(int argc, char *argv[]) {
             buffer = (char*)malloc(sizeof(char)* 1024);
             memset(buffer, 0, 1024);
             read(newfd, buffer, 1024);
+            char** saveTokens = parse_commandTCP(buffer);
+                
+            if(!strcmp(saveTokens[0],"GQU")){
+                printf("tratar o gqu!!!\n");
+            }
+            else{
+                int num = atoi(saveTokens[4]);
+                int i = atoi(saveTokens[5]);
+                
+                while(num > 0){
+                    printf("%ld\n", strlen(buffer));
+                    indice = treatBufferData(saveTokens, i, num, buffer);
+                    num = num - (indice - i);
+                    i = 0;
+
+                    if(indice == strlen(buffer)){
+                        memset(buffer, 0, 1024);
+                        read(newfd, buffer, 1024);
+                    }
+                } 
+                if(buffer[indice] == ' '){
+                    indice++;
+                    if(buffer[indice] == '0'){
+                        printf("No photo!!\n");
+                    }
+                    else{
+                        indice+=2;
+                        printf("Photo\n");
+                        char* ext = (char*)malloc(sizeof(char)*3);
+                        int j;
+                        for(j = 0; j<3; j++, indice++){
+                            ext[j] = buffer[indice];
+                        }
+                        ext[j] = '\0';
+                        printf("EXT %s\n", ext);
+                        indice += 2;
+                        char* isize = (char*)malloc(sizeof(char)*10);
+                        int indImg = 0;  
+                        while(buffer[indice] != ' '){
+                            isize[indImg] = buffer[indice];
+                            indice++;
+                            indImg++;
+                        }
+                        printf("SIZE %s\n", isize);
+                    }
+                }  
+            }   
             char* newBuffer = realloc(buffer, strlen(buffer) + 1);
-            printf("%s!\n", newBuffer);
-            write(newfd, parse_commandTCP(newBuffer, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP)), 1024); //ta a escrever para o user?
+            write(newfd, "QUR OK\n", 7); //ta a escrever para o user?
         	close(newfd); 
         	close(fdTCP);
 
         	start_TCP();
-        	// addrlen = sizeof(addr);
+        	
+
+
+            // addrlen = sizeof(addr);
             // int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
             // n = read(newfd, buffer, 1024);
 

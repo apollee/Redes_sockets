@@ -11,7 +11,7 @@ int commandLTPOK(int numTokens, char** saveTokens, long int numberChar);
 int commandPTPOK(int numTokens, char** saveTokens, long int numberChar);
 int commandLQUOK(int numTokens, char** saveTokens, long int numberChar);
 int commandGQUOK(int numTokens, char** saveTokens, long int numberChar);
-int commandQUSOK(int numTokens, char** saveTokens, long int numberChar);
+int commandQUSOK(int numTokens, char** saveTokens, int numberChar);
 int commandANSOK(int numTokens, char** saveTokens, long int numberChar);
 char* checkTopics();
 char* checkQuestions(char** saveTokens);
