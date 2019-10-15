@@ -166,7 +166,7 @@ void send_message_ql(char* message){
 void send_message_qg(char* message){
     strcpy(message, "GQU ");
     strcat(message, "\n");
-    send_commandTCP(message);
+    //send_commandTCP(message);
 }
 
 // void send_message_qs(char* message, int numTokens, char** saveTokens){
@@ -195,6 +195,7 @@ void send_message_qg(char* message){
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     char var[1024]; 
+    char buffer[1024];
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
     FILE* fd;
@@ -203,26 +204,17 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     stat(saveTokens[2], &qsize);
     sprintf(var, "%ld", qsize.st_size); //Size of text doc
 
-
-    fd = fopen(saveTokens[2], "rb");
+    strcat(saveTokens[2], ".txt"); //adding the .txt to the file name
+    fd = fopen(saveTokens[2], "r");
     if (fd == NULL){
         fprintf(stderr, "cannot open input file\n");
     }
-    int i, c, max;
-    for (i = 0, max = 4900; i < max && (c = getc(fd)) != EOF; i++) {
-        printf("%02x", c);
-        if (i % 16 == 15)
-            putchar('\n');  // 16 bytes per line
-    }
-    if (i % 16 != 0)
-        putchar('\n');  // output a newline if needed
 
+    fgets(buffer, atoi(var), fd);   
+    strcat(message, buffer);
     fclose(fd);
 
-
-
-
-    connectTCP();
+    //connectTCP();
     
     // while(qsize.st_size != offset){
     //     strcat(message, var);
@@ -232,15 +224,10 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     //     var -= offset;
     // }
 
-
-
-
-   
-    
     //Doc itself
     //strcat(message, " ");
     if (numTokens == 4){
-        strcat(message, "1 ");
+        strcat(message, " 1 ");
         //Missing extension of image
         //strcat(message, " ");
         stat(saveTokens[3], &isize);
@@ -248,7 +235,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         strcat(message, var);
         //Image itself
     }else {
-        strcat(message, "0");
+        strcat(message, " 0 ");
     }
     strcat(message, "\n\0"); //atencao ao \0
     //sprintf(message, "QUS 53035 topic questao 10 Ola");
