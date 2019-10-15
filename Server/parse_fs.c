@@ -12,6 +12,7 @@
 #include "parse_fs.h"
 #include "commands_fs.h"
 #include "vector.h"
+#include "directory_structure_fs.h"
 
 Link headUser;
 
@@ -168,42 +169,16 @@ int isREG(const char* ip){
 	return searchIP(headUser, ip);
 }
 
-char* parse_commandTCP(char* message, const char* ip){
-    int i;
-        
-    char** saveTokens = (char **) malloc(sizeof (char*) * 5);
-    
-    for(i = 0; i < 5; i++){
-        saveTokens[i] = (char *) malloc(sizeof(char)*50);
-        memset(saveTokens[i], 0, 50);
-    }
-    
+char** parse_commandTCP(char* message){
     int nSpaces = 0;
     int j = 0;
     int k = 0;
-    int error = 0;
-
-    int sizes[5] = {3,5,10,10,10}; 
-    int nSizes = 0;
-
+    int i;
+    char** saveTokens = saveTokensInit(6, 50);
     //First part of parse until data
     for(i = 0; i < 50; i++){
         if(message[i] == ' '){
-            if (strlen(saveTokens[j]) == 0){
-                error = 1;
-            }
-            else{
-                if (nSizes < 2){
-                    if (strlen(saveTokens[nSizes]) != sizes[nSizes])
-                        error = 1;
-                }
-                else {
-                    if (strlen(saveTokens[nSizes]) > sizes[nSizes])
-                        error = 1;
-                }
-            }
-
-            nSizes++;
+            saveTokens[j][k] = '\0';
             nSpaces++;
             j++;
             k = 0;
@@ -216,36 +191,147 @@ char* parse_commandTCP(char* message, const char* ip){
             k++;
         }
     }
-
-    char* newMessage = (char*) malloc(sizeof(char)* 9);
-    if (error){
-        strcpy(newMessage, "ERR\n");
+    sprintf(saveTokens[j],"%d", i);
+    return saveTokens;
+}
+int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
+    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind));
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
     }
-    else {
-        //char* data = (char*) malloc(sizeof(char)* saveTokens[4]);
-        
-        printf("Message: %s\n", message);
-
-
-        if(!strcmp(saveTokens[0],"GQU")){
-            printf("qg\n");
+    printf("%s\n",message);
+    return i;
+}
+char** parse_commandTCPImg(int ind, char* message){
+    int nSpaces = 0;
+    int j = 0;
+    int k = 0;
+    int i;
+    char** saveTokens = saveTokensInit(4, 40);
+    printf("%s\n", message);
+    //First part of parse until data
+    for(i = 0; i < 40; i++){
+        if(message[ind + i] == ' '){
+            saveTokens[j][k] = '\0';
+            nSpaces++;
+            j++;
+            k = 0;
         }
-
-        else if(!strcmp(saveTokens[0],"QUS")){
-            //if(commandQUSOK(saveTokens, , i)){}
-
-            strcpy(newMessage, "QUR OK\n");
-        }
-        else if(!strcmp(saveTokens[0],"ANS")){
-            printf("answer_submit\n");
+        else if(nSpaces == 5){
+            break;
         }
         else{
-            printf("lou e gay\n");
+            saveTokens[j][k] = message[ind + i];
+            k++;
         }
+    }
+    int total = ind + i;
+    saveTokens[j][0] = (char)total;
+    return saveTokens;
+}
+
+int treatBufferImg(int ind, int num, char* buffer){
+    return 0;
+}
+/*
+    char* newMessage = (char*) malloc(sizeof(char)* 9);
+    if(!strcmp(saveTokens[0],"GQU")){
+        printf("qg\n");
+    }
+
+    else if(!strcmp(saveTokens[0],"QUS")){
+        if(commandQUSOK(5, saveTokens, i)){
+            char *data = (char*)malloc(sizeof (char)*atoi(saveTokens[4]));
+            int dataIndice = 0;
+            int indiceUpperBound = i +  atoi(saveTokens[4]);
+            for(; i< indiceUpperBound; i++){
+                data[dataIndice] = message[i];
+                dataIndice++;
+            }
+            if(!checkExistenceofTopic(saveTokens[2])){
+                strcpy(newMessage, "QUR NOK");
+            }
+            else{
+                printf("data: %s", data);
+                if(message[i] != ' '){
+                    strcpy(newMessage, "QUR NOK");
+                }
+                else{
+                    i++;
+                    if(message[i] == '0'){
+                        strcpy(newMessage, "QUR OK");
+                    }
+                    else if(message[i] == '1'){
+                        i++;
+                        if(message[i]!= ' '){
+                            strcpy(newMessage, "QUR NOK");
+                        }
+                        else{
+                            i++;
+                            char* ext = (char*)malloc(sizeof(char)*3);
+                            for(j = 0; j < 3; j++, i++){
+                                ext[j] = message[i];
+                            }
+                            char* imgSize = (char*)malloc(sizeof(char)* 10);
+                            if(message[i] != ' '){
+                                strcpy(newMessage, "QUR NOK");
+                            }
+                            else{
+                                i++;
+                                for(j = 0 ;j < 10; j++, i++){    
+                                    if(message[i] == ' '){
+                                        break;
+                                    }
+                                    else{
+                                        imgSize[j] = message[i];
+                                    }
+                                }
+                                if(strlen(imgSize) == 0){
+                                    strcpy(newMessage, "QUR NOK");
+                                }
+                                else{
+                                    i++;
+                                    char* imgData = (char*)malloc(sizeof(char)*atoi(imgSize));
+                                    
+                                    //for(j = 0; j < atoi(imgSize); j++, i++){
+                                      //  imgData[j] = message[i];
+                                    //}
+                                    printf("%s\n",imgData);
+                                    strcpy(newMessage, "QUR OK");
+                                }
+                            }
+                        }
+                    }
+                    else{
+                        strcpy(newMessage, "QUR NOK");       
+                    }
+                }
+            }
+        }
+        else{
+            strcpy(newMessage, "QUR NOK");
+        }
+    }
+    else if(!strcmp(saveTokens[0],"ANS")){
+        printf("answer_submit\n");
+    }
+    else{
+        printf("lou e gay\n");
     }
 
     free(saveTokens);
     char* finalMessage = realloc(newMessage, strlen(newMessage) + 1); 
     printf("Final Message: %s\n", finalMessage);
     return finalMessage;
+}*/
+
+char** saveTokensInit(int row, int collumn){
+    char** saveTokens = (char **) malloc(sizeof (char*) * row);
+    for(int i = 0; i < collumn; i++){
+        saveTokens[i] = (char *) malloc(sizeof(char)*collumn);
+        memset(saveTokens[i], 0, collumn);
+    }
+    return  saveTokens;
 }

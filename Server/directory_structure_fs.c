@@ -224,6 +224,22 @@ char* questionID(char* currTopic, char* dirname){
     return id;
 }
 
+int checkExistenceofTopic(char* dirname){ //check if a topic exists
+    DIR *d;
+    struct dirent *dir;
+    d = opendir("TOPICS");
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if(!(strcmp(dir->d_name, dirname))){
+                return 1;
+            }
+        }
+        closedir(d);
+    }
+    return 0;
+}
+
 //USER FUNCTIONS--------------------------------------------------
 // int getTopic_by_number(int number){ //get the topic by the number
 //     DIR *d;
