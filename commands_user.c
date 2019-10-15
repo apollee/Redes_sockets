@@ -194,26 +194,29 @@ void send_message_qg(char* message){
 // }
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
-    char var[1024]; 
+    long var;
+    char var2[1024];
     char buffer[1024];
+    memset(buffer, 0, 1024);
     strcpy(buffer, "");
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
     FILE* fd;
 
-    sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
-    stat(saveTokens[2], &qsize);
-    sprintf(var, "%ld", qsize.st_size); //Size of text doc
-
     strcat(saveTokens[2], ".txt"); //adding the .txt to the file name
+    stat(saveTokens[2], &qsize);
+    var = qsize.st_size; //Size of text doc
+    
+    sprintf(message, "QUS %s %s %s %ld ", id_user, local_topic, saveTokens[1], var);
+    
     fd = fopen(saveTokens[2], "r");
     if (fd == NULL){
         fprintf(stderr, "cannot open input file\n");
     }
 
-    fgets(buffer, atoi(var), fd);   
+    fgets(buffer, var, fd);   
     strcat(message, buffer);
-    fclose(fd);
+    fclose(fd); 
 
     //connectTCP();
     
@@ -232,11 +235,11 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         //Missing extension of image
         //strcat(message, " ");
         stat(saveTokens[3], &isize);
-        sprintf(var, "%ld", isize.st_size); //Size of image
-        strcat(message, var);
+        sprintf(var2, "%ld", isize.st_size); //Size of image
+        strcat(message, var2);
         //Image itself
     }else {
-        strcat(message, " 0 ");
+        strcat(message, " 0");
     }
     strcat(message, "\n\0"); //atencao ao \0
     //sprintf(message, "QUS 53035 topic questao 10 Ola");
