@@ -18,6 +18,7 @@ int check_max_directory_size(char* dirname);
 char* numberOfdirectories(char* dirname);
 char* numberOfAnswers(char* currTopic, char* currQuestion);
 int checkExistenceofTopic(char* dirname);
+void createQuestion(char* pathTopic, char** saveTokens);
 
 //User functions
 // int getTopic_by_number(int topic_number);

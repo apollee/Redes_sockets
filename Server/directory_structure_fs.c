@@ -240,6 +240,31 @@ int checkExistenceofTopic(char* dirname){ //check if a topic exists
     return 0;
 }
 
+//QUESTION SUBMIT-------------------------------------------------
+void createQuestion(char* pathTopic, char** saveTokens){
+    DIR *d;
+    //Open topic folder
+    d = opendir(pathTopic);
+    int fd = dirfd(d);
+    mkdirat(fd, saveTokens[3], 0700);
+    
+    //Criar ficheiro
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    sprintf(path, "%s/%s_UID.txt", pathTopic, saveTokens[3]);
+    file = fopen(path, "w");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fprintf(file,"%s\0", saveTokens[1]);
+    fclose(file);
+    //free(path);
+    closedir(d);
+    
+}
+
 //USER FUNCTIONS--------------------------------------------------
 // int getTopic_by_number(int number){ //get the topic by the number
 //     DIR *d;

@@ -91,7 +91,6 @@ int main(int argc, char *argv[]) {
                 int i = atoi(saveTokens[5]);
                 
                 while(num > 0){
-                    printf("%ld\n", strlen(buffer));
                     indice = treatBufferData(saveTokens, i, num, buffer);
                     num = num - (indice - i);
                     i = 0;

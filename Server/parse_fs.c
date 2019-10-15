@@ -194,6 +194,7 @@ char** parse_commandTCP(char* message){
     sprintf(saveTokens[j],"%d", i);
     return saveTokens;
 }
+
 int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
     int max = num > strlen(buffer) ? strlen(buffer) : num;
     int i, k = 0;
@@ -204,6 +205,7 @@ int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
     printf("%s\n",message);
     return i;
 }
+
 char** parse_commandTCPImg(int ind, char* message){
     int nSpaces = 0;
     int j = 0;

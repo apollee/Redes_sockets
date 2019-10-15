@@ -154,15 +154,22 @@ char* checkSubmitQuestion(char** saveTokens){
     char* message = (char*)malloc(sizeof (char)* 1024);
     memset(message, 0, 1024);
     char* finalMessage;
-    char* path = malloc(sizeof (char)* 1024);
-    sprintf(path, "TOPICS/%s/%s", saveTokens[3], saveTokens[4]);
+    char* pathTopic = malloc(sizeof (char)* 1024);
+    char* pathQuestion = malloc(sizeof (char)* 1024);
+    sprintf(pathTopic, "TOPICS/%s", saveTokens[2]);
+    sprintf(pathQuestion, "TOPICS/%s/%s", saveTokens[2], saveTokens[3]);
 
-    if(check_directory_existence(path))
+    if (!check_directory_existence(pathTopic)){
+        strcpy(message, "NOK");
+    }
+    else if(check_directory_existence(pathQuestion))
         strcpy(message, "DUP");
-    else if(!check_max_directory_size(path))
+    else if(!check_max_directory_size(pathTopic))
         strcpy(message, "FUL");
-    else
+    else{
         strcpy(message, "OK");
+        createQuestion(pathTopic, saveTokens);
+    }
     
     //free(path);
     finalMessage = (char*)realloc(message, strlen(message)+1);
