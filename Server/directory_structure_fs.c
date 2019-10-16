@@ -251,18 +251,32 @@ void createQuestion(char* pathTopic, char** saveTokens){
     //Criar ficheiro
     FILE* file;
     char* path = (char*)malloc (sizeof (char) * 1024);
-    sprintf(path, "%s/%s_UID.txt", pathTopic, saveTokens[3]);
+    sprintf(path, "%s/%s/%s_UID.txt", pathTopic,saveTokens[3], saveTokens[3]);
     file = fopen(path, "w");
     //free(path);
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
-    fprintf(file,"%s\0", saveTokens[1]);
+    fprintf(file,"%s", saveTokens[1]);
     fclose(file);
     //free(path);
-    closedir(d);
     
+}
+void writeFileData(char ** saveTokens, char* message){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.txt", saveTokens[2], saveTokens[3], saveTokens[3]);
+    file = fopen(path, "a");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fprintf(file,"%s", message);
+    fclose(file);
+    //free(path);
 }
 
 //USER FUNCTIONS--------------------------------------------------

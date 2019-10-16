@@ -89,7 +89,13 @@ int main(int argc, char *argv[]) {
             else{
                 int num = atoi(saveTokens[4]);
                 int i = atoi(saveTokens[5]);
-                
+                //tratar do commandQUSOK
+                char* path = (char*)malloc(sizeof(char)*50);
+                memset(path,0,50);
+                strcpy(path, "TOPICS/");
+                strcat(path,saveTokens[2]);
+                strcat(path, "/");
+                createQuestion(path, saveTokens);
                 while(num > 0){
                     indice = treatBufferData(saveTokens, i, num, buffer);
                     num = num - (indice - i);
@@ -124,10 +130,23 @@ int main(int argc, char *argv[]) {
                             indImg++;
                         }
                         printf("SIZE %s\n", isize);
+                        i = indice;
+                        printf("INDICE %d\n",indice );
+                        printf("%ld",strlen(buffer));
+                        int numImg = atoi(isize);
+                        while(numImg > 0){
+                            indice = treatBufferImg(saveTokens, i, numImg, buffer);
+                            numImg = numImg - (indice - i);
+                            i = 0;
+                            if(indice == strlen(buffer)){
+                                memset(buffer, 0, 1024);
+                                read(newfd, buffer, 1024);
+                            }
+                        } 
+
                     }
                 }  
             }   
-            char* newBuffer = realloc(buffer, strlen(buffer) + 1);
             write(newfd, "QUR OK\n", 7); //ta a escrever para o user?
         	close(newfd); 
         	close(fdTCP);

@@ -19,6 +19,7 @@ char* numberOfdirectories(char* dirname);
 char* numberOfAnswers(char* currTopic, char* currQuestion);
 int checkExistenceofTopic(char* dirname);
 void createQuestion(char* pathTopic, char** saveTokens);
+void writeFileData(char** saveTokens, char* buffer);
 
 //User functions
 // int getTopic_by_number(int topic_number);

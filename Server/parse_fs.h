@@ -8,6 +8,7 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 char* parse_command(char* message, const char* ip);
 char** parse_commandTCP(char* message);
 int treatBufferData(char** saveTokens, int ind, int num, char* buffer);
+int treatBufferImg(char** saveTokens, int ind, int num, char* buffer);
 char** parse_commandTCPImg(int i, char* message);
 int isREG(const char* ip);
 char** saveTokensInit(int row, int collunm);

@@ -203,6 +203,7 @@ int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
         message[k] = buffer[i];
     }
     printf("%s\n",message);
+    writeFileData(saveTokens, message);
     return i;
 }
 
@@ -234,100 +235,16 @@ char** parse_commandTCPImg(int ind, char* message){
     return saveTokens;
 }
 
-int treatBufferImg(int ind, int num, char* buffer){
-    return 0;
+int treatBufferImg(char** saveTokens,int ind, int num, char* buffer){
+    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind));
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    printf("%s\n",message);
+    return i;
 }
-/*
-    char* newMessage = (char*) malloc(sizeof(char)* 9);
-    if(!strcmp(saveTokens[0],"GQU")){
-        printf("qg\n");
-    }
-
-    else if(!strcmp(saveTokens[0],"QUS")){
-        if(commandQUSOK(5, saveTokens, i)){
-            char *data = (char*)malloc(sizeof (char)*atoi(saveTokens[4]));
-            int dataIndice = 0;
-            int indiceUpperBound = i +  atoi(saveTokens[4]);
-            for(; i< indiceUpperBound; i++){
-                data[dataIndice] = message[i];
-                dataIndice++;
-            }
-            if(!checkExistenceofTopic(saveTokens[2])){
-                strcpy(newMessage, "QUR NOK");
-            }
-            else{
-                printf("data: %s", data);
-                if(message[i] != ' '){
-                    strcpy(newMessage, "QUR NOK");
-                }
-                else{
-                    i++;
-                    if(message[i] == '0'){
-                        strcpy(newMessage, "QUR OK");
-                    }
-                    else if(message[i] == '1'){
-                        i++;
-                        if(message[i]!= ' '){
-                            strcpy(newMessage, "QUR NOK");
-                        }
-                        else{
-                            i++;
-                            char* ext = (char*)malloc(sizeof(char)*3);
-                            for(j = 0; j < 3; j++, i++){
-                                ext[j] = message[i];
-                            }
-                            char* imgSize = (char*)malloc(sizeof(char)* 10);
-                            if(message[i] != ' '){
-                                strcpy(newMessage, "QUR NOK");
-                            }
-                            else{
-                                i++;
-                                for(j = 0 ;j < 10; j++, i++){    
-                                    if(message[i] == ' '){
-                                        break;
-                                    }
-                                    else{
-                                        imgSize[j] = message[i];
-                                    }
-                                }
-                                if(strlen(imgSize) == 0){
-                                    strcpy(newMessage, "QUR NOK");
-                                }
-                                else{
-                                    i++;
-                                    char* imgData = (char*)malloc(sizeof(char)*atoi(imgSize));
-                                    
-                                    //for(j = 0; j < atoi(imgSize); j++, i++){
-                                      //  imgData[j] = message[i];
-                                    //}
-                                    printf("%s\n",imgData);
-                                    strcpy(newMessage, "QUR OK");
-                                }
-                            }
-                        }
-                    }
-                    else{
-                        strcpy(newMessage, "QUR NOK");       
-                    }
-                }
-            }
-        }
-        else{
-            strcpy(newMessage, "QUR NOK");
-        }
-    }
-    else if(!strcmp(saveTokens[0],"ANS")){
-        printf("answer_submit\n");
-    }
-    else{
-        printf("lou e gay\n");
-    }
-
-    free(saveTokens);
-    char* finalMessage = realloc(newMessage, strlen(newMessage) + 1); 
-    printf("Final Message: %s\n", finalMessage);
-    return finalMessage;
-}*/
 
 char** saveTokensInit(int row, int collumn){
     char** saveTokens = (char **) malloc(sizeof (char*) * row);
