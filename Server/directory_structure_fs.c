@@ -301,46 +301,45 @@ void writeFileImg(char ** saveTokens, char* message, char* ext, long int n){
     fclose(file);
     //free(path);
 }
+/*=====================ANSWER SUBMIT=============*/
 
-//USER FUNCTIONS--------------------------------------------------
-// int getTopic_by_number(int number){ //get the topic by the number
-//     DIR *d;
-//     struct dirent *dir;
-//     int flag = 0;
-
-//     if(number > 99 && number == 0){
-//         return flag;
-//     } 
-
-//     d = opendir("TOPICS");
-//     int current_topic_number = 1;
-//     if(d){
-//         while((dir = readdir(d)) != NULL){
-//             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
-//                 if(current_topic_number == number){
-//                     strcpy(local_topic, dir->d_name); 
-//                     return 1;
-//                 }else
-//                     current_topic_number++;            
-//             }   
-//         }
-//         closedir(d);
-//     }
-//     return flag;
-// }
-
-// int checkExistenceofTopic(char* dirname){ //check if a topic exists
-//     DIR *d;
-//     struct dirent *dir;
-//     d = opendir("TOPICS");
-
-//     if (d){
-//         while((dir=readdir(d)) != NULL){
-//             if(!(strcmp(dir->d_name, dirname))){
-//                 return 1;
-//             }
-//         }
-//         closedir(d);
-//     }
-//     return 0;
-// }
+void createAnswer(char** saveTokens){
+    DIR *d;
+    char* number = (char*)malloc(sizeof(char)*3);
+    //Open topic folder
+    char* path = (char*)malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    strcpy(path, "TOPICS/");
+    strcat(path, saveTokens[2]);
+    strcat(path, "/");
+    strcat(path,saveTokens[3]);
+    char* newPath = realloc(path, strlen(path) + 1); 
+    number = numberOfdirectories(path);
+    d = opendir(newPath);
+    int fd = dirfd(d);
+    strcat(saveTokens[3], "_");
+    if(strlen(number)==2){
+        strcat(saveTokens[3], number);
+    }
+    else{
+        strcat(saveTokens[3], "0");
+        strcat(saveTokens[3], number);
+    }
+    mkdirat(fd, saveTokens[3], 0700);
+    
+    //Criar ficheiro
+    FILE* file;
+    char* pathDir = (char*)malloc (sizeof (char) * 1024);
+    memset(pathDir, 0, 1024);
+    sprintf(pathDir, "%s/%s/%sUID.txt", newPath,saveTokens[3], saveTokens[3]);
+    file = fopen(pathDir, "w");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fprintf(file,"%s", saveTokens[1]);
+    fclose(file);
+    //free(path);
+    
+}
