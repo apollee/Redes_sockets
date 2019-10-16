@@ -196,53 +196,29 @@ char** parse_commandTCP(char* message){
 }
 
 int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
+    
     int max = num > strlen(buffer) ? strlen(buffer) : num;
     int i, k = 0;
-    char* message = (char*)malloc(sizeof(char)*(max-ind));
+    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
+    memset(message, 0, max-ind);
     for(i = ind; i < max; i++, k++){
         message[k] = buffer[i];
     }
-    printf("%s\n",message);
+    message[k] = '\0';
     writeFileData(saveTokens, message);
     return i;
 }
 
-char** parse_commandTCPImg(int ind, char* message){
-    int nSpaces = 0;
-    int j = 0;
-    int k = 0;
-    int i;
-    char** saveTokens = saveTokensInit(4, 40);
-    printf("%s\n", message);
-    //First part of parse until data
-    for(i = 0; i < 40; i++){
-        if(message[ind + i] == ' '){
-            saveTokens[j][k] = '\0';
-            nSpaces++;
-            j++;
-            k = 0;
-        }
-        else if(nSpaces == 5){
-            break;
-        }
-        else{
-            saveTokens[j][k] = message[ind + i];
-            k++;
-        }
-    }
-    int total = ind + i;
-    saveTokens[j][0] = (char)total;
-    return saveTokens;
-}
-
-int treatBufferImg(char** saveTokens,int ind, int num, char* buffer){
-    int max = num > strlen(buffer) ? strlen(buffer) : num;
+int treatBufferImg(char** saveTokens,int ind, int num, long int n, char* buffer, char* ext){
+    int max = num > n ? n : num;
     int i, k = 0;
     char* message = (char*)malloc(sizeof(char)*(max-ind));
+    memset(message, 0, max-ind);
     for(i = ind; i < max; i++, k++){
         message[k] = buffer[i];
     }
-    printf("%s\n",message);
+    //printf("%s\n",message);
+    writeFileImg(saveTokens, message, ext, max-ind);
     return i;
 }
 

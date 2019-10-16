@@ -12,7 +12,6 @@ int check_directory_existence(char *dirname){
     d = opendir(dirname);
 
     if(d){
-        //printf("directory exists\n");
         closedir(d);
         return TRUE;
     }else{
@@ -116,6 +115,7 @@ char* numberOfdirectories(char* path){
     char* finalValue;
     d = opendir(path);
     //free(path);
+    printf("ola\n");
     if (d){
         while((dir=readdir(d)) != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && dir->d_type == DT_DIR){             
@@ -244,15 +244,21 @@ int checkExistenceofTopic(char* dirname){ //check if a topic exists
 void createQuestion(char* pathTopic, char** saveTokens){
     DIR *d;
     //Open topic folder
-    d = opendir(pathTopic);
+    char* path = (char*)malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    strcpy(path, "TOPICS/");
+    strcat(path, saveTokens[2]);
+    char* newPath = realloc(path, strlen(path) + 1); 
+    d = opendir(newPath);
     int fd = dirfd(d);
     mkdirat(fd, saveTokens[3], 0700);
     
     //Criar ficheiro
     FILE* file;
-    char* path = (char*)malloc (sizeof (char) * 1024);
-    sprintf(path, "%s/%s/%s_UID.txt", pathTopic,saveTokens[3], saveTokens[3]);
-    file = fopen(path, "w");
+    char* pathDir = (char*)malloc (sizeof (char) * 1024);
+    memset(pathDir, 0, 1024);
+    sprintf(pathDir, "%s/%s/%s_UID.txt", newPath,saveTokens[3], saveTokens[3]);
+    file = fopen(pathDir, "w");
     //free(path);
     if (file < 0) {
         perror("CLIENT:\n");
@@ -267,6 +273,7 @@ void writeFileData(char ** saveTokens, char* message){
 
     FILE* file;
     char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s/%s.txt", saveTokens[2], saveTokens[3], saveTokens[3]);
     file = fopen(path, "a");
     //free(path);
@@ -275,6 +282,22 @@ void writeFileData(char ** saveTokens, char* message){
         exit(1);
     }
     fprintf(file,"%s", message);
+    fclose(file);
+    //free(path);
+}
+void writeFileImg(char ** saveTokens, char* message, char* ext, long int n){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.%s", saveTokens[2], saveTokens[3], saveTokens[3], ext);
+    file = fopen(path, "ab");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fwrite(message, n, sizeof(char), file);
     fclose(file);
     //free(path);
 }

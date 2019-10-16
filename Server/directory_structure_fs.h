@@ -20,6 +20,7 @@ char* numberOfAnswers(char* currTopic, char* currQuestion);
 int checkExistenceofTopic(char* dirname);
 void createQuestion(char* pathTopic, char** saveTokens);
 void writeFileData(char** saveTokens, char* buffer);
+void writeFileImg(char ** saveTokens, char* message, char* ext, long int n);
 
 //User functions
 // int getTopic_by_number(int topic_number);

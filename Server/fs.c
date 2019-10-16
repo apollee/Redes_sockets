@@ -79,6 +79,7 @@ int main(int argc, char *argv[]) {
             addrlen = sizeof(addr);
             int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
             buffer = (char*)malloc(sizeof(char)* 1024);
+            char* message = (char*)malloc(sizeof(char)*20);
             memset(buffer, 0, 1024);
             read(newfd, buffer, 1024);
             char** saveTokens = parse_commandTCP(buffer);
@@ -89,99 +90,86 @@ int main(int argc, char *argv[]) {
             else{
                 int num = atoi(saveTokens[4]);
                 int i = atoi(saveTokens[5]);
-                //tratar do commandQUSOK
-                char* path = (char*)malloc(sizeof(char)*50);
-                memset(path,0,50);
-                strcpy(path, "TOPICS/");
-                strcat(path,saveTokens[2]);
-                strcat(path, "/");
-                createQuestion(path, saveTokens);
-                while(num > 0){
-                    indice = treatBufferData(saveTokens, i, num, buffer);
-                    num = num - (indice - i);
-                    i = 0;
-
-                    if(indice == strlen(buffer)){
-                        memset(buffer, 0, 1024);
-                        read(newfd, buffer, 1024);
+                if(commandQUSOK(5, saveTokens, i)){
+                    char* path = (char*)malloc(sizeof(char)*50);
+                    memset(path,0,50);
+                    strcpy(path, "TOPICS/");
+                    strcat(path,saveTokens[2]);
+                    strcat(path, "/");
+                    strcat(path, saveTokens[3]);
+                    if(check_directory_existence(path)){
+                        strcpy(message, "QUR DUP\n");
                     }
-                } 
-                if(buffer[indice] == ' '){
-                    indice++;
-                    if(buffer[indice] == '0'){
-                        printf("No photo!!\n");
+                    else if(atoi(numberOfdirectories(path))==99){
+                        strcpy(message, "DUP FUL\n");
                     }
                     else{
-                        indice+=2;
-                        printf("Photo\n");
-                        char* ext = (char*)malloc(sizeof(char)*3);
-                        int j;
-                        for(j = 0; j<3; j++, indice++){
-                            ext[j] = buffer[indice];
-                        }
-                        ext[j] = '\0';
-                        printf("EXT %s\n", ext);
-                        indice += 2;
-                        char* isize = (char*)malloc(sizeof(char)*10);
-                        int indImg = 0;  
-                        while(buffer[indice] != ' '){
-                            isize[indImg] = buffer[indice];
-                            indice++;
-                            indImg++;
-                        }
-                        printf("SIZE %s\n", isize);
-                        i = indice;
-                        printf("INDICE %d\n",indice );
-                        printf("%ld",strlen(buffer));
-                        int numImg = atoi(isize);
-                        while(numImg > 0){
-                            indice = treatBufferImg(saveTokens, i, numImg, buffer);
-                            numImg = numImg - (indice - i);
+                        createQuestion(path, saveTokens);
+                        while(num > 0){
+                            indice = treatBufferData(saveTokens, i, num, buffer);
+                            num = num - (indice - i);
                             i = 0;
+
                             if(indice == strlen(buffer)){
                                 memset(buffer, 0, 1024);
-                                read(newfd, buffer, 1024);
+                                n = read(newfd, buffer, 1024);
                             }
                         } 
-
+                        if(buffer[indice] == ' '){
+                            indice++;
+                            if(buffer[indice] == '0'){
+                                strcpy(message, "QUR OK\n");
+                            }
+                            else{
+                                indice+=2;
+                                char* ext = (char*)malloc(sizeof(char)*3);
+                                int j;
+                                for(j = 0; j<3; j++, indice++){
+                                    ext[j] = buffer[indice];
+                                }
+                                ext[j] = '\0';
+                                indice ++;
+                                char* isize = (char*)malloc(sizeof(char)*10);
+                                memset(isize, 0, 10);
+                                int indImg = 0;  
+                                while(buffer[indice] != ' '){
+                                    isize[indImg] = buffer[indice];
+                                    indice++;
+                                    indImg++;
+                                }
+                                isize[indImg] = '\0';
+                                indice++;
+                                i = indice;
+                                int numImg = atoi(isize);
+                                while(numImg > 0){
+                                    indice = treatBufferImg(saveTokens, i, numImg, n, buffer, ext);
+                                    numImg = numImg - (indice - i);
+                                    i = 0;
+                                    if(indice == n){
+                                        memset(buffer, 0, 1024);
+                                        n = read(newfd, buffer, 1024);
+                                    }
+                                }
+                             strcpy(message, "QUR OK\n");
+                             printf("DATA SEND\n");
+                            }
+                        }
                     }
+                    
+                }
+                else{
+                        strcpy(message, "QUR NOK\n");
                 }  
             }   
-            write(newfd, "QUR OK\n", 7); //ta a escrever para o user?
+            char* newMessage = realloc(message, strlen(message)+1);
+            write(newfd, newMessage, strlen(newMessage)); //ta a escrever para o user?
         	close(newfd); 
         	close(fdTCP);
 
         	start_TCP();
-        	
-
-
-            // addrlen = sizeof(addr);
-            // int newfd = accept(fdTCP, (struct sockaddr*)&addr, &addrlen);
-            // n = read(newfd, buffer, 1024);
-
-            // //bufferBeforeParsingTCP = realloc(buffer, strlen(buffer)+1);
-            // strcpy();
-            // bufferAfterParsingTCP = (char*)malloc(sizeof(char)*1024);
-            
-            // printf("Buffer inicial: %s!\n", bufferBeforeParsingTCP);
-
-            // //memset(buffer, 0, 1024);
-            // //char* nbuf = realloc(buffer, strlen(buffer) + 1);
-            // bufferAfterParsingTCP = parse_commandTCP(bufferBeforeParsingTCP, inet_ntop(resTCP->ai_family,&addr,bufferIP,sizeof bufferIP));
-            
-            // bufferFinalTCP = realloc(bufferAfterParsingTCP, strlen(bufferAfterParsingTCP) + 1); 
-            // write(newfd, bufferFinalTCP, 1024); //ta a escrever para o user?
-        	
-            // close(newfd); 
-        	// close(fdTCP);
-
-        	// start_TCP();
         }
     }
-    // free(bufferBeforeParsing);
-    // free(bufferAfterParsing);
-    // free(bufferFinal);
-
+   
     freeaddrinfo(resUDP);
     freeaddrinfo(resTCP);
     close(fdUDP);   
