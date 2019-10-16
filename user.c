@@ -21,8 +21,8 @@ ssize_t n;
 int fdUDP, fdTCP, errcode;
 char host_name[128];
 char port[6];
-char ip[INET_ADDRSTRLEN];
-
+//char ip[INET_ADDRSTRLEN];
+char ip[55];
  
 int main(int argc, char *argv[]) {
     
@@ -117,8 +117,15 @@ void start_TCP(){
     hintsTCP.ai_socktype = SOCK_STREAM; //TCP
     hintsTCP.ai_flags = AI_NUMERICSERV;
 
-    if ((errcode = getaddrinfo(NULL, port, &hintsTCP, &resTCP)) != 0){
-        fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+    if(!strcmp(ip, FLAG)){
+        if((errcode = getaddrinfo(host_name, port, &hintsTCP, &resTCP)) != 0){
+            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+        }
+    }
+    else{
+        if ((errcode = getaddrinfo(ip, port, &hintsTCP, &resTCP)) != 0){
+            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+        }
     }
 } 
 
@@ -154,8 +161,11 @@ char* readTCP(){
 void send_commandTCP(char* message){ 
     //resTCP->ai_addrlen = sizeof(resTCP->ai_addr);
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
+    if(h == -1){
+        printf("connect not working TCP\n");
+    }
 
-    int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
+    int b = send(fdTCP, message, strlen(message), 0);
     if (b == -1){
         printf("write not working TCP\n");
     }
@@ -164,9 +174,9 @@ void send_commandTCP(char* message){
     memset(buffer, 0, 2048);
     strcpy(buffer, "");
 
-    b = read(fdTCP, buffer, 2048); 
+    b = recv(fdTCP, buffer, 50, 0); 
     if (b == -1){
-        printf("read not working TCP\n");
+        perror("receive not working");
     }
 
     write(1, "echo TCP: ", 10);    

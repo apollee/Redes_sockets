@@ -165,6 +165,7 @@ void send_message_ql(char* message){
 
 void send_message_qg(char* message){
     strcpy(message, "GQU ");
+    
     strcat(message, "\n");
     //send_commandTCP(message);
 }
@@ -212,11 +213,12 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     fd = fopen(saveTokens[2], "r");
     if (fd == NULL){
         fprintf(stderr, "cannot open input file\n");
+        return;
+    }else{
+        fread(buffer, var+1, 1, fd);   
+        strcat(message, buffer);
+        fclose(fd);
     }
-
-    fgets(buffer, var, fd);   
-    strcat(message, buffer);
-    fclose(fd); 
 
     //connectTCP();
     

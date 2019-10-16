@@ -111,7 +111,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandQLOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
                 printf("You need to register first\n");
-            else if (!isREG(local_topic))
+            else if (!strcmp(local_topic, FLAG))
                 printf("You have to select a topic first\n");
             else
                 send_message_ql(message);
@@ -127,7 +127,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
             if(!isREG(id_user))
                 printf("You need to register first\n");
             else
-                send_message_qg(message);
+                send_message_qg(message, numTokens, saveTokens);
         }else{
             printf("Invalid arguments\n");
         }
@@ -191,7 +191,8 @@ void parse_command_received(char* buffer){
     input_action_received(numTokens, saveTokens, numberChar);
 }
 
-void input_action_received(int numTokens, char** saveTokens, long int numberChar){ //message from the server
+//UDP message from the server
+void input_action_received(int numTokens, char** saveTokens, long int numberChar){ 
     char command[5];
     strcpy(command, saveTokens[0]);
 
@@ -214,17 +215,42 @@ void input_action_received(int numTokens, char** saveTokens, long int numberChar
     else if(!strcmp(command, "LQR")){
         questions_print(saveTokens);
     }
-    /*else if(commandQGOK(numTokens, saveTokens, numberChar)){
-            
-  
-    */else if(!strcmp(command, "QUR")){
-        printf("%s %s\n", command, saveTokens[1]);    
+    else{
+        printf("Unexpected server response\n");
     }
-    /*else if(!strcmp(command, "ANR")){
-        // for (int i = 0; i < numTokens; i++){
-        //     printf("Token %d: %s\n", i, saveTokens[i]);
-        // }
-    }*/
+}
+
+//TCP message from the server
+void input_action_received_TCP(int numTokens, char** saveTokens, long int numberChar){ 
+    char command[5];
+    strcpy(command, saveTokens[0]);
+
+    if(!strcmp(command, "CGR")){
+        /*funcao missing*/        
+    }
+
+    else if(!strcmp(command, "QUR")){
+        if(!strcmp(saveTokens[1], "OK")){
+            printf("Question submitted with success\n");
+        }else if(!strcmp(saveTokens[1], "NOK")){
+            printf("Failed to submit question\n");
+        }else if(!strcmp(saveTokens[1], "FUL")){
+            printf("Failed to submit question - Maximum limit of questions reached\n");
+        }else if(!strcmp(saveTokens[1], "DUP")){ 
+            printf("Duplicated question, failed to submit\n");
+        }
+        //printf("%s %s\n", command, saveTokens[1]);
+    }
+    else if(!strcmp(command, "ANR")){
+        if(!strcmp(saveTokens[1], "OK")){
+            printf("Answer submitted with success\n");
+        }else if(!strcmp(saveTokens[1], "NOK")){
+            printf("Failed to submit answer\n");
+        }else if(!strcmp(command, "FUL")){
+            printf("Failed to submit answer - Maximum limit of answers reached\n");
+        }
+        printf("%s %s\n", command, saveTokens[1]);
+    }
     else{
         printf("Unexpected server response\n");
     }
