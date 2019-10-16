@@ -92,14 +92,22 @@ int commandQGOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(!strcmp(saveTokens[0], "qg")){
         if(onlyNumbers(saveTokens[1])){
-            return TRUE;
+            if(getQuestion_by_number(atoi(saveTokens[1])))
+                return TRUE;
+            else
+                return FALSE;
         }else{
             return FALSE;
         }
     }
-    else if(!strcmp(saveTokens[0], "question_get"))
-        return TRUE;
-    else 
+    else if(!strcmp(saveTokens[0], "question_get")){
+       if(checkExistenceofQuestion(saveTokens[1])){
+            strcpy(local_question, saveTokens[1]);
+            return TRUE;
+        }else{
+            return FALSE;
+        }
+    }else 
         return FALSE;
     
 }
@@ -165,9 +173,11 @@ void send_message_ql(char* message){
 
 void send_message_qg(char* message){
     strcpy(message, "GQU ");
-    
+    strcat(message, local_topic);
+    strcat(message, " ");
+    strcat(message, local_question);
     strcat(message, "\n");
-    //send_commandTCP(message);
+    send_commandTCP(message);
 }
 
 // void send_message_qs(char* message, int numTokens, char** saveTokens){
@@ -328,6 +338,10 @@ void questions_print(char** saveTokens){
     for(i = 1; i <= number; i++){
         printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
-        printf("%s\n", token);
+        printf("%s ", token);
+        char * token2 = strtok(NULL, ":");
+        printf("(proposed by %s)\n", token2);
+        char * token3 = strtok(NULL, ""); //number of answers
+        create_question_directory(token, token2);
     }
 }

@@ -143,7 +143,7 @@ int writeTCP(char* message){
     if (b == -1){
         printf("write not working TCP");
     }
-    return b;
+    return b; 
 }
 
 char* readTCP(){
