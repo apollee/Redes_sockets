@@ -36,6 +36,33 @@ void create_topic_directory(char *dirname, char* userID){
     closedir(d);
 }
 
+void create_question_directory(char *dirname, char* userID){
+    DIR *d;
+    //Open folder of the current topic
+    char* message = malloc (sizeof (char) * 1024); 
+    sprintf(message, "TOPICS/%s", local_topic);
+    d = opendir(message);
+    int fd = dirfd(d);
+    mkdirat(fd, dirname, 0700);
+    
+    //Criar ficheiro
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_UID.txt", local_topic, dirname, dirname);
+    file = fopen(path, "w");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    strcat(userID, "\0");
+    fprintf(file,"%s", userID);
+    fclose(file);
+    //free(path);
+    closedir(d);    
+}
+
+
 int getTopic_by_number(int number){ //get the topic by the number
     DIR *d;
     struct dirent *dir;
@@ -62,6 +89,35 @@ int getTopic_by_number(int number){ //get the topic by the number
     return flag;
 }
 
+int getQuestion_by_number(int number){ //get the topic by the number
+    DIR *d;
+    struct dirent *dir;
+    int flag = 0;
+    char* message = malloc (sizeof (char) * 1024); 
+    sprintf(message, "TOPICS/%s", local_topic);
+
+    if(number > 99 && number == 0){
+        return flag;
+    } 
+
+    d = opendir(message);
+    int current_question_number = 1;
+    if(d){
+        while((dir = readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+                if(current_question_number == number){
+                    strcpy(local_question, dir->d_name); 
+                    return 1;
+                }else
+                    current_question_number++;            
+            }   
+        }
+        closedir(d);
+    }
+    free(message);
+    return flag;
+}
+
 int checkExistenceofTopic(char* dirname){ //check if a topic exists
     DIR *d;
     struct dirent *dir;
@@ -75,6 +131,25 @@ int checkExistenceofTopic(char* dirname){ //check if a topic exists
         }
         closedir(d);
     }
+    return 0;
+}
+
+int checkExistenceofQuestion(char* dirname){ //check if a topic exists
+    DIR *d;
+    struct dirent *dir;
+    char* message = malloc (sizeof (char) * 1024); 
+    sprintf(message, "TOPICS/%s", local_topic);
+    d = opendir(message);
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if(!(strcmp(dir->d_name, dirname))){
+                return 1;
+            }
+        }
+        closedir(d);
+    }
+    free(message);
     return 0;
 }
 
