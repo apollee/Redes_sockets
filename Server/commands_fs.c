@@ -66,18 +66,16 @@ int commandLQUOK(int numTokens, char** saveTokens, long int numberChar){
 //--------------------------------------------------------------------
 // TCP CMDS
 //--------------------------------------------------------------------
-int commandGQUOK(int numTokens, char** saveTokens, long int numberChar){
-    if(numTokens != 3)
+int commandGQUOK(char** saveTokens, long int numberChar){
+    /*if(numberChar - 3 != strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]))
+        return FALSE;*/
+    if(strlen(saveTokens[1])>10 || strlen(saveTokens[2])>10)
         return FALSE;
-    else if(numberChar - 3 != strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]))
-        return FALSE;
-    else if(!strcmp(saveTokens[0], "GQU"))
-        return TRUE;
     else 
         return TRUE;
 }
 
-int commandQUSOK(int numTokens, char** saveTokens, int numberChar){
+int commandQUSOK(char** saveTokens, int numberChar){
     if(!strlen(saveTokens[0]) || !strlen(saveTokens[1]) || !strlen(saveTokens[2]) || !strlen(saveTokens[3])|| !strlen(saveTokens[4]))
         return FALSE;
     else if(numberChar - 5 != (strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + strlen(saveTokens[3])+strlen(saveTokens[4])))
@@ -91,7 +89,7 @@ int commandQUSOK(int numTokens, char** saveTokens, int numberChar){
     else
         return TRUE;
 }
-int commandANSOK(int numTokens, char** saveTokens, long int numberChar){
+int commandANSOK(char** saveTokens, long int numberChar){
     //Nao sei se nao temos que verificar os ficheiros 
     // if(numTokens != 3)
     //     return FALSE;

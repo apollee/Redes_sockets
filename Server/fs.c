@@ -83,14 +83,22 @@ int main(int argc, char *argv[]) {
             memset(buffer, 0, 1024);
             read(newfd, buffer, 1024);
             char** saveTokens = parse_commandTCP(buffer);
-                
             if(!strcmp(saveTokens[0],"GQU")){
-                printf("tratar o gqu!!!\n");
+                if(commandGQUOK(saveTokens, atoi(saveTokens[3]))){
+                    //parseQGU(saveTokens, newfd, buffer);
+
+                    strcpy(message,"QGR 12345 3 ola 0 0\n");
+                    
+                }
+                else{
+                    strcpy(message,"GQU NOK\n");
+                }
             }
+
             else if(!strcmp(saveTokens[0],"QUS")){
                 int num = atoi(saveTokens[4]);
                 int i = atoi(saveTokens[5]);
-                if(commandQUSOK(5, saveTokens, i)){
+                if(commandQUSOK(saveTokens, i)){
                     char* path = (char*)malloc(sizeof(char)*50);
                     memset(path,0,50);
                     strcpy(path, "TOPICS/");
@@ -162,74 +170,11 @@ int main(int argc, char *argv[]) {
                 }  
             }
             else if(!strcmp(saveTokens[0],"ANS")){
-                int numANS = atoi(saveTokens[4]);
-                int i = atoi(saveTokens[5]);
-                if(commandQUSOK(5, saveTokens, i)){
-                    char* path = (char*)malloc(sizeof(char)*50);
-                    memset(path,0,50);
-                    strcpy(path, "TOPICS/");
-                    strcat(path,saveTokens[2]);
-                    strcat(path, "/");
-                    strcat(path, saveTokens[3]);
-                    if(atoi(numberOfdirectories(path))==99){
-                        strcpy(message, "DUP FUL\n");
-                    }
-                    else{
-                        createAnswer(saveTokens);
-                        /*while(numANS > 0){
-                            indice = treatBufferData(saveTokens, i, numANS, buffer);
-                            numANS = numANS - (indice - i);
-                            i = 0;
-
-                            if(indice == strlen(buffer)){
-                                memset(buffer, 0, 1024);
-                                n = read(newfd, buffer, 1024);
-                            }
-                        } 
-                        if(buffer[indice] == ' '){
-                            indice++;
-                            if(buffer[indice] == '0'){
-                                strcpy(message, "QUR OK\n");
-                            }
-                            else{
-                                indice+=2;
-                                char* ext = (char*)malloc(sizeof(char)*3);
-                                int j;
-                                for(j = 0; j<3; j++, indice++){
-                                    ext[j] = buffer[indice];
-                                }
-                                ext[j] = '\0';
-                                indice ++;
-                                char* isize = (char*)malloc(sizeof(char)*10);
-                                memset(isize, 0, 10);
-                                int indImg = 0;  
-                                while(buffer[indice] != ' '){
-                                    isize[indImg] = buffer[indice];
-                                    indice++;
-                                    indImg++;
-                                }
-                                isize[indImg] = '\0';
-                                indice++;
-                                i = indice;
-                                int numANSImg = atoi(isize);
-                                while(numImg > 0){
-                                    indice = treatBufferImg(saveTokens, i, numImg, n, buffer, ext);
-                                    numImg = numImg - (indice - i);
-                                    i = 0;
-                                    if(indice == n){
-                                        memset(buffer, 0, 1024);
-                                        n = read(newfd, buffer, 1024);
-                                    }
-                                }
-                             strcpy(message, "QUR OK\n");
-                             printf("DATA SEND\n");
-                            }
-                        }
-                    */}
-                    
+                if(commandANSOK(saveTokens, atoi(saveTokens[5]))){
+                    message = parseANS(saveTokens, newfd, n, buffer, message);   
                 }
                 else{
-                        strcpy(message, "QUR NOK\n");
+                    strcpy(message, "QUR NOK\n");
                 }
             }
             else{
