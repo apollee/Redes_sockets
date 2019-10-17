@@ -1,1 +1,0 @@
-UDPC:REG 12342$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 3 topic1:12342 topic3:12342 topic2:12342$UDPC:LQU topic1$UDPS:LQR 2 quest1:12342:0 3:12345:3$TCPC:GQU topic1 quest1$TCPS:QGR 12342 2828 [<-- 2828 bytes of data <--] 1 jpg 61543 [<-- 61543 bytes of data <--] 0$TCPC:GQU topic1 3$TCPS:QGR 12345 2828 [<-- 2828 bytes of data <--] 0 3 

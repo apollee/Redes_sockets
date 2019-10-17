@@ -212,37 +212,28 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     strcpy(buffer, "");
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
-    FILE* fd;
+    int indice = 0;
+    int numBytes; 
+
+    connectTCP();
 
     strcat(saveTokens[2], ".txt"); //adding the .txt to the file name
     stat(saveTokens[2], &qsize);
     var = qsize.st_size; //Size of text doc
+    var += 1; //e preciso por causa do \n??
     
     sprintf(message, "QUS %s %s %s %ld ", id_user, local_topic, saveTokens[1], var);
     
-    fd = fopen(saveTokens[2], "r");
-    if (fd == NULL){
-        fprintf(stderr, "cannot open input file\n");
-        return;
-    }else{
-        fread(buffer, var+1, 1, fd);   
-        strcat(message, buffer);
-        fclose(fd);
+    while(var > 0){
+        numBytes = treatBufferDataQUS(saveTokens, var, indice, message);
+        var = var - numBytes;
+        indice += numBytes;
+        memset(message, 0, 1024);
     }
-
-    //connectTCP();
-    
-    // while(qsize.st_size != offset){
-    //     strcat(message, var);
-    //     strcat(message, " ");
-        
-    //     offset += writeTCP(message);
-    //     var -= offset;
-    // }
 
     //Doc itself
     //strcat(message, " ");
-    if (numTokens == 4){
+    /*if (numTokens == 4){
         strcat(message, " 1 ");
         //Missing extension of image
         //strcat(message, " ");
@@ -252,7 +243,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         //Image itself
     }else {
         strcat(message, " 0");
-    }
+    }*/
     strcat(message, "\n\0"); //atencao ao \0
     //sprintf(message, "QUS 53035 topic questao 10 Ola");
     send_commandTCP(message);
@@ -341,7 +332,28 @@ void questions_print(char** saveTokens){
         printf("%s ", token);
         char * token2 = strtok(NULL, ":");
         printf("(proposed by %s)\n", token2);
-        char * token3 = strtok(NULL, ""); //number of answers
+        //char * token3 = strtok(NULL, ""); //number of answers
         create_question_directory(token, token2);
     }
+}
+
+int treatBufferDataQUS(char** saveTokens, int qsize, int indice, char* message){
+    FILE* fd;
+    int max = qsize > 1024 - strlen(message) ? 1024 - strlen(message) : qsize;
+    char* newMessage = (char*)malloc(sizeof(char)*max);
+
+    fd = fopen(saveTokens[2], "r");
+    if (fd == NULL){
+        fprintf(stderr, "cannot open input file\n");
+        return -1;
+    }
+    fseek(fd, indice, SEEK_SET);
+    fread(newMessage, 1, max, fd);
+    if(max == qsize){
+        strcat(newMessage, " 0\n"); //sem imagem
+    }
+    strcat(message, newMessage);
+    printf("%s", message);
+    writeTCP(message);
+    return max;
 }

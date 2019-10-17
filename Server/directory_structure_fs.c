@@ -339,6 +339,7 @@ void writeFileData(char ** saveTokens, char* message){
     fclose(file);
     //free(path);
 }
+
 void writeFileImg(char ** saveTokens, char* message, char* ext, long int n){
 
     FILE* file;
