@@ -208,9 +208,6 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
             indice += numBytes;
             memset(message, 0, 1024);
         }
-
-
-
 }
 
 int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, char* message){

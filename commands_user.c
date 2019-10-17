@@ -233,7 +233,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
 
     //Doc itself
     //strcat(message, " ");
-    if (numTokens == 4){
+    /*if (numTokens == 4){
         strcat(message, " 1 ");
         //Missing extension of image
         //strcat(message, " ");
@@ -243,7 +243,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         //Image itself
     }else {
         strcat(message, " 0");
-    }
+    }*/
     strcat(message, "\n\0"); //atencao ao \0
     //sprintf(message, "QUS 53035 topic questao 10 Ola");
     send_commandTCP(message);
@@ -345,7 +345,7 @@ int treatBufferDataQUS(char** saveTokens, int qsize, int indice, char* message){
     fd = fopen(saveTokens[2], "r");
     if (fd == NULL){
         fprintf(stderr, "cannot open input file\n");
-        return;
+        return -1;
     }
     fseek(fd, indice, SEEK_SET);
     fread(newMessage, 1, max, fd);
@@ -353,7 +353,7 @@ int treatBufferDataQUS(char** saveTokens, int qsize, int indice, char* message){
         strcat(newMessage, " 0\n"); //sem imagem
     }
     strcat(message, newMessage);
-    printf("%s, message");
-    write(fdTCP, message, strlen(message));
+    printf("%s", message);
+    writeTCP(message);
     return max;
 }

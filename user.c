@@ -139,7 +139,7 @@ int connectTCP(){
 }
 
 int writeTCP(char* message){
-    int b = write(fdTCP, message, DEFAULT_BUFFER_SIZE);
+    int b = write(fdTCP, message, strlen(message));
     if (b == -1){
         printf("write not working TCP");
     }

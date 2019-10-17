@@ -222,7 +222,7 @@ void input_action_received(int numTokens, char** saveTokens, long int numberChar
     }
 }
 
-char** parse_commandTCP(char* message){
+char** parse_command_received_TCP(char* message){
     int nSpaces = 0;
     int j = 0;
     int k = 0;
@@ -245,12 +245,12 @@ char** parse_commandTCP(char* message){
         }
     }
     sprintf(saveTokens[j],"%d", i);
-    input_action_received_TCP(numTokens, saveTokens, numberChar);
+    input_action_received_TCP(saveTokens);
     return saveTokens;
 }
 
 //TCP message from the server
-void input_action_received_TCP(int numTokens, char** saveTokens, long int numberChar){ 
+void input_action_received_TCP(char** saveTokens){ 
     char command[5];
     int indice;
     char* buffer = (char*)malloc(sizeof(char)* 1024);
@@ -359,7 +359,7 @@ int parse_image_qg(int indice, char* buffer){
     return indice;
 }
 
-int parse_answers_image_qg(indice, buffer){
+int parse_answers_image_qg(int indice, char* buffer){
     indice += 2;
     char* ext = (char*)malloc(sizeof(char)*3);
     int j;
@@ -372,7 +372,7 @@ int parse_answers_image_qg(indice, buffer){
     char* an = (char*)malloc(sizeof(char)*2);
     memset(an, 0, 2);
     int indAn = 0;
-    for(j = 0; j < 2; j++; indice++){ //guardar o AN
+    for(j = 0; j < 2; j++, indice++){ //guardar o AN
         an[j] = buffer[indice];
 
     }
@@ -392,7 +392,7 @@ int parse_answers_image_qg(indice, buffer){
     int i = indice;
     int numImg = atoi(qisize); //image size
     while(numImg > 0){
-        indice = treatBufferImg2(i, numImg, n, buffer, ext);
+        indice = treatBufferImg(i, numImg, n, buffer, ext); //vai ter que ser um treatbufferimg2
         numImg = numImg - (indice - i);
         i = 0;
         if(indice == n){
@@ -407,7 +407,7 @@ int parse_answers_image_qg(indice, buffer){
 int parse_answers_qg(int indice, char* buffer){
     char* id_answer = (char*)malloc(sizeof(char)*5);
     int j;
-    for(j = 0; j < 5; j++; indice++){
+    for(j = 0; j < 5; j++, indice++){
         id_answer[j] = buffer[indice];
     }
     id_answer[j] = '\0';
@@ -425,7 +425,7 @@ int parse_answers_qg(int indice, char* buffer){
     int i = indice;
     int numData = atoi(asize);
     while(numData > 0){
-        indice = treatBufferData2(i, num, buffer); //esta funcao nao da como esta, nova ou mudar esta?
+        indice = treatBufferData2(i, numData, buffer); //esta funcao nao da como esta, nova ou mudar esta?
         numData = numData - (indice - i);
         i = 0;
         if(indice == strlen(buffer)){

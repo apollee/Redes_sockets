@@ -217,7 +217,7 @@ void writeFileData(char* message){
 }
 
 void writeFileData2(char* message){
-
+    DIR *d;
     FILE* file;
     char* path = (char*)malloc (sizeof (char) * 1024);
     memset(path, 0, 1024);
@@ -225,7 +225,7 @@ void writeFileData2(char* message){
     sprintf(path, "TOPICS/%s/%s/%s", local_topic, local_question, local_question);
     d = opendir("path");
     int fd = dirfd(d);
-    mkdirat(fd, dirname, 0700);
+    //mkdirat(fd, dirname, 0700); o dirname tem que ser o local_question0_0(incrementando)
 
     file = fopen(path, "a");
     //free(path);
