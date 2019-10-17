@@ -212,9 +212,8 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     strcpy(buffer, "");
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
-    FILE* fd;
-    int offset = atoi(saveTokens[5]);
     int indice = 0;
+    int numBytes; 
 
     connectTCP();
 
@@ -225,21 +224,11 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     
     sprintf(message, "QUS %s %s %s %ld ", id_user, local_topic, saveTokens[1], var);
     
-    fd = fopen(saveTokens[2], "r");
-    if (fd == NULL){
-        fprintf(stderr, "cannot open input file\n");
-        return;
-    }else{
-        while(var > 0){
-            indice = fread(buffer, 1, 1024, fd);
-            var = var - indice;
-
-            if(indice == strlen(buffer)){
-                memset(buffer, 0, 1024);
-                writeTCP(char* message);
-            }
-        }  
-        fclose(fd);
+    while(var > 0){
+        numBytes = treatBufferDataQUS(saveTokens, var, indice, message);
+        var = var - numBytes;
+        indice += numBytes;
+        memset(message, 0, 1024);
     }
 
     //Doc itself
@@ -346,4 +335,25 @@ void questions_print(char** saveTokens){
         //char * token3 = strtok(NULL, ""); //number of answers
         create_question_directory(token, token2);
     }
+}
+
+int treatBufferDataQUS(char** saveTokens, int qsize, int indice, char* message){
+    FILE* fd;
+    int max = qsize > 1024 - strlen(message) ? 1024 - strlen(message) : qsize;
+    char* newMessage = (char*)malloc(sizeof(char)*max);
+
+    fd = fopen(saveTokens[2], "r");
+    if (fd == NULL){
+        fprintf(stderr, "cannot open input file\n");
+        return;
+    }
+    fseek(fd, indice, SEEK_SET);
+    fread(newMessage, 1, max, fd);
+    if(max == qsize){
+        strcat(newMessage, " 0\n"); //sem imagem
+    }
+    strcat(message, newMessage);
+    printf("%s, message");
+    write(fdTCP, message, strlen(message));
+    return max;
 }
