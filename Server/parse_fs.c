@@ -208,7 +208,6 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
             indice += numBytes;
             memset(message, 0, 1024);
         }
-<<<<<<< HEAD
         if(strcmp(Img[0], "0")){
             char* iSize = questionTextSize(saveTokens[1], saveTokens[2], Img[1]);
             sprintf(message," %s %s %s ",Img[0], Img[1], iSize);
@@ -287,11 +286,6 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
             write(socket, message, strlen(message));
             memset(message, 0, 1024);
         }
-
-
-
-=======
->>>>>>> b59a45bacdf456244f9c9993ee37849d4ec971ff
 }
 
 int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm){

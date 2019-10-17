@@ -129,7 +129,7 @@ void start_TCP(){
     }
 } 
 
-//divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo whyle
+//divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo while
 int connectTCP(){
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
@@ -139,11 +139,11 @@ int connectTCP(){
 }
 
 int writeTCP(char* message){
-    int b = write(fdTCP, message, strlen(message));
+    ssize_t b = write(fdTCP, message, strlen(message));
     if (b == -1){
-        printf("write not working TCP");
+        return b;
     }
-    return b; 
+    return b;
 }
 
 char* readTCP(){
