@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <string.h>
+#include "parse_fs.h"
 
 //MAIN FS---------------------------------------------------------
 int check_directory_existence(char *dirname){
@@ -47,6 +48,7 @@ char* number_of_topics(){ //get the number of total topics
     finalValue = realloc(value, strlen(value)+1);
     return finalValue;
 }
+
 
 char* topicList(char* numTopics){ //get the list of topics
     DIR *d;
@@ -222,10 +224,10 @@ char* questionID(char* currTopic, char* dirname){
     return id;
 }
 
-char* questionTextSize(char* currTopic, char* dirname){
+char* questionTextSize(char* currTopic, char* dirname, char* ext){
     char* path = (char*)malloc (sizeof (char) * 1024); 
     memset(path, 0, 1024);
-    sprintf(path, "TOPICS/%s/%s/%s.txt", currTopic, dirname, dirname);
+    sprintf(path, "TOPICS/%s/%s/%s.%s", currTopic, dirname, dirname, ext);
     FILE* file;
     char* qsize = (char*)malloc(sizeof(char)*11);
     memset(qsize, 0, 11);
@@ -243,25 +245,37 @@ char* questionTextSize(char* currTopic, char* dirname){
     return qsize;
 }
 
-char* checkQuestionImage(char *currTopic, char* dirname){
+char** checkQuestionImage(char *currTopic, char* dirname){
     char* path = (char*)malloc (sizeof (char) * 1024); 
     memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s", currTopic, dirname);
     
-    FILE* file;
-    char* qsize = (char*)malloc(sizeof(char)*2);
-    memset(qsize, 0, 2);
-    file = fopen(path, "r");
-    free(path);
-    if(file == NULL){
-        exit(EXIT_FAILURE);
+    char** qImg = saveTokensInit(2, 4);
+    
+    char* ret;
+    const char ch = '.';
+    strcpy(qImg[0],"0");
+    
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(path);
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))&&dir->d_type != DT_DIR ){
+                ret = strrchr(dir->d_name, ch);
+                //char* dirent = strncpy(dir->d_name)
+                if(strcmp(ret, ".txt")){
+                    strcpy(qImg[0],"1");
+                    for(int i = 1; i < strlen(ret); i++){
+                        qImg[1][i -1] = ret[i];
+                    }
+                    return qImg;
+                }     
+            }
+        }
+        closedir(d);
     }
-
-    fseek(file, 0, SEEK_END);
-    long int size = ftell(file);
-    sprintf(qsize, "%ld", size);
-
-    return qsize;
+    return qImg;
 }
 
 int checkExistenceofTopic(char* dirname){ //check if a topic exists
@@ -356,6 +370,9 @@ char* createAnswer(char** saveTokens){
     strcat(path,saveTokens[3]);
     char* newPath = realloc(path, strlen(path) + 1); 
     number = numberOfdirectories(path);
+    int numbInt = atoi(number);
+    numbInt++;
+    sprintf(number, "%d", numbInt); 
     d = opendir(newPath);
     int fd = dirfd(d);
     if(strlen(number)!=2){
@@ -416,4 +433,103 @@ void writeFileImgANS(char ** saveTokens, char* message, char* ext, long int n, c
     fwrite(message, n, sizeof(char), file);
     fclose(file);
     //free(path);
+}
+
+char* number_of_answers(char* topic, char* question){ //get the number of total topics
+    char* value = (char*)malloc(sizeof (char)* 4);
+    memset(value, 0, 4);
+    char* finalValue;
+    int number = 0;
+    DIR *d;
+    struct dirent *dir;
+    char* path = (char*) malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s", topic, question);
+    d = opendir(path);
+
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))&& dir->d_type == DT_DIR){
+                number++;
+            }
+        }
+        closedir(d);
+    }
+    else 
+        return NULL;  
+    
+    sprintf(value, "%d", number);
+    finalValue = realloc(value, strlen(value)+1);
+    return finalValue;
+}
+
+char* answerID(char* currTopic, char* dirname, char* numb){
+    char* path = (char*)malloc (sizeof (char) * 1024); 
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s_UID.txt", currTopic, dirname, dirname, numb, dirname, numb);
+    FILE* file;
+    char* id = (char*)malloc(sizeof(char)*6);
+    
+    file = fopen(path, "r");
+    free(path);
+    if(file == NULL){
+        exit(EXIT_FAILURE);
+    }
+    fscanf(file, "%s", id);
+    strcat(id, "\0");
+
+    return id;
+}
+
+char** checkAnswerImage(char *currTopic, char* dirname, char* numb){
+    char* path = (char*)malloc (sizeof (char) * 1024); 
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_%s", currTopic, dirname, dirname, numb);
+    
+    char** qImg = saveTokensInit(2, 4);
+    
+    char* ret;
+    const char ch = '.';
+    strcpy(qImg[0],"0");
+    
+    DIR *d;
+    struct dirent *dir;
+    d = opendir(path);
+    if (d){
+        while((dir=readdir(d)) != NULL){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))&&dir->d_type != DT_DIR ){
+                ret = strrchr(dir->d_name, ch);
+                //char* dirent = strncpy(dir->d_name)
+                if(strcmp(ret, ".txt")){
+                    strcpy(qImg[0],"1");
+                    for(int i = 1; i < strlen(ret); i++){
+                        qImg[1][i -1] = ret[i];
+                    }
+                    return qImg;
+                }     
+            }
+        }
+        closedir(d);
+    }
+    return qImg;
+}
+char* questionAnswerSize(char* currTopic, char* dirname, char*numb, char* ext){
+    char* path = (char*)malloc (sizeof (char) * 1024); 
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s.%s", currTopic, dirname, dirname, numb, dirname, numb, ext);
+    FILE* file;
+    char* qsize = (char*)malloc(sizeof(char)*11);
+    memset(qsize, 0, 11);
+    
+    file = fopen(path, "r");
+    free(path);
+    if(file == NULL){
+        exit(EXIT_FAILURE);
+    }
+
+    fseek(file, 0, SEEK_END);
+    long int size = ftell(file);
+    sprintf(qsize, "%ld", size);
+
+    return qsize;
 }
