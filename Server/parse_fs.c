@@ -111,53 +111,6 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
             strcpy(message, "ERR\n");
         }
     }
-
-    //--------------------------------------------------------------------
-    // TCP CMDS
-    //--------------------------------------------------------------------
-    else if(!strcmp(saveTokens[0], "GQU")){
-        if(commandGQUOK(numTokens, saveTokens, numberChar)){
-            if(isREG(ip)){
-            	strcpy(message, "QGR ");
-            	strcat(message, "\n");
-        	}
-        	else{
-        		strcpy(message, "ERR\n");
-        	}
-        }else{
-            strcpy(message, "ERR\n");
-        }
-    }
-
-    else if(!strcmp(saveTokens[0], "QUS")){
-        if(commandQUSOK(numTokens, saveTokens, numberChar)){ 
-        	if(isREG(ip)){
-            	strcpy(message, "QUR ");
-            	strcat(message, checkSubmitQuestion(saveTokens));
-            	strcat(message, "\n");
-			}
-			else{
-				strcpy(message, "ERR\n");
-			}        	
-        }else{
-            strcpy(message, "QUR NOK\n");
-        }
-    }
-    
-    else if(!strcmp(saveTokens[0], "ANS")){
-        if(commandANSOK(numTokens, saveTokens, numberChar)){
-            if(isREG(ip)){
-            	strcpy(message, "ANR ");
-            	strcat(message, "\n");
-        	}
-        	else{
-        		strcpy(message, "ERR\n");
-        	}
-        }else{
-            strcpy(message, "ERR\n");
-        }
-    }
-    
     else{
         strcpy(message, "ERR\n");
     }
@@ -166,7 +119,8 @@ char* input_action(int numTokens, char** saveTokens, char* input, long int numbe
 }
 
 int isREG(const char* ip){
-	return searchIP(headUser, ip);
+	//return searchIP(headUser, ip);
+    return TRUE;
 }
 
 char** parse_commandTCP(char* message){
@@ -177,9 +131,9 @@ char** parse_commandTCP(char* message){
     char** saveTokens = saveTokensInit(6, 50);
     //First part of parse until data
     for(i = 0; i < 50; i++){
-        if(message[i] == ' '){
+        if(message[i] == ' '|| message[i] == '\n'){
             saveTokens[j][k] = '\0';
-            nSpaces++;
+            nSpaces++; 
             j++;
             k = 0;
         }
@@ -190,6 +144,9 @@ char** parse_commandTCP(char* message){
             saveTokens[j][k] = message[i];
             k++;
         }
+    }
+    if(j == 2){
+        j++;
     }
     sprintf(saveTokens[j],"%d", i);
     return saveTokens;
@@ -229,4 +186,147 @@ char** saveTokensInit(int row, int collumn){
         memset(saveTokens[i], 0, collumn);
     }
     return  saveTokens;
+}
+
+void parseQGU(char** saveTokens, int socket, char* buffer){
+        int indice = 0;
+        int numBytes;
+        char * message = (char*)malloc(sizeof(char)*1024);
+        memset(message, 0, 1024);
+        char* qUser = questionID(saveTokens[1], saveTokens[2]);
+        char* qSize = questionTextSize(saveTokens[1],saveTokens[2]);
+        //char* qImg = checkQuestionImage(saveTokens[1], saveTokens[2]);
+        strcpy(message, "QGR ");
+        strcat(message, qUser);
+        strcat(message, " ");
+        strcat(message, qSize);
+        strcat(message, " ");
+        int qSizeInt = atoi(qSize);
+        while(qSizeInt > 0){
+            numBytes = treatBufferDataQGU(saveTokens, qSizeInt, indice, socket, message);
+            qSizeInt = qSizeInt - numBytes;
+            indice += numBytes;
+            memset(message, 0, 1024);
+        }
+
+
+
+}
+
+int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, char* message){
+    FILE* file;
+    int max = qSize > 1024-strlen(message) ? 1024-strlen(message) : qSize; 
+    char* newMessage = (char*)malloc(sizeof(char)*(max));
+    char* path = (char*)malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.txt",saveTokens[1],saveTokens[2], saveTokens[2]);
+    file = fopen(path, "r");
+    if(file < 0){
+        exit(1);
+    }
+    fseek(file, indice, SEEK_SET);
+    fread(newMessage,1, max, file);
+    if(max == qSize){
+        strcat(newMessage, " 0 0\n");
+    }
+    strcat(message, newMessage);
+    printf("%s", message);
+    write(socket, message, strlen(message));
+    return (max);
+}
+
+char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* message){
+    int indice;
+    int num = atoi(saveTokens[4]);
+    int i = atoi(saveTokens[5]);
+    char* path = (char*)malloc(sizeof(char)*50);
+    memset(path,0,50);
+    strcpy(path, "TOPICS/");
+    strcat(path,saveTokens[2]);
+    strcat(path, "/");
+    strcat(path, saveTokens[3]);
+    
+    if(atoi(numberOfdirectories(path))==99){
+        strcpy(message, "ANR FUL\n");
+        return message;
+    }
+    else{
+        char* number = createAnswer(saveTokens);
+        while(num > 0){
+            indice = treatBufferDataANS(saveTokens, i, num, buffer, number);
+            num = num - (indice - i);
+            i = 0;
+            if(indice == strlen(buffer)){
+                memset(buffer, 0, 1024);
+                n = read(newfd, buffer, 1024);
+            }
+        } 
+        if(buffer[indice] == ' '){
+            indice++;
+            if(buffer[indice] == '0'){
+                strcpy(message, "ANR OK\n");
+            }
+            else{
+                indice+=2;
+                char* ext = (char*)malloc(sizeof(char)*3);
+                int j;
+                for(j = 0; j<3; j++, indice++){
+                    ext[j] = buffer[indice];
+                }
+                ext[j] = '\0';
+                indice ++;
+                char* isize = (char*)malloc(sizeof(char)*10);
+                memset(isize, 0, 10);
+                int indImg = 0;  
+                while(buffer[indice] != ' '){
+                    isize[indImg] = buffer[indice];
+                    indice++;
+                    indImg++;
+                }
+                isize[indImg] = '\0';
+                indice++;
+                i = indice;
+                int numImg = atoi(isize);
+                while(numImg > 0){
+                    indice = treatBufferImgANS(saveTokens, i, numImg, n, buffer, ext, number);
+                    numImg = numImg - (indice - i);
+                    i = 0;
+                    if(indice == n){
+                        memset(buffer, 0, 1024);
+                        n = read(newfd, buffer, 1024);
+                    }
+                }
+             strcpy(message, "ANR OK\n");
+             printf("DATA SEND\n");
+            }
+        }
+    }
+    return message;    
+}
+
+int treatBufferDataANS(char** saveTokens, int ind, int num, char* buffer, char* number){
+    
+    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
+    memset(message, 0, max-ind);
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    message[k] = '\0';
+    writeFileDataANS(saveTokens, message, buffer, number);
+    return i;
+}
+
+int treatBufferImgANS(char** saveTokens,int ind, int num, long int n, char* buffer, char* ext, char* number){
+    int max = num > n ? n : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind));
+    memset(message, 0, max-ind);
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    //printf("%s\n",message);
+    writeFileImgANS(saveTokens, message, ext, max-ind, number);
+    return i;
 }

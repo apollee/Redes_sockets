@@ -21,7 +21,10 @@ int checkExistenceofTopic(char* dirname);
 void createQuestion(char* pathTopic, char** saveTokens);
 void writeFileData(char** saveTokens, char* buffer);
 void writeFileImg(char ** saveTokens, char* message, char* ext, long int n);
-void createAnswer(char** saveTokens);
+char* createAnswer(char** saveTokens);
+char* questionTextSize(char* currTopic, char* dirname);
+void writeFileDataANS(char ** saveTokens, char* message, char* buffer, char* number);
+void writeFileImgANS(char ** saveTokens, char* message, char* ext, long int n, char* number);
 //User functions
 // int getTopic_by_number(int topic_number);
 // int checkExistenceofTopic(char* dirname);

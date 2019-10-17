@@ -12,4 +12,9 @@ int treatBufferImg(char** saveTokens, int ind, int num, long int n, char* buffer
 char** parse_commandTCPImg(int i, char* message);
 int isREG(const char* ip);
 char** saveTokensInit(int row, int collunm);
+void parseQGU(char** saveTokens, int socket, char* buffer);
+int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, char* message);
+char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* message);
+int treatBufferDataANS(char** saveTokens, int ind, int num, char* buffer, char* number);
+int treatBufferImgANS(char** saveTokens,int ind, int num, long int n, char* buffer, char* ext, char* number);
 #endif
