@@ -153,6 +153,7 @@ char* readTCP(){
     if (b == -1){
         printf("read not working TCP");
     }
+
     bufferFinal = realloc(buffer, strlen(buffer)+1);
     return bufferFinal;
 }

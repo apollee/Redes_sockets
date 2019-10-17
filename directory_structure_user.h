@@ -14,5 +14,7 @@ void writeFileData(char* message);
 void writeFileImg(char* message, char* ext, long int n);
 void writeFileData2(char* message);
 void writeFileImg2(char* message, char* ext, long int n);
+char* questionID(char* dirname, char* path);
+void questionList();
 
 #endif
