@@ -135,7 +135,7 @@ int connectTCP(){
     if(h == -1){
         printf("send to not working TCP\n");
     }  
-    return h;
+    return h; 
 }
 
 int writeTCP(char* message){

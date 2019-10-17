@@ -29,6 +29,6 @@ int commandQLOK(int numTokens, char ** saveTokens, long int numberCar);
 int commandQGOK(int numTokens, char** saveTokens, long int numberCar);
 int commandQSOK(int numTokens, char** saveTokens, long int numberCar);
 int commandASOK(int numTokens, char** saveTokens, long int numberCar);
-
+int treatBufferImageQUS(char** saveTokens, int qsize, int indice, char* message);
 
 #endif
