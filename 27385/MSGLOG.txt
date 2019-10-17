@@ -1,1 +1,0 @@
-UDPC:REG 13422$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 7 topic6:12342 topic7:12345 topic3:21432 topic1:12345 topic5:12345 topic2:80953 topic4:12342$TCPC:QUS 13422 topic6 t3 187 [--> 187 bytes of data -->] 1 jpg 61543 TCPS:ðct›æ

@@ -1,1 +1,0 @@
-UDPC:REG 12341$UDPS:RGR OK$UDPC:LTP$UDPS:LTR 7 topic6:12342 topic7:12345 topic3:21432 topic1:12345 topic5:12345 topic2:80953 topic4:12342$TCPC:QUS 12341 topic6 q1 2828 [--> 2828 bytes of data -->] 1 jpg 5794368 [--> 5794368 bytes of data -->]$TCPS:QUR OK$TCPC:QUS 12341 topic6 q1 2 [--> 2 bytes of data -->]

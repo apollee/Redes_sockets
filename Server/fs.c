@@ -85,9 +85,9 @@ int main(int argc, char *argv[]) {
             char** saveTokens = parse_commandTCP(buffer);
             if(!strcmp(saveTokens[0],"GQU")){
                 if(commandGQUOK(saveTokens, atoi(saveTokens[3]))){
-                    //parseQGU(saveTokens, newfd, buffer);
+                    parseQGU(saveTokens, newfd, buffer);
 
-                    strcpy(message,"QGR 12345 3 ola 0 0\n");
+                    //strcpy(message,"QGR 12345 3 ola 0 0\n");
                     
                 }
                 else{
@@ -121,6 +121,7 @@ int main(int argc, char *argv[]) {
                             if(indice == strlen(buffer)){
                                 memset(buffer, 0, 1024);
                                 n = read(newfd, buffer, 1024);
+                                indice = 0;
                             }
                         } 
                         if(buffer[indice] == ' '){
@@ -168,7 +169,15 @@ int main(int argc, char *argv[]) {
                 else{
                         strcpy(message, "QUR NOK\n");
                 }  
+                 char* newMessage = realloc(message, strlen(message)+1);
+                write(newfd, newMessage, strlen(newMessage)); //ta a escrever para o user?
+                close(newfd); 
+                close(fdTCP);
+
+                start_TCP();
+
             }
+
             else if(!strcmp(saveTokens[0],"ANS")){
                 if(commandANSOK(saveTokens, atoi(saveTokens[5]))){
                     message = parseANS(saveTokens, newfd, n, buffer, message);   
@@ -176,17 +185,25 @@ int main(int argc, char *argv[]) {
                 else{
                     strcpy(message, "QUR NOK\n");
                 }
+                     char* newMessage = realloc(message, strlen(message)+1);
+                    write(newfd, newMessage, strlen(newMessage)); //ta a escrever para o user?
+                    close(newfd); 
+                    close(fdTCP);
+
+                    start_TCP(); 
             }
+
             else{
                 strcpy(message, "ERR");
+                char* newMessage = realloc(message, strlen(message)+1);
+                write(newfd, newMessage, strlen(newMessage)); //ta a escrever para o user?
+                close(newfd); 
+                close(fdTCP);
+
+                start_TCP();
             }
 
-            char* newMessage = realloc(message, strlen(message)+1);
-            write(newfd, newMessage, strlen(newMessage)); //ta a escrever para o user?
-        	close(newfd); 
-        	close(fdTCP);
-
-        	start_TCP();
+           
         }
     }
    

@@ -196,16 +196,19 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
         char* qUser = questionID(saveTokens[1], saveTokens[2]);
         char* qSize = questionTextSize(saveTokens[1],saveTokens[2]);
         //char* qImg = checkQuestionImage(saveTokens[1], saveTokens[2]);
-        strcpy(message, "GQR ");
+        strcpy(message, "QGR ");
         strcat(message, qUser);
         strcat(message, " ");
         strcat(message, qSize);
         strcat(message, " ");
-        while(qSize > 0){
-            numBytes = treatBufferDataQGU(saveTokens, atoi(qSize), indice, socket, message);
-            qSize -= numBytes;
+        int qSizeInt = atoi(qSize);
+        while(qSizeInt > 0){
+            numBytes = treatBufferDataQGU(saveTokens, qSizeInt, indice, socket, message);
+            qSizeInt = qSizeInt - numBytes;
             indice += numBytes;
+            memset(message, 0, 1024);
         }
+
 
 
 }
@@ -223,9 +226,13 @@ int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, cha
     }
     fseek(file, indice, SEEK_SET);
     fread(newMessage,1, max, file);
+    if(max == qSize){
+        strcat(newMessage, " 0 0\n");
+    }
     strcat(message, newMessage);
+    printf("%s", message);
     write(socket, message, strlen(message));
-    return (indice + max);
+    return (max);
 }
 
 char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* message){

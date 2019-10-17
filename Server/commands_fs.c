@@ -120,8 +120,11 @@ char* checkTopics(){
     numTopics = number_of_topics();
     strcpy(message, numTopics);
     if (strcmp(numTopics, "0")){
+        
         strcat(message, " ");
+        
         strcat(message, topicList(numTopics));
+
     }
     finalMessage = (char*)realloc(message, strlen(message)+1);
     return finalMessage;
