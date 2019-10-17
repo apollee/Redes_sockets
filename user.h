@@ -5,6 +5,8 @@
 #define DEFAULT_PORT "58041"
 #define DEFAULT_BUFFER_SIZE 1024
 
+int fdTCP;
+
 struct addrinfo;
 void sigpipe_handler();
 void initialize_flags();

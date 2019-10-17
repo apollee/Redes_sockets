@@ -18,7 +18,7 @@ struct addrinfo *resUDP, *resTCP;
 struct sockaddr_in addr;
 socklen_t addrlen;
 ssize_t n;
-int fdUDP, fdTCP, errcode;
+int fdUDP, errcode;
 char host_name[128];
 char port[6];
 //char ip[INET_ADDRSTRLEN];
@@ -181,7 +181,7 @@ void send_commandTCP(char* message){
 
     write(1, "echo TCP: ", 10);    
     write(1, buffer, strlen(buffer)); 
-    parse_command_received(buffer);
+    parse_command_received_TCP(buffer);
     close(fdTCP);
 
     fdTCP = create_socket(resTCP);

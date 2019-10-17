@@ -10,5 +10,9 @@ void create_topic_directory(char *dirname, char* userID);
 void create_question_directory(char *dirname, char* userID);
 void create_directory(char* dirname);
 void topicList();
+void writeFileData(char* message);
+void writeFileImg(char* message, char* ext, long int n);
+void writeFileData2(char* message);
+void writeFileImg2(char* message, char* ext, long int n);
 
 #endif

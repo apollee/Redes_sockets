@@ -13,6 +13,8 @@
 #include "commands_user.h"
 #include "directory_structure_user.h"
 
+ssize_t n;
+
 
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
@@ -220,12 +222,80 @@ void input_action_received(int numTokens, char** saveTokens, long int numberChar
     }
 }
 
+char** parse_commandTCP(char* message){
+    int nSpaces = 0;
+    int j = 0;
+    int k = 0;
+    int i;
+    char** saveTokens = saveTokensInit(4, 50);
+    //First part of parse until data
+    for(i = 0; i < 50; i++){
+        if(message[i] == ' '){
+            saveTokens[j][k] = '\0';
+            nSpaces++;
+            j++;
+            k = 0;
+        }
+        else if(nSpaces == 3){
+            break;
+        }
+        else{
+            saveTokens[j][k] = message[i];
+            k++;
+        }
+    }
+    sprintf(saveTokens[j],"%d", i);
+    input_action_received_TCP(numTokens, saveTokens, numberChar);
+    return saveTokens;
+}
+
 //TCP message from the server
 void input_action_received_TCP(int numTokens, char** saveTokens, long int numberChar){ 
     char command[5];
+    int indice;
+    char* buffer = (char*)malloc(sizeof(char)* 1024);
+    memset(buffer, 0, 1024);
     strcpy(command, saveTokens[0]);
 
-    if(!strcmp(command, "CGR")){
+    if(!strcmp(command, "QGR")){
+        //int id_user = atoi(saveTokens[1]);
+        int qsize = atoi(saveTokens[2]);
+        int qdata = atoi(saveTokens[3]);
+        while(qsize > 0){
+            indice = treatBufferData(saveTokens, qdata , qsize, buffer); //qdata
+            qsize = qsize - (indice - qdata);    
+            qdata = 0;
+
+            if(indice == strlen(buffer)){
+                memset(buffer, 0, 1024);
+                n = read(fdTCP, buffer, 1024);
+            }
+        }
+        if(buffer[indice] == ' '){
+            indice++;
+            if(buffer[indice] == '0'){
+                indice++;
+                //printf("Got the file of the question with success\n");
+            }else{
+                indice = parse_image_qg(indice, buffer); //qiext qisize qidata
+            }
+        }
+        if(buffer[indice] == ' '){
+            indice++;
+            int number_answers = atoi(buffer[indice]); // N
+            indice += 2;
+            while(number_answers > 0){
+                indice = parse_answers_qg(indice, buffer); //aUserID asize adata
+                if(buffer[indice] == ' '){
+                    indice++;
+                    if(buffer[indice] == '0'){
+                        indice++;
+                    }else{
+                        indice = parse_answers_image_qg(indice, buffer); //aiext AN aisize aidata
+                    }
+                }
+            }
+        }
         /*funcao missing*/        
     }
 
@@ -254,4 +324,164 @@ void input_action_received_TCP(int numTokens, char** saveTokens, long int number
     else{
         printf("Unexpected server response\n");
     }
+}
+
+int parse_image_qg(int indice, char* buffer){
+    indice += 2;
+    char* ext = (char*)malloc(sizeof(char)*3);
+    int j;
+    for(j = 0; j < 3; j++, indice++){ //checkar a extensao
+        ext[j] = buffer[indice];
+    }
+    ext[j] = '\0';
+    indice++;
+    char* qisize = (char*)malloc(sizeof(char)*10);
+    memset(qisize, 0, 10);
+    int indImg = 0;
+    while(buffer[indice] != ' '){ //guardar o isize
+        qisize[indImg] = buffer[indice];
+        indice++;
+        indImg++;
+    }
+    qisize[indImg] = '\0';
+    indice++;
+    int i = indice;
+    int numImg = atoi(qisize); //image size
+    while(numImg > 0){
+        indice = treatBufferImg(i, numImg, n, buffer, ext);
+        numImg = numImg - (indice - i);
+        i = 0;
+        if(indice == n){
+            memset(buffer, 0, 1024);
+            n = read(fdTCP, buffer, 1024);
+        }
+    }
+    return indice;
+}
+
+int parse_answers_image_qg(indice, buffer){
+    indice += 2;
+    char* ext = (char*)malloc(sizeof(char)*3);
+    int j;
+    for(j = 0; j < 3; j++, indice++){ //checkar a extensao
+        ext[j] = buffer[indice];
+    }
+    ext[j] = '\0';
+    indice++;
+
+    char* an = (char*)malloc(sizeof(char)*2);
+    memset(an, 0, 2);
+    int indAn = 0;
+    for(j = 0; j < 2; j++; indice++){ //guardar o AN
+        an[j] = buffer[indice];
+
+    }
+    an[j] = '\0';
+    indice++;
+
+    char* qisize = (char*)malloc(sizeof(char)*10);
+    memset(qisize, 0, 10);
+    int indImg = 0;
+    while(buffer[indice] != ' '){ //guardar o qsize
+        qisize[indImg] = buffer[indice];
+        indice++;
+        indImg++;
+    }
+    qisize[indImg] = '\0';
+    indice++;
+    int i = indice;
+    int numImg = atoi(qisize); //image size
+    while(numImg > 0){
+        indice = treatBufferImg2(i, numImg, n, buffer, ext);
+        numImg = numImg - (indice - i);
+        i = 0;
+        if(indice == n){
+            memset(buffer, 0, 1024);
+            n = read(fdTCP, buffer, 1024);
+        }
+    }
+    return indice;    
+}
+
+
+int parse_answers_qg(int indice, char* buffer){
+    char* id_answer = (char*)malloc(sizeof(char)*5);
+    int j;
+    for(j = 0; j < 5; j++; indice++){
+        id_answer[j] = buffer[indice];
+    }
+    id_answer[j] = '\0';
+    indice++;
+    char* asize = (char*)malloc(sizeof(char)*10);
+    memset(asize, 0, 10);
+    int indData = 0;
+    while(buffer[indice] != ' '){
+        asize[indData] = buffer[indice];
+        indice++;
+        indData++;
+    }
+    asize[indData] = '\0';
+    indice++;
+    int i = indice;
+    int numData = atoi(asize);
+    while(numData > 0){
+        indice = treatBufferData2(i, num, buffer); //esta funcao nao da como esta, nova ou mudar esta?
+        numData = numData - (indice - i);
+        i = 0;
+        if(indice == strlen(buffer)){
+            memset(buffer, 0, 1024);
+            n = read(fdTCP, buffer, 1024);
+        }
+    }
+    return indice;
+
+}
+
+int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext){
+    int max = num > n ? n : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind));
+    memset(message, 0, max-ind);
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    //printf("%s\n",message);
+    writeFileImg(message, ext, max-ind);
+    return i;
+}
+
+int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
+    
+    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
+    memset(message, 0, max-ind);
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    message[k] = '\0';
+    writeFileData(message);
+    return i;
+}
+
+int treatBufferData2(int ind, int num, char* buffer){
+    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int i, k = 0;
+    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
+    memset(message, 0, max-ind);
+    for(i = ind; i < max; i++, k++){
+        message[k] = buffer[i];
+    }
+    message[k] = '\0';
+    writeFileData2(message);
+    return i;
+}
+
+char** saveTokensInit(int row, int collumn){
+    char** saveTokens = (char **) malloc(sizeof (char*) * row);
+    for(int i = 0; i < collumn; i++){
+        saveTokens[i] = (char *) malloc(sizeof(char)*collumn);
+        memset(saveTokens[i], 0, collumn);
+    }
+    return  saveTokens;
 }

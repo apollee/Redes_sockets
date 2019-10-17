@@ -213,10 +213,15 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     //char buffer[DEFAULT_BUFFER_SIZE];
     //int offset = 0;
     FILE* fd;
+    int offset = atoi(saveTokens[5]);
+    int indice = 0;
+
+    connectTCP();
 
     strcat(saveTokens[2], ".txt"); //adding the .txt to the file name
     stat(saveTokens[2], &qsize);
     var = qsize.st_size; //Size of text doc
+    var += 1; //e preciso por causa do \n??
     
     sprintf(message, "QUS %s %s %s %ld ", id_user, local_topic, saveTokens[1], var);
     
@@ -225,20 +230,17 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         fprintf(stderr, "cannot open input file\n");
         return;
     }else{
-        fread(buffer, var+1, 1, fd);   
-        strcat(message, buffer);
+        while(var > 0){
+            indice = fread(buffer, 1, 1024, fd);
+            var = var - indice;
+
+            if(indice == strlen(buffer)){
+                memset(buffer, 0, 1024);
+                writeTCP(char* message);
+            }
+        }  
         fclose(fd);
     }
-
-    //connectTCP();
-    
-    // while(qsize.st_size != offset){
-    //     strcat(message, var);
-    //     strcat(message, " ");
-        
-    //     offset += writeTCP(message);
-    //     var -= offset;
-    // }
 
     //Doc itself
     //strcat(message, " ");
@@ -341,7 +343,7 @@ void questions_print(char** saveTokens){
         printf("%s ", token);
         char * token2 = strtok(NULL, ":");
         printf("(proposed by %s)\n", token2);
-        char * token3 = strtok(NULL, ""); //number of answers
+        //char * token3 = strtok(NULL, ""); //number of answers
         create_question_directory(token, token2);
     }
 }

@@ -134,7 +134,7 @@ int checkExistenceofTopic(char* dirname){ //check if a topic exists
     return 0;
 }
 
-int checkExistenceofQuestion(char* dirname){ //check if a topic exists
+int checkExistenceofQuestion(char* dirname){ //check if a question exists
     DIR *d;
     struct dirent *dir;
     char* message = malloc (sizeof (char) * 1024); 
@@ -197,4 +197,77 @@ void topicList(){ //get the list of topics
 	else{
 		exit(1);
 	}
+}
+
+void writeFileData(char* message){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.txt", local_topic, local_question, local_question);
+    file = fopen(path, "a");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fprintf(file,"%s", message);
+    fclose(file);
+    //free(path);
+}
+
+void writeFileData2(char* message){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
+
+    sprintf(path, "TOPICS/%s/%s/%s", local_topic, local_question, local_question);
+    d = opendir("path");
+    int fd = dirfd(d);
+    mkdirat(fd, dirname, 0700);
+
+    file = fopen(path, "a");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fprintf(file,"%s", message);
+    fclose(file);
+    //free(path);
+}
+
+void writeFileImg(char* message, char* ext, long int n){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.%s", local_topic, local_question, local_question, ext);
+    file = fopen(path, "ab");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fwrite(message, n, sizeof(char), file);
+    fclose(file);
+    //free(path);
+}
+
+void writeFileImg2(char* message, char* ext, long int n){
+
+    FILE* file;
+    char* path = (char*)malloc (sizeof (char) * 1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s.%s", local_topic, local_question, local_question, ext);
+    file = fopen(path, "ab");
+    //free(path);
+    if (file < 0) {
+        perror("CLIENT:\n");
+        exit(1);
+    }
+    fwrite(message, n, sizeof(char), file);
+    fclose(file);
+    //free(path);
 }
