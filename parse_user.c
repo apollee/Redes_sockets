@@ -235,7 +235,7 @@ char** parse_command_received_TCP(char* message){
     char** saveTokens = saveTokensInit(4, 50);
     //First part of parse until data
     for(i = 0; i < 50; i++){
-        if(message[i] == ' '){
+        if(message[i] == ' ' || message[i] == '\n'){
             saveTokens[j][k] = '\0';
             nSpaces++;
             j++;
@@ -248,6 +248,9 @@ char** parse_command_received_TCP(char* message){
             saveTokens[j][k] = message[i];
             k++;
         }
+    }
+    if(j == 2){
+        j++;
     }
     sprintf(saveTokens[j],"%d", i);
     input_action_received_TCP(saveTokens);
@@ -369,8 +372,8 @@ void input_action_received_TCP(char** saveTokens){
         }else if(!strcmp(saveTokens[1], "DUP")){ 
             printf("Duplicated question, failed to submit\n");
         }
-        //printf("%s %s\n", command, saveTokens[1]);
     }
+    
     else if(!strcmp(command, "ANR")){
         if(!strcmp(saveTokens[1], "OK")){
             printf("Answer submitted with success\n");
@@ -379,7 +382,6 @@ void input_action_received_TCP(char** saveTokens){
         }else if(!strcmp(command, "FUL")){
             printf("Failed to submit answer - Maximum limit of answers reached\n");
         }
-        printf("%s %s\n", command, saveTokens[1]);
     }
     else{
         printf("Unexpected server response\n");

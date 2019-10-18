@@ -317,6 +317,7 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     free(file_with_extension);
     printf("%s", message);
     //send_commandTCP(message);
+    parse_command_received_TCP(readTCP());
 }
 
 void send_message_as(char* message, int numTokens, char** saveTokens){
@@ -327,14 +328,15 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     int numBytes; 
 
     connectTCP();
-    sprintf(file_with_extension, "%s.txt", saveTokens[2]); //adding the .txt to the file name;
+    sprintf(file_with_extension, "%s.txt", saveTokens[1]); //adding the .txt to the file name;
     stat(file_with_extension, &qsize);
     var = qsize.st_size; 
     //var += 1; \n?? !!!!
     
-    sprintf(message, "ANS %s %s %s ", id_user, local_topic, local_question);
-    fd_bufferData = fopen(file_with_extension, "r")
+    sprintf(message, "ANS %s %s %s %ld ", id_user, local_topic, local_question, var);
+    fd_bufferData = fopen(file_with_extension, "r");
     if(fd_bufferData == NULL){
+        printf("FILE NAME: %s", file_with_extension);
         fprintf(stderr, "cannot open input file\n");
         exit(-1);
     }
@@ -347,7 +349,44 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     }
 
     fclose(fd_bufferData);
-    strcpy(message, "");    
+    strcpy(message, "");
+    if(numTokens == 3){
+        strcat(message, " 1 ");
+        const char ch = '.';
+        char* ext = (char*)malloc(sizeof(char)*4);
+        ext = strchr(saveTokens[2], ch);
+        ext = ext + 1;
+
+        char var2[1024];
+        int size_image;
+        strcat(message, ext);
+        strcat(message, " ");
+        stat(saveTokens[2], &isize);
+        sprintf(var2, "%ld", isize.st_size);
+        size_image = atoi(var2);
+        strcat(message, var2);
+        strcat(message, " ");
+        write(fdTCP, message, strlen(message));
+        memset(message, 0, 1024);
+        indice = 0;
+        fd_bufferImg = fopen(saveTokens[2], "rb");
+        if(fd_bufferImg == NULL){
+            fprintf(stderr, "error: %s\n", strerror(errno));
+            exit(-1);
+        }
+        while(size_image > 0){
+            numBytes = treatBufferImageQUS(saveTokens, size_image, indice);
+            size_image = size_image - numBytes;
+            indice += numBytes;
+        }
+        fclose(fd_bufferImg);
+    }else{
+        strcat(message, " 0");
+    }
+    strcat(message, "\n");
+    writeTCP(message, 0);
+    free(file_with_extension);
+    parse_command_received_TCP(readTCP());
 }
 
 void send_message_err(char* message){
@@ -426,7 +465,7 @@ int treatBufferDataQUS(char* file_with_extension, int qsize, int indice, char* m
 }
 
 int treatBufferImageQUS(char** saveTokens, int qsize, int indice){
-    FILE* file;
+    /*FILE* file;*/
     ssize_t n;
     int max = qsize > 1024 ? 1024 : qsize;
     char* newMessage = (char*)malloc(sizeof(char)*max);
@@ -435,12 +474,12 @@ int treatBufferImageQUS(char** saveTokens, int qsize, int indice){
     fseek(fd_bufferImg, indice, SEEK_SET);
     int nread = fread(newMessage, 1, max, fd_bufferImg); 
 
-    file = fopen("teste.jpg", "ab");
+    /*file = fopen("teste.jpg", "ab");
     if(file < 0){
         exit(1);
     }
     fwrite(newMessage, 1,nread, file);
-    fclose(file);
+    fclose(file);*/
     n = write(fdTCP, newMessage, nread);
     free(newMessage);
     return n;
