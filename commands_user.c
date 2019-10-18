@@ -18,7 +18,9 @@
 struct stat qsize, isize;
 FILE* fd_bufferData;
 FILE* fd_bufferImg;
-
+//----------------------------------------------------------------------------------
+//Verification of the called commands
+//----------------------------------------------------------------------------------
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
         return FALSE;
@@ -143,6 +145,9 @@ int commandASOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE;
 }
 
+//----------------------------------------------------------------------------------
+//The commands are sended to the server side with a specific protocol
+//----------------------------------------------------------------------------------
 void send_message_reg(char* id, char* message){
     strcpy(id_user, id);
     strcpy(message, "REG ");
@@ -181,11 +186,13 @@ void send_message_qg(char* message){
     connectTCP();
     writeTCP(message, 0);
     
-    char* messageReceived = readTCP();
+    //Aqui começa a besteira de codigo------------------------------------------------------
+    char* messageReceived = (char*) malloc(sizeof (char*) * 1024);
+    memset(messageReceived, 0, 1024);
+    readTCP(messageReceived);
     
-    char** saveTokens = (char **) malloc(sizeof (char*) * 3);
-
-    for(int i = 0; i < 50; i++){
+    char** saveTokens = (char **) malloc(sizeof (char*) * 4);
+    for(int i = 0; i < 4; i++){
         saveTokens[i] = (char *) malloc(sizeof(char)*50);
         memset(saveTokens[i], 0, 50);
     }
@@ -211,8 +218,16 @@ void send_message_qg(char* message){
         }
     }
     sprintf(saveTokens[j],"%d", i);
-    input_action_received_TCP(saveTokens);
 
+
+    input_action_received_TCP(saveTokens, messageReceived);
+    for(int i = 0; i < 4; i++){
+         free(saveTokens[i]);
+    }
+    free(saveTokens);
+    free(messageReceived);
+
+    //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
@@ -431,7 +446,6 @@ int treatBufferDataQUS(char* file_with_extension, int qsize, int indice, char* m
     fread(newMessage, 1, max, fd_bufferData);
     strcat(message, newMessage);
     write(fdTCP, message, strlen(message));
-    //printf("%s", message);
     free(newMessage);
     return max;
 }

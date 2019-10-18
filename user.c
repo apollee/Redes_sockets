@@ -55,13 +55,6 @@ int main(int argc, char *argv[]) {
     free_and_close(); 
 }  
 
-void initialize_flags(){
-    strcpy(port, DEFAULT_PORT);
-    strcpy(ip, FLAG);
-    strcpy(id_user, FLAG);
-    strcpy(local_topic, FLAG);
-}
-
 void sigpipe_handler(){
     struct sigaction act;    
     memset(&act,0,sizeof act);
@@ -71,6 +64,13 @@ void sigpipe_handler(){
         printf("Error: connection was lost.\n");    
         exit(-1); 
     }  
+}
+
+void initialize_flags(){
+    strcpy(port, DEFAULT_PORT);
+    strcpy(ip, FLAG);
+    strcpy(id_user, FLAG);
+    strcpy(local_topic, FLAG);
 }
 
 int create_socket(struct addrinfo* res){ 
@@ -179,9 +179,8 @@ int writeTCP(char* message, int nread){
     return n;
 }
 
-char* readTCP(){
-    char* buffer = (char*) malloc(sizeof(char)*1024);
-    char* bufferFinal;
+char* readTCP(char* buffer){
+    //char* bufferFinal;
     int b = read(fdTCP, buffer, 1024); 
     if (b == -1){
         printf("Error: not able to receive the message from the server.\n");
