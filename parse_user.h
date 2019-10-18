@@ -15,6 +15,7 @@ int treatBufferData2(int ind, int num, char* buffer);
 int treatBufferData(char** saveTokens, int ind, int num, char* buffer);
 int parse_image_qg(int indice, char* buffer);
 int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext);
+int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext);
 char** saveTokensInit(int row, int collumn);
 int parse_image_qg(int indice, char* buffer);
 int parse_answers_qg(int indice, char* buffer);

@@ -103,7 +103,7 @@ int getQuestion_by_number(int number){ //get the topic by the number
     int current_question_number = 1;
     if(d){
         while((dir = readdir(d)) != NULL){
-            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))){
+            if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && (dir->d_type == DT_DIR)){
                 if(current_question_number == number){
                     strcpy(local_question, dir->d_name); 
                     return 1;
