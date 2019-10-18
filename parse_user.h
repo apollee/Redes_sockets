@@ -21,6 +21,6 @@ int parse_image_qg(int indice, char* buffer);
 int parse_answers_qg(int indice, char* buffer);
 int parse_answers_image_qg(int indice, char* buffer);
 
-void input_action_received_TCP(char** saveTokens);
+void input_action_received_TCP(char** saveTokens, char* buffer);
 
 #endif

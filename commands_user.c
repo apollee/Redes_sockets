@@ -190,6 +190,7 @@ void send_message_qg(char* message){
     
     //Aqui começa a besteira de codigo------------------------------------------------------
     char* messageReceived = (char*) malloc(sizeof (char*) * 1024);
+    memset(messageReceived, 0, 1024);
     readTCP(messageReceived);
     
     char** saveTokens = (char **) malloc(sizeof (char*) * 4);
@@ -220,15 +221,15 @@ void send_message_qg(char* message){
             k++;
         }
     }
-    free(messageReceived);
     sprintf(saveTokens[j],"%d", i);
 
 
-    input_action_received_TCP(saveTokens);
+    input_action_received_TCP(saveTokens, messageReceived);
     for(int i = 0; i < 4; i++){
          free(saveTokens[i]);
     }
     free(saveTokens);
+    free(messageReceived);
 
     //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
