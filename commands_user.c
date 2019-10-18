@@ -189,7 +189,7 @@ void send_message_qg(char* message){
     //Aqui começa a besteira de codigo------------------------------------------------------
     char* messageReceived = (char*) malloc(sizeof (char*) * 1024);
     memset(messageReceived, 0, 1024);
-    readTCP(messageReceived);
+    messageReceived = readTCP();
     
     char** saveTokens = (char **) malloc(sizeof (char*) * 4);
     for(int i = 0; i < 4; i++){

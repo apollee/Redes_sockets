@@ -179,8 +179,9 @@ int writeTCP(char* message, int nread){
     return n;
 }
 
-char* readTCP(char* buffer){
-    //char* bufferFinal;
+char* readTCP(){
+    char* buffer = (char*) malloc(sizeof(char)*1024);
+    char* bufferFinal;
     int b = read(fdTCP, buffer, 1024); 
     if (b == -1){
         printf("Error: not able to receive the message from the server.\n");

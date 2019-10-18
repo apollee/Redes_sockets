@@ -299,7 +299,7 @@ void input_action_received_TCP(char** saveTokens, char* buffer){
             if(indice == strlen(buffer)){
                 memset(buffer, 0, 1024);
                 //n = read(newfd, buffer, 1024);
-                readTCP(buffer);
+                buffer = readTCP();
                 indice = 0;
             }
         }
