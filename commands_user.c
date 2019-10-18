@@ -13,6 +13,7 @@
 #include "commands_user.h"
 #include "directory_structure_user.h"
 #include "user.h"
+#include "parse_user.h"
 
 struct stat qsize, isize;
 FILE* fd_bufferData;
@@ -179,7 +180,48 @@ void send_message_qg(char* message){
     strcat(message, " ");
     strcat(message, local_question);
     strcat(message, "\n");
-    send_commandTCP(message);
+    connectTCP();
+    writeTCP(message);
+    
+    //Aqui começa a besteira de codigo------------------------------------------------------
+    char* messageReceived = readTCP();
+    
+    char** saveTokens = (char **) malloc(sizeof (char*) * 3);
+
+    for(int i = 0; i < 50; i++){
+        saveTokens[i] = (char *) malloc(sizeof(char)*50);
+        memset(saveTokens[i], 0, 50);
+    }
+
+    int nSpaces = 0;
+    int j = 0;
+    int k = 0;
+    int i;
+
+    //Isto ja esta feito no parse_user
+    //First part of parse until data
+    for(i = 0; i < 50; i++){
+        if(messageReceived[i] == ' '|| messageReceived[i] == '\n'){
+            saveTokens[j][k] = '\0';
+            nSpaces++; 
+            j++;
+            k = 0;
+        }
+        else if(nSpaces == 3){
+            break;
+        }
+        else{
+            saveTokens[j][k] = messageReceived[i];
+            k++;
+        }
+    }
+    sprintf(saveTokens[j],"%d", i);
+
+
+    input_action_received_TCP(saveTokens);
+
+
+    //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
 
 // void send_message_qs(char* message, int numTokens, char** saveTokens){
@@ -356,14 +398,15 @@ void questions_print(char** saveTokens){
         printf("available questions about %s:\n", local_topic);
     }
     for(i = 1; i <= number; i++){
-        printf("%d - ", i);
+        //printf("%d - ", i);
         char * token = strtok(saveTokens[i+1], ":");
-        printf("%s ", token);
+        //printf("%s ", token);
         char * token2 = strtok(NULL, ":");
-        printf("(proposed by %s)\n", token2);
+        //printf("(proposed by %s)\n", token2);
         //char * token3 = strtok(NULL, ""); //number of answers
         create_question_directory(token, token2);
     }
+    questionList();
 }
 
 int treatBufferDataQUS(char* file_with_extension, int qsize, int indice, char* message){

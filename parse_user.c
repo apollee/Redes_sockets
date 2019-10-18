@@ -254,51 +254,106 @@ char** parse_command_received_TCP(char* message){
 //TCP message from the server
 void input_action_received_TCP(char** saveTokens){ 
     char command[5];
-    int indice;
     char* buffer = (char*)malloc(sizeof(char)* 1024);
     memset(buffer, 0, 1024);
     strcpy(command, saveTokens[0]);
 
     if(!strcmp(command, "QGR")){
-        //int id_user = atoi(saveTokens[1]);
-        int qsize = atoi(saveTokens[2]);
-        int qdata = atoi(saveTokens[3]);
-        while(qsize > 0){
-            indice = treatBufferData(saveTokens, qdata , qsize, buffer); //qdata
-            qsize = qsize - (indice - qdata);    
-            qdata = 0;
+        int qUserID = atoi(saveTokens[1]);
+        int qSize = atoi(saveTokens[2]);
+        int firstOffset = atoi(saveTokens[5]);
+        int indice;
+        char* path = (char*)malloc(sizeof(char)* 1024);
+        sprintf(path, "TOPICS/%s/%s", local_topic, local_question);
+        
+        
+
+        while(qSize > 0){
+            indice = treatBufferData(saveTokens, firstOffset, qSize, buffer);
+            qSize = qSize- (indice - firstOffset);
+            firstOffset = 0;
 
             if(indice == strlen(buffer)){
                 memset(buffer, 0, 1024);
-                n = read(fdTCP, buffer, 1024);
+                //n = read(newfd, buffer, 1024);
+                buffer = readTCP();
+                indice = 0;
             }
         }
-        if(buffer[indice] == ' '){
-            indice++;
-            if(buffer[indice] == '0'){
-                indice++;
-                //printf("Got the file of the question with success\n");
-            }else{
-                indice = parse_image_qg(indice, buffer); //qiext qisize qidata
-            }
-        }
-        if(buffer[indice] == ' '){
-            indice++;
-            int number_answers = atoi(buffer[indice]); // N
-            indice += 2;
-            while(number_answers > 0){
-                indice = parse_answers_qg(indice, buffer); //aUserID asize adata
-                if(buffer[indice] == ' '){
-                    indice++;
-                    if(buffer[indice] == '0'){
-                        indice++;
-                    }else{
-                        indice = parse_answers_image_qg(indice, buffer); //aiext AN aisize aidata
-                    }
-                }
-            }
-        }
-        /*funcao missing*/        
+
+
+
+
+
+
+
+
+
+
+
+        
+        printf("localTopic: %s\n", local_topic);
+        printf("localQuestion: %s\n", local_question);
+
+
+
+
+        
+
+
+        // //calculating qdata
+        // int offset = strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + 3 ;
+        
+
+
+
+
+
+        // while(qsize > 0){
+        //     indice = treatBufferData(saveTokens, offset, qsize, buffer); //qdata
+        //     qsize = qsize - (indice - qdata);    
+        //     qdata = 0;
+
+        //     if(indice == strlen(buffer)){
+        //         memset(buffer, 0, 1024);
+        //         n = read(fdTCP, buffer, 1024);
+        //     }
+        // }
+
+        // if(buffer[indice] == ' '){
+        //     indice++;
+        //     if(buffer[indice] == '0'){
+        //         indice++;
+        //         //printf("Got the file of the question with success\n");
+        //     }else{
+        //         indice = parse_image_qg(indice, buffer); //qiext qisize qidata
+        //     }
+        // }
+
+        // if(buffer[indice] == ' '){
+        //     indice++;
+            
+        //     // char* number; 
+        //     // while(buffer[indice] != ' '){
+        //     //     strcat(number, buffer+indice);
+        //     //     indice++;
+        //     // }   
+
+        //     int number_answers = atoi(number); // N
+        //     indice += 2;
+        //     while(number_answers > 0){
+        //         indice = parse_answers_qg(indice, buffer); //aUserID asize adata
+        //         if(buffer[indice] == ' '){
+        //             indice++;
+        //             if(buffer[indice] == '0'){
+        //                 indice++;
+        //             }else{
+        //                 indice = parse_answers_image_qg(indice, buffer); //aiext AN aisize aidata
+        //             }
+        //         }
+        //     }
+        // }
+        // /*funcao missing*/        
     }
 
     else if(!strcmp(command, "QUR")){
@@ -374,7 +429,7 @@ int parse_answers_image_qg(int indice, char* buffer){
 
     char* an = (char*)malloc(sizeof(char)*2);
     memset(an, 0, 2);
-    int indAn = 0;
+    //int indAn = 0;
     for(j = 0; j < 2; j++, indice++){ //guardar o AN
         an[j] = buffer[indice];
 
@@ -453,9 +508,9 @@ int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext){
     return i;
 }
 
-int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
+int treatBufferData(char** saveTokens, int ind, int qsize, char* buffer){
     
-    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int max = qsize > strlen(buffer) ? strlen(buffer) : qsize;
     int i, k = 0;
     char* message = (char*)malloc(sizeof(char)*(max-ind+1));
     memset(message, 0, max-ind);

@@ -62,7 +62,6 @@ void create_question_directory(char *dirname, char* userID){
     closedir(d);    
 }
 
-
 int getTopic_by_number(int number){ //get the topic by the number
     DIR *d;
     struct dirent *dir;
@@ -199,6 +198,57 @@ void topicList(){ //get the list of topics
 	}
 }
 
+void questionList(){
+    DIR *d;
+    struct dirent *dir;
+    char* path = (char*)malloc(sizeof(char)*1024);
+    sprintf(path, "TOPICS/%s", local_topic);
+
+
+    d = opendir(path);
+    int count = 0;
+    //printf("message antes do topicList: !%s!\n", message);
+    if (d){
+        dir = readdir(d);
+        while(dir != NULL){
+            //printf("dirName: %s\n", dir->d_name);
+           if ((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, ".")) && (dir->d_type == DT_DIR)){
+                count++;
+           		printf("%d - ", count);
+                printf("%s (proposed by ", dir->d_name);
+                printf("%s)\n", questionID(dir->d_name, path));
+                //if(num != count){
+                  //  strcat(message, " ");
+                //}
+            }
+            dir=readdir(d);
+        }
+        closedir(d);
+	}
+	else{
+		exit(1);
+	}
+}
+
+char* questionID(char* dirname, char* path){
+    char* message = malloc (sizeof (char) * 1024); 
+    sprintf(message, "%s/%s/%s_UID.txt",path, dirname, dirname);
+    FILE* file;
+    size_t len = 0; 
+    
+    file = fopen(message, "r");
+    char *line = NULL;
+    if(file == NULL){
+        exit(EXIT_FAILURE);
+    }
+    
+    getline(&line, &len, file);
+    line[strcspn(line, "\n")] = 0;
+    free(message);
+    return line;
+}
+
+
 void writeFileData(char* message){
 
     FILE* file;
@@ -217,14 +267,14 @@ void writeFileData(char* message){
 }
 
 void writeFileData2(char* message){
-    DIR *d;
+    //DIR *d;
     FILE* file;
     char* path = (char*)malloc (sizeof (char) * 1024);
     memset(path, 0, 1024);
 
     sprintf(path, "TOPICS/%s/%s/%s", local_topic, local_question, local_question);
-    d = opendir("path");
-    int fd = dirfd(d);
+    //d = opendir("path");
+    //int fd = dirfd(d);
     //mkdirat(fd, dirname, 0700); o dirname tem que ser o local_question0_0(incrementando)
 
     file = fopen(path, "a");
