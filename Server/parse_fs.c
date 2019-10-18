@@ -154,10 +154,10 @@ char** parse_commandTCP(char* message){
 
 int treatBufferData(char** saveTokens, int ind, int num, char* buffer){
     
-    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int max = num > strlen(buffer)-ind ? strlen(buffer)-ind : num;
     int i, k = 0;
-    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
-    memset(message, 0, max-ind);
+    char* message = (char*)malloc(sizeof(char)*(max+1));
+    memset(message, 0, max+1);
     for(i = ind; i < max; i++, k++){
         message[k] = buffer[i];
     }
@@ -303,6 +303,7 @@ int treatBufferDataQGUANS(char** saveTokens, int qSize, int indice, int socket, 
     if(file < 0){
         exit(1);
     }
+
     fseek(file, indice, SEEK_SET);
     int n = fread(newMessage, 1, max, file);
     ssize_t N = write(socket, newMessage, n);
@@ -445,10 +446,10 @@ char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* messa
 
 int treatBufferDataANS(char** saveTokens, int ind, int num, char* buffer, char* number){
     
-    int max = num > strlen(buffer) ? strlen(buffer) : num;
+    int max = num > strlen(buffer)-ind ? strlen(buffer)-ind : num;
     int i, k = 0;
-    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
-    memset(message, 0, max-ind);
+    char* message = (char*)malloc(sizeof(char)*(max+1));
+    memset(message, 0, max);
     for(i = ind; i < max; i++, k++){
         message[k] = buffer[i];
     }

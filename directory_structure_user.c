@@ -46,7 +46,7 @@ void create_topic_directory(char *dirname, char* userID){
     free(path);
 }
 
-void create_question_directory(char *dirname, char* userID){
+void create_question_directory(char *dirname, char* userID, char* numberOfQuestions){
     DIR *d;
     //Open folder of the current topic
     char* message = malloc (sizeof (char) * 1024); 
@@ -80,6 +80,21 @@ void create_question_directory(char *dirname, char* userID){
         printf("Error in receiving information from the server.\n");
         exit(-1);
     }   
+
+    //Criar ficheiro de numero de respostas
+    path = (char*)malloc (sizeof (char) * 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_AN.txt", local_topic, dirname, dirname);
+    file = fopen(path, "w");
+    if(file == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
+
+    strcat(numberOfQuestions, "\0");
+    fprintf(file,"%s", numberOfQuestions);
+    fclose(file);
+ 
+
 }
 
 int getTopic_by_number(int number){ //get the topic by the number
@@ -251,7 +266,7 @@ void questionList(){
                 count++;
            		printf("%d - ", count);
                 printf("%s (proposed by ", dir->d_name);
-                printf("%s)\n", questionID(dir->d_name, path));
+                printf("%s) %s\n", questionID(dir->d_name, path), questionAN(dir->d_name, path));
 
             }
             dir=readdir(d);
@@ -286,6 +301,27 @@ char* questionID(char* dirname, char* path){
     free(message);
     return line;
 }
+
+
+char* questionAN(char* dirname, char* path){
+    char* message = malloc (sizeof (char) * 1024); 
+    sprintf(message, "%s/%s/%s_AN.txt",path, dirname, dirname);
+    FILE* file;
+    size_t len = 0; 
+    
+    file = fopen(message, "r");
+    char *line = NULL;
+    if(file == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
+    
+    getline(&line, &len, file);
+    line[strcspn(line, "\n")] = 0;
+    free(message);
+    return line;
+}
+
 
 
 void writeFileData(char* message){
