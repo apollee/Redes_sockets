@@ -129,39 +129,76 @@ int main(int argc, char *argv[]) {
                             if(buffer[indice] == '0'){
                                 strcpy(message, "QUR OK\n");
                             }
+                            else if(buffer[indice]!='1'){
+                                strcpy(message, "QUR NOK");
+                            }
                             else{
-                                indice+=2;
-                                char* ext = (char*)malloc(sizeof(char)*3);
-                                int j;
-                                for(j = 0; j<3; j++, indice++){
-                                    ext[j] = buffer[indice];
-                                }
-                                ext[j] = '\0';
-                                indice ++;
-                                char* isize = (char*)malloc(sizeof(char)*10);
-                                memset(isize, 0, 10);
-                                int indImg = 0;  
-                                while(buffer[indice] != ' '){
-                                    isize[indImg] = buffer[indice];
-                                    indice++;
-                                    indImg++;
-                                }
-                                isize[indImg] = '\0';
                                 indice++;
-                                i = indice;
-                                int numImg = atoi(isize);
-                                while(numImg > 0){
-                                    indice = treatBufferImg(saveTokens, i, numImg, n, buffer, ext);
-                                    numImg = numImg - (indice - i);
-                                    i = 0;
-                                    if(indice == n){
-                                        memset(buffer, 0, 1024);
-                                        n = read(newfd, buffer, 1024);
+                                if(buffer[indice] == ' '){
+                                    indice++;
+                                    if(buffer[indice] != ' '){
+                                        char* ext = (char*)malloc(sizeof(char)*3);
+                                        int j;
+                                        for(j = 0; j<3; j++, indice++){
+                                            ext[j] = buffer[indice];
+                                        }
+                                        ext[j] = '\0';
+                                        if(buffer[indice]!=' '){
+                                            strcpy(message, "QUR NOK\n");
+                                        }
+                                        else{
+                                            indice ++;
+                                            if(buffer[indice]==' '){
+                                                strcpy(message, "QUR NOK\n");
+                                            }
+                                            else{
+                                                char* isize = (char*)malloc(sizeof(char)*10);
+                                                memset(isize, 0, 10);
+                                                int indImg = 0;  
+                                                while(buffer[indice] != ' '){
+                                                    isize[indImg] = buffer[indice];
+                                                    indice++;
+                                                    indImg++;
+                                                }
+                                                isize[indImg] = '\0';
+                                                if(strlen(isize) > 10){
+                                                    strcpy(message, "QUR NOK\n");
+                                                }
+                                                else{
+                                                    indice++;
+                                                    if(buffer[indice] != ' '){
+                                                        i = indice;
+                                                        int numImg = atoi(isize);
+                                                        while(numImg > 0){
+                                                            indice = treatBufferImg(saveTokens, i, numImg, n, buffer, ext);
+                                                            numImg = numImg - (indice - i);
+                                                            i = 0;
+                                                            if(indice == n){
+                                                                memset(buffer, 0, 1024);
+                                                                n = read(newfd, buffer, 1024);
+                                                            }
+                                                        }
+                                                     strcpy(message, "QUR OK\n");
+                                                     printf("DATA SEND\n");
+                                                    }
+                                                    else{
+                                                        strcpy(message, "QUR NOK\n");
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                    else{
+                                        strcpy(message, "QUR NOK\n");
                                     }
                                 }
-                             strcpy(message, "QUR OK\n");
-                             printf("DATA SEND\n");
+                                else{
+                                    strcpy(message, "QUR NOK\n");
+                                }
                             }
+                        }
+                        else{
+                            strcpy(message, "QUR NOK\n");
                         }
                     }
                     
