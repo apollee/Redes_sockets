@@ -5,6 +5,8 @@
 #define DEFAULT_PORT "58041"
 #define DEFAULT_BUFFER_SIZE 1024
 
+
+struct addrinfo *resTCP;
 int fdTCP;
 
 struct addrinfo;

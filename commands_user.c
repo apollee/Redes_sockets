@@ -287,6 +287,8 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     free(file_with_extension);
     printf("%s", message);
     parse_command_received_TCP(readTCP());
+    close(fdTCP); 
+    fdTCP = create_socket(resTCP);
 }
 
 void send_message_as(char* message, int numTokens, char** saveTokens){
@@ -300,7 +302,6 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     sprintf(file_with_extension, "%s.txt", saveTokens[1]); //adding the .txt to the file name;
     stat(file_with_extension, &qsize);
     var = qsize.st_size; 
-    //var += 1; \n?? !!!!
     
     sprintf(message, "ANS %s %s %s %ld ", id_user, local_topic, local_question, var);
     fd_bufferData = fopen(file_with_extension, "r");
@@ -356,6 +357,8 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     writeTCP(message, 0);
     free(file_with_extension);
     parse_command_received_TCP(readTCP());
+    close(fdTCP); 
+    fdTCP = create_socket(resTCP);
 }
 
 void send_message_err(char* message){
