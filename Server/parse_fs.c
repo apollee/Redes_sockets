@@ -208,8 +208,9 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
             indice += numBytes;
             memset(message, 0, 1024);
         }
-        if(strcmp(Img[0], "0")){
+       if(strcmp(Img[0], "0")){
             char* iSize = questionTextSize(saveTokens[1], saveTokens[2], Img[1]);
+            memset(message, 0, 1024);
             sprintf(message," %s %s %s ",Img[0], Img[1], iSize);
             int iSizeInt = atoi(iSize);
             write(socket, message, strlen(message));
@@ -222,14 +223,14 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
                
             }
         }else{
+            memset(message,0,1024);
             sprintf(message," %s",Img[0]);
             write(socket, message, strlen(message));
             memset(message, 0, 1024);
         }
         char* numbAns = number_of_answers(saveTokens[1], saveTokens[2]);
-        printf("%s\n", numbAns);
         if(strcmp(numbAns,"0")){
-            sprintf(message, " %s ", numbAns);
+            sprintf(message, " %s", numbAns);
             write(socket, message, strlen(message));
             memset(message, 0, 1024);
             int numAnsInt = atoi(numbAns);
@@ -244,52 +245,95 @@ void parseQGU(char** saveTokens, int socket, char* buffer){
                 char* aUserID = answerID(saveTokens[1], saveTokens[2], numbAns);
                 char* asize = questionAnswerSize(saveTokens[1], saveTokens[2], numbAns, "txt");
                 char** aImg = checkAnswerImage(saveTokens[1], saveTokens[2], numbAns);
-                printf("%s\n", aUserID);
-                printf("%s\n",asize );
-                printf("%s\n",aImg[0]);
-                printf("%s\n",aImg[1]);
-
-                /*sprintf(message, "%s %s ", aUserID, asize);
+                
+                sprintf(message, " %s %s %s ",numbAns, aUserID, asize);
                 write(socket, message, strlen(message));
                 memset(message, 0, 1024);
                 int asizeInt = atoi(asize);
-                indice = 0;
+                int indiceAns = 0;
                 while(asizeInt > 0){
-                    numBytes = treatBufferDataQGU(saveTokens, qSizeInt, indice, socket, message, "txt", "r");
+                    numBytes = treatBufferDataQGUANS(saveTokens, asizeInt, indiceAns, socket, message, "txt", "r",numbAns);
                     asizeInt = asizeInt - numBytes;
-                    indice += numBytes;
+                    indiceAns += numBytes;
                     memset(message, 0, 1024);
+                }
+                if(strcmp(aImg[0], "0")){
+                    char* aiSize = questionAnswerSize(saveTokens[1], saveTokens[2],  numbAns, aImg[1]);
+                    sprintf(message," %s %s %s ",aImg[0], aImg[1], aiSize);
+                    int aiSizeInt = atoi(aiSize);
+                    write(socket, message, strlen(message));
+                    memset(message, 0, 1024);
+                    int indiceIAns = 0;
+                    while(aiSizeInt > 0){ 
+                        numBytes = treatBufferDataImgQGUANS(saveTokens, aiSizeInt, indiceIAns, socket, message, aImg[1], "rb", numbAns);
+                        aiSizeInt = aiSizeInt - numBytes;
+                        indiceIAns += numBytes;
 
-                    if(strcmp(aImg[0], "0")){
-                        char* aiSize = questionTextSize(saveTokens[1], saveTokens[2], aImg[1]);
-                        sprintf(message," %s %s %s ",aImg[0], aImg[1], aiSize);
-                        int aiSizeInt = atoi(aiSize);
-                        write(socket, message, strlen(message));
-                        memset(message, 0, 1024);
-                        indice = 0;
-                        while(aiSizeInt > 0){
-                            numBytes = treatBufferDataImgQGU(saveTokens, aiSizeInt, indice, socket, message, aImg[1], "rb");
-                            aiSizeInt = aiSizeInt - numBytes;
-                            indice += numBytes;    
-                        }
-                    }
-                    else{
-                        sprintf(message," %s",aImg[0]);
-                        write(socket, message, strlen(message));
-                        memset(message, 0, 1024);
                     }
                 }
-            */}
+                else{
+                    //sprintf(message," %s",aImg[0]);
+                    strcpy(message," 0");
+                    write(socket, message, strlen(message));
+                    memset(message, 0, 1024);
+                }
+            }
+            strcpy(message,"\n");
+            write(socket, message,strlen(message));
+
         }
-        else{
+       else{
             strcpy(message, " 0\n");
             write(socket, message, strlen(message));
             memset(message, 0, 1024);
-        }
+       }
+
 }
 
+
+int treatBufferDataQGUANS(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm, char* numbAns){
+    FILE* file;
+    int max = qSize > 1024 ? 1024 : qSize; 
+    char* newMessage = (char*)malloc(sizeof(char)*(max));
+    memset(newMessage,0,max);
+    char* path = (char*)malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s.%s",saveTokens[1],saveTokens[2], saveTokens[2],numbAns,saveTokens[2], numbAns, ext);
+    file = fopen(path, perm);
+    if(file < 0){
+        exit(1);
+    }
+    fseek(file, indice, SEEK_SET);
+    int n = fread(newMessage, 1, max, file);
+    ssize_t N = write(socket, newMessage, n);
+    fclose(file);
+    free(path);
+    return N;
+}
+
+int treatBufferDataImgQGUANS(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm, char* numbAns){
+    FILE* file;
+    ssize_t n;
+    int max = qSize > 1024 ? 1024 : qSize; 
+    char* newMessage = (char*)malloc(sizeof(char)*(max));
+    memset(newMessage, 0, max);
+    char* path = (char*)malloc(sizeof(char)*1024);
+    memset(path, 0, 1024);
+    sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s.%s",saveTokens[1],saveTokens[2], saveTokens[2],numbAns,saveTokens[2], numbAns, ext);
+    file = fopen(path, perm);
+    if(file < 0){
+        exit(1);
+    }
+    fseek(file, indice, SEEK_SET);
+    int nread = fread(newMessage, 1, max, file);
+    n = write(socket, newMessage, nread);
+    fclose(file);
+    free(path);
+    return n;
+}
 int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm){
     FILE* file;
+    int mensSize = strlen(message);
     int max = qSize > 1024 ? 1024-strlen(message) : qSize; 
     char* newMessage = (char*)malloc(sizeof(char)*(max));
     char* path = (char*)malloc(sizeof(char)*1024);
@@ -300,10 +344,13 @@ int treatBufferDataQGU(char** saveTokens, int qSize, int indice, int socket, cha
         exit(1);
     }
     fseek(file, indice, SEEK_SET);
-    fread(newMessage,1, max, file);
+    int n = fread(newMessage,1, max, file);
     strcat(message, newMessage);
-    write(socket, message, strlen(message));
-    return (max);
+    int N = write(socket, message, n);
+    memset(message, 0, 1024);    
+    fclose(file);
+    free(path);
+    return N-mensSize;
 }
 
 int treatBufferDataImgQGU(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm){
@@ -322,9 +369,11 @@ int treatBufferDataImgQGU(char** saveTokens, int qSize, int indice, int socket, 
     fseek(file, indice, SEEK_SET);
     int nread = fread(newMessage, 1, max, file);
     n = write(socket, newMessage, nread);
+    memset(message, 0, 1024);
+    fclose(file);
+    free(path);
     return n;
 }
-
 char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* message){
     int indice;
     int num = atoi(saveTokens[4]);
