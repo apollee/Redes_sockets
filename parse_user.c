@@ -45,6 +45,7 @@ int parse_command() { // command that the user wrote
     char input[50];
     int numberChar;
     if(fgets(input, 50, stdin) == NULL){
+        printf("Error: command not received\n");
         return -1;
     }    
 
@@ -57,6 +58,7 @@ int parse_command() { // command that the user wrote
         numTokens++;
         token = strtok(NULL, " ");
     }
+
     input_action(numTokens, saveTokens, input, numberChar);
     return 0;
 }
@@ -74,51 +76,51 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandREGOK(numTokens, saveTokens, numberChar))
             send_message_reg(saveTokens[1], message);
         else
-            printf("Invalid arguments\n"); //nao devia ser um ERR tambem?
+            printf("Error: invalid arguments\n");
     }
 
     else if((!strcmp(saveTokens[0], "topic_list") || !strcmp(saveTokens[0], "tl"))) {
         if(commandTLOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-            	printf("You should register first\n");
+            	printf("Error: you should register first\n");
             else
                 send_message_tl(message);
         }
         else
-            printf("Invalid arguments\n"); 
+            printf("Error: invalid arguments\n"); 
     }
 
     else if((!strcmp(saveTokens[0], "topic_select") || !strcmp(saveTokens[0], "ts"))) {
         if(commandTSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-            	printf("You should register first\n");
+            	printf("Error: you should register first\n");
             else
             	printf("selected topic: %s (%s)\n", local_topic, topicID(local_topic));
         }else
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
     } 
 
     else if((!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))) {
         if(commandTPOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_tp(saveTokens[1], message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
     else if((!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))){
         if(commandQLOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else if (!strcmp(local_topic, FLAG))
-                printf("You have to select a topic first\n");
+                printf("Error: you have to select a topic first\n");
             else
                 send_message_ql(message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
     //--------------------------------------------------------------------
@@ -127,34 +129,34 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     else if((!strcmp(saveTokens[0], "question_get") || !strcmp(saveTokens[0], "qg"))){
         if(commandQGOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_qg(message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
     
     else if((!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))){
         if(commandQSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else{
                 send_message_qs(message, numTokens, saveTokens);
             }
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
     else if((!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as"))){
         if(commandASOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_as(message, numTokens, saveTokens);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
@@ -162,8 +164,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         exit(0);
 
     else
-        //send_message_err(message);
-       printf("Invalid command\n");
+       printf("Error: invalid command\n");
     
     free(message);
 }
@@ -173,7 +174,6 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
 void parse_command_received(char* buffer){ 
     int numTokens = 0;
     int i;
-    //char *saveTokens[120];
     int numberChar;
 
     char** saveTokens = (char **) malloc(sizeof (char*) * 120);
@@ -192,7 +192,6 @@ void parse_command_received(char* buffer){
         numTokens++;
         token = strtok(NULL, " ");
     }
-    //free(buffer);
     input_action_received(numTokens, saveTokens, numberChar);
     free(saveTokens);
     free(token);
@@ -208,16 +207,31 @@ void input_action_received(int numTokens, char** saveTokens, long int numberChar
             printf("User \"%s\" registered\n", id_user);
         }
         else if(!strcmp(saveTokens[1], "NOK")){
-            printf("User %s not registered\n", id_user); //e suposto?
+            printf("Error: user %s not registered\n", id_user); 
         }
     }
     else if(!strcmp(command, "LTR")){ 
-        printf("available topics:\n");
-        topics_print(saveTokens);
+        int number = atoi(saveTokens[1]);
+        if(number == 0){
+            printf("No available topics\n");
+        }else{
+            printf("Available topics:\n");
+            topics_print(saveTokens);
+        }
     }
-    else if(!strcmp(command, "PTR")){
-       printf("%s %s\n", saveTokens[0], saveTokens[1]);
-       
+    else if(!strcmp(command, "PTR")){ 
+        if(!strcmp(saveTokens[1], "OK")){
+            printf("Topic created with sucess\n");
+        }
+        else if(!strcmp(saveTokens[1], "DUP")){
+            printf("Error: duplicated topic\n");
+        }
+        else if(!strcmp(saveTokens[1], "NOK")){
+            printf("Error: failed to create the topic\n");
+        }
+       else if(!strcmp(saveTokens[1], "FUL")){
+            printf("Error: too many topics created already\n");
+        }  
     }
     else if(!strcmp(command, "LQR")){
         questions_print(saveTokens);
@@ -233,9 +247,10 @@ char** parse_command_received_TCP(char* message){
     int k = 0;
     int i;
     char** saveTokens = saveTokensInit(4, 50);
+
     //First part of parse until data
     for(i = 0; i < 50; i++){
-        if(message[i] == ' '){
+        if(message[i] == ' ' || message[i] == '\n'){
             saveTokens[j][k] = '\0';
             nSpaces++;
             j++;
@@ -249,19 +264,23 @@ char** parse_command_received_TCP(char* message){
             k++;
         }
     }
+    if(j == 2){
+        j++;
+    }
     sprintf(saveTokens[j],"%d", i);
-    input_action_received_TCP(saveTokens);
+    input_action_received_TCP(saveTokens, message);
     return saveTokens;
 }
 
 
 //TCP message from the server
-void input_action_received_TCP(char** saveTokens){ 
+void input_action_received_TCP(char** saveTokens, char* buffer){ 
     char command[5];
     
     strcpy(command, saveTokens[0]);
 
     if(!strcmp(command, "QGR")){
+        //int qUserID = atoi(saveTokens[1]); (not used)
         char* path = (char*)malloc(sizeof(char) * 50);
         memset(path, 0, 50);
         sprintf(path, "TOPICS/%s/%s", local_topic, local_question);
@@ -271,67 +290,73 @@ void input_action_received_TCP(char** saveTokens){
         int firstOffset = atoi(saveTokens[3]);
         int indice;
         free(saveTokens);
-
-
-        char* buffer = (char*)malloc(sizeof(char)* 1024);
-        memset(buffer, 0, 1024);
+        int i = 0;
         while(qSize > 0){
             indice = treatBufferData(firstOffset, qSize, buffer);
+            i++;
             qSize = qSize - (indice - firstOffset);
             firstOffset = 0;
-
             if(indice == strlen(buffer)){
                 memset(buffer, 0, 1024);
                 //n = read(newfd, buffer, 1024);
-                readTCP(buffer);
+                buffer = readTCP();
                 indice = 0;
             }
         }
 
+        //Este codigo retira a imagem mas nao funciona por bugs
+        // if(buffer[indice] == ' '){
+        //     indice++;
+        //     if(buffer[indice] != '0'){
+        //         indice+=2;
+        //         char* ext = (char*)malloc(sizeof(char)*3);
+        //         int j;
+        //         for(j = 0; j<3; j++, indice++){
+        //             ext[j] = buffer[indice];
+        //         }
+        //         ext[j] = '\0';
 
-
-
-
-        if(buffer[indice] == ' '){
-            indice++;
-            if(buffer[indice] == '0'){
-                printf("Não há foto\n");
-            }
-            else{
-                indice+=2;
-                char* ext = (char*)malloc(sizeof(char)*3);
-                int j;
-                for(j = 0; j<3; j++, indice++){
-                    ext[j] = buffer[indice];
-                }
-                ext[j] = '\0';
-
-                indice ++;
-                char* isize = (char*)malloc(sizeof(char)*10);
-                memset(isize, 0, 10);
-                int indImg = 0;  
-                while(buffer[indice] != ' '){
-                    isize[indImg] = buffer[indice];
-                    indice++;
-                    indImg++;
-                }
-                isize[indImg] = '\0';
+        //         indice ++;
+        //         char* isize = (char*)malloc(sizeof(char)*10);
+        //         memset(isize, 0, 10);
+        //         int indImg = 0;  
+        //         while(buffer[indice] != ' '){
+        //             isize[indImg] = buffer[indice];
+        //             indice++;
+        //             indImg++;
+        //         }
+        //         isize[indImg] = '\0';
                 
-                indice++;
-                firstOffset = indice;
-                int numImg = atoi(isize); //tamanho da imagem
-                while(numImg > 0){
-                    indice = treatBufferImg(firstOffset, numImg, n, buffer, ext);
-                    numImg = numImg - (indice - firstOffset);
-                    firstOffset = 0;
-                    if(indice == n){
-                        memset(buffer, 0, 1024);
-                        readTCP(buffer);
-                    }
-                }
-                printf("DATA RECEIVED (até à imagem)\n");
-            }
-        }
+        //         indice++;
+        //         firstOffset = indice; //offset no buffer atual
+        //         int numImg = atoi(isize); //tamanho da imagem
+        //         free(isize);
+                
+        //         printf("Funciona ate ao while");
+
+        //         while(numImg > 0){   
+
+        //             int max = numImg > DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : numImg;
+        //             int i, k = 0;
+        //             char* message = (char*)malloc(sizeof(char)*(DEFAULT_BUFFER_SIZE));
+        //             memset(message, 0, max-firstOffset);
+        //             for(i = firstOffset; i < max; i++, k++){
+        //                 message[k] = buffer[i];
+        //             }
+        //             writeFileImg(message, ext, max-firstOffset);
+        //             free(message);
+        //             indice = i;
+                    
+        //             numImg = numImg - indice;
+        //             firstOffset = 0;
+        //             memset(buffer, 0, 1024);
+        //             readTCP(buffer);
+        //         }
+        //         free(ext);
+        //         printf("DATA RECEIVED (até à imagem)\n");
+        //     }
+        // }
+        //-----------------------------------------------------
 
         //A partir daqui tratamos das questoes-----------------------
         // int i = 0;
@@ -347,35 +372,29 @@ void input_action_received_TCP(char** saveTokens){
         // for (i = 0; i < numberOfQuestions; i++){
                 
         // }
-        //Em principio aqui acaba esta funcao-----------------------------
-
-
-        
-        printf("localTopic: %s\n", local_topic);
-        printf("localQuestion: %s\n", local_question);
+        //
     }
 
     else if(!strcmp(command, "QUR")){
         if(!strcmp(saveTokens[1], "OK")){
             printf("Question submitted with success\n");
         }else if(!strcmp(saveTokens[1], "NOK")){
-            printf("Failed to submit question\n");
+            printf("Error: submitting question\n");
         }else if(!strcmp(saveTokens[1], "FUL")){
-            printf("Failed to submit question - Maximum limit of questions reached\n");
+            printf("Error: maximum limit of questions reached\n");
         }else if(!strcmp(saveTokens[1], "DUP")){ 
-            printf("Duplicated question, failed to submit\n");
+            printf("Error: duplicated question\n");
         }
-        //printf("%s %s\n", command, saveTokens[1]);
     }
+
     else if(!strcmp(command, "ANR")){
         if(!strcmp(saveTokens[1], "OK")){
             printf("Answer submitted with success\n");
         }else if(!strcmp(saveTokens[1], "NOK")){
-            printf("Failed to submit answer\n");
+            printf("Error: failed to submit answer\n");
         }else if(!strcmp(command, "FUL")){
-            printf("Failed to submit answer - Maximum limit of answers reached\n");
+            printf("Error: maximum limit of answers reached\n");
         }
-        printf("%s %s\n", command, saveTokens[1]);
     }
     else{
         printf("Unexpected server response\n");
@@ -407,13 +426,18 @@ int parse_image_qg(int indice, char* buffer){
         indice = treatBufferImg(i, numImg, n, buffer, ext);
         numImg = numImg - (indice - i);
         i = 0;
-        if(indice == n){
+        printf("Indice: %d\n", indice);
+        printf("numImg: %d\n", numImg);
+        if(indice == strlen(buffer)){
+            printf("-------------- Entrou\n");
             memset(buffer, 0, 1024);
             n = read(fdTCP, buffer, 1024);
         }
     }
     return indice;
 }
+
+
 
 int parse_answers_image_qg(int indice, char* buffer){
     indice += 2;
@@ -493,31 +517,31 @@ int parse_answers_qg(int indice, char* buffer){
 
 }
 
-int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext){
-    int max = num > n ? n : num;
+int treatBufferImg(int firstOffset, int qsize, long int n, char* buffer, char* ext){
+    int max = qsize > strlen(buffer) ? strlen(buffer) : qsize;
     int i, k = 0;
-    char* message = (char*)malloc(sizeof(char)*(max-ind));
-    memset(message, 0, max-ind);
-    for(i = ind; i < max; i++, k++){
+    char* message = (char*)malloc(sizeof(char)*(max-firstOffset));
+    memset(message, 0, max-firstOffset);
+    for(i = firstOffset; i < max; i++, k++){
         message[k] = buffer[i];
     }
-    //printf("%s\n",message);
-    writeFileImg(message, ext, max-ind);
+    writeFileImg(message, ext, max-firstOffset);
+    free(message);
     return i;
 }
 
 //Em principio podemos eliminar o saveTokens
-int treatBufferData(int ind, int qsize, char* buffer){
-    
-    int max = qsize > DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : qsize;
+int treatBufferData(int firstOffset, int qsize, char* buffer){  
+    int max = qsize > strlen(buffer) ? strlen(buffer) : qsize;
     int i, k = 0;
-    char* message = (char*)malloc(sizeof(char)*(max-ind+1));
-    memset(message, 0, max-ind);
-    for(i = ind; i < max; i++, k++){
+    char* message = (char*)malloc(sizeof(char)*(max-firstOffset+1));
+    memset(message, 0, max-firstOffset);
+    for(i = firstOffset; i < max; i++, k++){
         message[k] = buffer[i];
     }
     message[k] = '\0';
     writeFileData(message);
+    free(message);
     return i;
 }
 
