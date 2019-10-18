@@ -18,4 +18,6 @@ int treatBufferDataImgQGU(char** saveTokens, int qSize, int indice, int socket, 
 char* parseANS(char**saveTokens, int newfd, ssize_t n, char* buffer, char* message);
 int treatBufferDataANS(char** saveTokens, int ind, int num, char* buffer, char* number);
 int treatBufferImgANS(char** saveTokens,int ind, int num, long int n, char* buffer, char* ext, char* number);
+int treatBufferDataImgQGUANS(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm, char* numbAns);
+int treatBufferDataQGUANS(char** saveTokens, int qSize, int indice, int socket, char* message, char* ext, char* perm, char* numbAns);
 #endif

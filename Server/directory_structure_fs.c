@@ -233,7 +233,7 @@ char* questionTextSize(char* currTopic, char* dirname, char* ext){
     memset(qsize, 0, 11);
     
     file = fopen(path, "r");
-    free(path);
+    
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
@@ -241,6 +241,8 @@ char* questionTextSize(char* currTopic, char* dirname, char* ext){
     fseek(file, 0, SEEK_END);
     long int size = ftell(file);
     sprintf(qsize, "%ld", size);
+    fclose(file);
+    free(path);
 
     return qsize;
 }
@@ -313,14 +315,16 @@ void createQuestion(char* pathTopic, char** saveTokens){
     memset(pathDir, 0, 1024);
     sprintf(pathDir, "%s/%s/%s_UID.txt", newPath,saveTokens[3], saveTokens[3]);
     file = fopen(pathDir, "w");
-    free(path);
+    
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fprintf(file,"%s", saveTokens[1]);
     fclose(file);
+    closedir(d);
     free(pathDir);
+    free(path);
     
 }
 void writeFileData(char ** saveTokens, char* message){
@@ -330,14 +334,14 @@ void writeFileData(char ** saveTokens, char* message){
     memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s/%s.txt", saveTokens[2], saveTokens[3], saveTokens[3]);
     file = fopen(path, "a");
-    free(path);
+    
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fprintf(file,"%s", message);
     fclose(file);
-    //free(path);
+    free(path);
 }
 
 void writeFileImg(char ** saveTokens, char* message, char* ext, long int n){
@@ -347,14 +351,13 @@ void writeFileImg(char ** saveTokens, char* message, char* ext, long int n){
     memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s/%s.%s", saveTokens[2], saveTokens[3], saveTokens[3], ext);
     file = fopen(path, "ab");
-    free(path);
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fwrite(message, n, sizeof(char), file);
     fclose(file);
-    //free(path);
+    free(path);
 }
 /*=====================ANSWER SUBMIT=============*/
 
@@ -390,14 +393,16 @@ char* createAnswer(char** saveTokens){
     memset(pathDir, 0, 1024);
     sprintf(pathDir, "TOPICS/%s/%s/%s_%s/%s_%s_UID.txt", saveTokens[2],saveTokens[3], saveTokens[3], number, saveTokens[3], number);
     file = fopen(pathDir, "w");
-    //free(path);
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fprintf(file,"%s", saveTokens[1]);
     fclose(file);
-    free(path);
+    closedir(d);
+    free(newPath);
+    free(pathDir);
+
     return number;
     
 }
@@ -409,14 +414,13 @@ void writeFileDataANS(char ** saveTokens, char* message, char* buffer, char* num
     memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s.txt", saveTokens[2], saveTokens[3], saveTokens[3], number, saveTokens[3], number);
     file = fopen(path, "a");
-    free(path);
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fprintf(file,"%s", message);
     fclose(file);
-    //free(path);
+    free(path);
 }
 void writeFileImgANS(char ** saveTokens, char* message, char* ext, long int n, char* number){
 
@@ -425,14 +429,14 @@ void writeFileImgANS(char ** saveTokens, char* message, char* ext, long int n, c
     memset(path, 0, 1024);
     sprintf(path, "TOPICS/%s/%s/%s_%s/%s_%s.%s", saveTokens[2], saveTokens[3], saveTokens[3], number,saveTokens[3], number, ext);
     file = fopen(path, "ab");
-    free(path);
+    
     if (file < 0) {
         perror("CLIENT:\n");
         exit(1);
     }
     fwrite(message, n, sizeof(char), file);
     fclose(file);
-    //free(path);
+    free(path);
 }
 
 char* number_of_answers(char* topic, char* question){ //get the number of total topics
@@ -471,13 +475,14 @@ char* answerID(char* currTopic, char* dirname, char* numb){
     char* id = (char*)malloc(sizeof(char)*6);
     
     file = fopen(path, "r");
-    free(path);
+    
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
     fscanf(file, "%s", id);
     strcat(id, "\0");
-
+    fclose(file);
+    free(path);
     return id;
 }
 
@@ -498,7 +503,7 @@ char** checkAnswerImage(char *currTopic, char* dirname, char* numb){
     if (d){
         while((dir=readdir(d)) != NULL){
             if((strcmp(dir->d_name, "..")) && (strcmp(dir->d_name, "."))&&dir->d_type != DT_DIR ){
-                ret = strrchr(dir->d_name, ch);
+                ret = strchr(dir->d_name, ch);
                 //char* dirent = strncpy(dir->d_name)
                 if(strcmp(ret, ".txt")){
                     strcpy(qImg[0],"1");
@@ -522,7 +527,7 @@ char* questionAnswerSize(char* currTopic, char* dirname, char*numb, char* ext){
     memset(qsize, 0, 11);
     
     file = fopen(path, "r");
-    free(path);
+    
     if(file == NULL){
         exit(EXIT_FAILURE);
     }
@@ -530,6 +535,7 @@ char* questionAnswerSize(char* currTopic, char* dirname, char*numb, char* ext){
     fseek(file, 0, SEEK_END);
     long int size = ftell(file);
     sprintf(qsize, "%ld", size);
-
+    fclose(file);
+    free(path);
     return qsize;
 }
