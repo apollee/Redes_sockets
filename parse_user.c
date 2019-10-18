@@ -13,10 +13,11 @@
 #include "commands_user.h"
 #include "directory_structure_user.h"
 
+#define DEFAULT_BUFFER_SIZE 1024
+
 ssize_t n;
 
 void input_command_user(int argc, char *argv[], char *port, char *ip) {
-
     if(argc == 1){
         return;
     }
@@ -36,8 +37,9 @@ void input_command_user(int argc, char *argv[], char *port, char *ip) {
     }
 }
 
-int parse_command() { // command that the user wrote
 
+//Parse the commands given by the user
+int parse_command() { // command that the user wrote
     int numTokens = 0;
     char *saveTokens[7];
     char input[50];
@@ -59,7 +61,7 @@ int parse_command() { // command that the user wrote
     return 0;
 }
 
-//action that the user requested
+//For each command do an action
 void input_action(int numTokens, char** saveTokens, char* input, long int numberChar){ 
     char* message = (char*)malloc(sizeof(char)*1024); 
     memset(message, 0, 1024);
@@ -166,6 +168,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     free(message);
 }
 
+
 //comand that the user got from the server
 void parse_command_received(char* buffer){ 
     int numTokens = 0;
@@ -251,11 +254,11 @@ char** parse_command_received_TCP(char* message){
     return saveTokens;
 }
 
+
 //TCP message from the server
 void input_action_received_TCP(char** saveTokens){ 
     char command[5];
-    char* buffer = (char*)malloc(sizeof(char)* 1024);
-    memset(buffer, 0, 1024);
+    
     strcpy(command, saveTokens[0]);
 
     if(!strcmp(command, "QGR")){
@@ -263,22 +266,24 @@ void input_action_received_TCP(char** saveTokens){
         memset(path, 0, 50);
         sprintf(path, "TOPICS/%s/%s", local_topic, local_question);
 
-        int qUserID = atoi(saveTokens[1]);
+        //int qUserID = atoi(saveTokens[1]);
         int qSize = atoi(saveTokens[2]);
-        int firstOffset = atoi(saveTokens[5]);
+        int firstOffset = atoi(saveTokens[3]);
         int indice;
-        
-        
+        free(saveTokens);
 
+
+        char* buffer = (char*)malloc(sizeof(char)* 1024);
+        memset(buffer, 0, 1024);
         while(qSize > 0){
-            indice = treatBufferData(saveTokens, firstOffset, qSize, buffer);
-            qSize = qSize- (indice - firstOffset);
+            indice = treatBufferData(firstOffset, qSize, buffer);
+            qSize = qSize - (indice - firstOffset);
             firstOffset = 0;
 
             if(indice == strlen(buffer)){
                 memset(buffer, 0, 1024);
                 //n = read(newfd, buffer, 1024);
-                buffer = readTCP();
+                readTCP(buffer);
                 indice = 0;
             }
         }
@@ -321,36 +326,33 @@ void input_action_received_TCP(char** saveTokens){
                     firstOffset = 0;
                     if(indice == n){
                         memset(buffer, 0, 1024);
-                        buffer = readTCP();
+                        readTCP(buffer);
                     }
                 }
                 printf("DATA RECEIVED (até à imagem)\n");
             }
         }
 
-        //A partir daqui tratamos das questoes
-        int i = 0;
-        indice+=2;
+        //A partir daqui tratamos das questoes-----------------------
+        // int i = 0;
+        // indice+=2;
 
-        char* numberOfQuestionsChar;
-        int iNumberOfQuestions = 0;
-        for(i = 0; buffer[indice] != ' '; i++, indice++){
-            numberOfQuestionsChar[i] = buffer[indice];
-        }
-        int numberOfQuestions = atoi(numberOfQuestionsChar);
+        // char* numberOfQuestionsChar;
+        // int iNumberOfQuestions = 0;
+        // for(i = 0; buffer[indice] != ' '; i++, indice++){
+        //     numberOfQuestionsChar[i] = buffer[indice];
+        // }
+        // int numberOfQuestions = atoi(numberOfQuestionsChar);
         
-        for (i = 0; i < numberOfQuestions; i++){
+        // for (i = 0; i < numberOfQuestions; i++){
                 
-        }
-        //Em principio aqui acaba esta funcao
+        // }
+        //Em principio aqui acaba esta funcao-----------------------------
+
 
         
         printf("localTopic: %s\n", local_topic);
         printf("localQuestion: %s\n", local_question);
-
-
-
-
     }
 
     else if(!strcmp(command, "QUR")){
@@ -378,7 +380,6 @@ void input_action_received_TCP(char** saveTokens){
     else{
         printf("Unexpected server response\n");
     }
-    free(buffer);
 }
 
 int parse_image_qg(int indice, char* buffer){
@@ -506,9 +507,9 @@ int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext){
 }
 
 //Em principio podemos eliminar o saveTokens
-int treatBufferData(char** saveTokens, int ind, int qsize, char* buffer){
+int treatBufferData(int ind, int qsize, char* buffer){
     
-    int max = qsize > strlen(buffer) ? strlen(buffer) : qsize;
+    int max = qsize > DEFAULT_BUFFER_SIZE ? DEFAULT_BUFFER_SIZE : qsize;
     int i, k = 0;
     char* message = (char*)malloc(sizeof(char)*(max-ind+1));
     memset(message, 0, max-ind);

@@ -18,7 +18,9 @@
 struct stat qsize, isize;
 FILE* fd_bufferData;
 FILE* fd_bufferImg;
-
+//----------------------------------------------------------------------------------
+//Verification of the called commands
+//----------------------------------------------------------------------------------
 int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
     if(numTokens != 2)
         return FALSE;
@@ -145,6 +147,9 @@ int commandASOK(int numTokens, char** saveTokens, long int numberChar){
         return TRUE;
 }
 
+//----------------------------------------------------------------------------------
+//The commands are sended to the server side with a specific protocol
+//----------------------------------------------------------------------------------
 void send_message_reg(char* id, char* message){
     strcpy(id_user, id);
     strcpy(message, "REG ");
@@ -184,11 +189,11 @@ void send_message_qg(char* message){
     writeTCP(message);
     
     //Aqui começa a besteira de codigo------------------------------------------------------
-    char* messageReceived = readTCP();
+    char* messageReceived = (char*) malloc(sizeof (char*) * 1024);
+    readTCP(messageReceived);
     
-    char** saveTokens = (char **) malloc(sizeof (char*) * 3);
-
-    for(int i = 0; i < 50; i++){
+    char** saveTokens = (char **) malloc(sizeof (char*) * 4);
+    for(int i = 0; i < 4; i++){
         saveTokens[i] = (char *) malloc(sizeof(char)*50);
         memset(saveTokens[i], 0, 50);
     }
@@ -215,38 +220,18 @@ void send_message_qg(char* message){
             k++;
         }
     }
+    free(messageReceived);
     sprintf(saveTokens[j],"%d", i);
 
 
     input_action_received_TCP(saveTokens);
-
+    for(int i = 0; i < 4; i++){
+         free(saveTokens[i]);
+    }
+    free(saveTokens);
 
     //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
-
-// void send_message_qs(char* message, int numTokens, char** saveTokens){
-//     char var[1024]; 
-//     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
-//     stat(saveTokens[2], &qsize);
-//     sprintf(var, "%ld", qsize.st_size); //Size of text doc
-//     strcat(message, var);
-//     strcat(message, " ");
-//     //Doc itself
-//     //strcat(message, " ");
-//     if (numTokens == 4){
-//         strcat(message, "1 ");
-//         //Missing extension of image
-//         //strcat(message, " ");
-//         stat(saveTokens[3], &isize);
-//         sprintf(var, "%ld", isize.st_size); //Size of image
-//         strcat(message, var);
-//         //Image itself
-//     }else {
-//         strcat(message, "0");
-//     }
-//     strcat(message, "\n\0"); //atencao ao \0
-//     send_commandTCP(message);
-// }
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     long var;
@@ -352,6 +337,17 @@ void send_message_err(char* message){
     send_commandUDP(message);
 }
 
+
+
+
+
+
+
+
+
+
+
+
 int onlyNumbers(char* message) {
     int i;
 
@@ -422,15 +418,40 @@ int treatBufferDataQUS(char* file_with_extension, int qsize, int indice, char* m
     return max;
 }
 
+//Em principio da para tirar o saveTokens
 int treatBufferImageQUS(char** saveTokens, int qsize, int indice, char* message){
     ssize_t n;
-    int max = qsize > 1024 ? 1024 : qsize;
-    char* newMessage = (char*)malloc(sizeof(char)*max);
+    //int max = qsize > 1024 ? 1024 : qsize;
+    //char* newMessage = (char*)malloc(sizeof(char)*max);
  
     fseek(fd_bufferImg, indice, SEEK_SET);
-    int nread = fread(newMessage, 1, max, fd_bufferImg); 
+    //int nread = fread(newMessage, 1, max, fd_bufferImg); 
     //strcat(message, newMessage);
     //printf("%s", message);
     n = writeTCP(message);
     return n;
 }
+
+// void send_message_qs(char* message, int numTokens, char** saveTokens){
+//     char var[1024]; 
+//     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
+//     stat(saveTokens[2], &qsize);
+//     sprintf(var, "%ld", qsize.st_size); //Size of text doc
+//     strcat(message, var);
+//     strcat(message, " ");
+//     //Doc itself
+//     //strcat(message, " ");
+//     if (numTokens == 4){
+//         strcat(message, "1 ");
+//         //Missing extension of image
+//         //strcat(message, " ");
+//         stat(saveTokens[3], &isize);
+//         sprintf(var, "%ld", isize.st_size); //Size of image
+//         strcat(message, var);
+//         //Image itself
+//     }else {
+//         strcat(message, "0");
+//     }
+//     strcat(message, "\n\0"); //atencao ao \0
+//     send_commandTCP(message);
+// }

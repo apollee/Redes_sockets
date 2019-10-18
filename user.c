@@ -56,18 +56,18 @@ int main(int argc, char *argv[]) {
     free_and_close(); 
 }  
 
-void initialize_flags(){
-    strcpy(port, DEFAULT_PORT);
-    strcpy(ip, FLAG);
-    strcpy(id_user, FLAG);
-    strcpy(local_topic, FLAG);
-}
-
 void sigpipe_handler(){
     struct sigaction act;    
     memset(&act,0,sizeof act);
     act.sa_handler=SIG_IGN;
     if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);   
+}
+
+void initialize_flags(){
+    strcpy(port, DEFAULT_PORT);
+    strcpy(ip, FLAG);
+    strcpy(id_user, FLAG);
+    strcpy(local_topic, FLAG);
 }
 
 int create_socket(struct addrinfo* res){ 
@@ -94,24 +94,6 @@ void start_UDP(){
     }
 }
 
-void send_commandUDP(char *message){
-    
-    n = sendto(fdUDP, message, strlen(message),0,resUDP->ai_addr,resUDP->ai_addrlen);
-
-    if(n == -1){
-        printf("send to not working UDP\n");
-    }
-    char* buffer = (char*)malloc(sizeof( char)*2048);
-    memset(buffer, 0, 2048);
-    addrlen = sizeof(addr);
-    n = recvfrom(fdUDP, buffer, 2048, 0, (struct sockaddr*) &addr, &addrlen);
-    if(n == -1){
-        printf("receiving from UDP server not working\n");
-    }
-    parse_command_received(buffer);
-    free(buffer);
-}
-
 void start_TCP(){
     memset(&hintsTCP, 0 ,sizeof hintsTCP);
     hintsTCP.ai_family = AF_INET;
@@ -130,6 +112,28 @@ void start_TCP(){
     }
 } 
 
+
+
+
+//For sending UDP CMDS
+void send_commandUDP(char *message){   
+    n = sendto(fdUDP, message, strlen(message),0,resUDP->ai_addr,resUDP->ai_addrlen);
+    if(n == -1){
+        printf("send to not working UDP\n");
+    }
+
+    char* buffer = (char*)malloc(sizeof( char)*2048);
+    memset(buffer, 0, 2048);
+    addrlen = sizeof(addr);
+    n = recvfrom(fdUDP, buffer, 2048, 0, (struct sockaddr*) &addr, &addrlen);
+    if(n == -1){
+        printf("receiving from UDP server not working\n");
+    }
+    parse_command_received(buffer);
+    free(buffer);
+}
+
+
 //divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo while
 int connectTCP(){
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
@@ -147,16 +151,14 @@ int writeTCP(char* message){
     return b;
 }
 
-char* readTCP(){
-    char* buffer = (char*) malloc(sizeof(char)*1024);
-    char* bufferFinal;
+char* readTCP(char* buffer){
+    //char* bufferFinal;
     int b = read(fdTCP, buffer, 1024); 
     if (b == -1){
         printf("read not working TCP");
     }
 
-    bufferFinal = realloc(buffer, strlen(buffer)+1);
-    return bufferFinal;
+    return buffer;
 }
 
 //Esta funcao e para ser chamada depois de tudo ter sido enviado
@@ -191,6 +193,10 @@ void send_commandTCP(char* message){
         printf("creating TCP socket failed\n"); 
     }
 } 
+
+
+
+
 
 void free_and_close(){
     freeaddrinfo(resUDP);

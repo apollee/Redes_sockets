@@ -12,7 +12,7 @@ void parse_command_received(char* buffer);
 char** parse_command_received_TCP(char* buffer);
 void input_action_received(int numTokens, char** saveTokens, long int numberChar);
 int treatBufferData2(int ind, int num, char* buffer);
-int treatBufferData(char** saveTokens, int ind, int num, char* buffer);
+int treatBufferData(int ind, int num, char* buffer);
 int parse_image_qg(int indice, char* buffer);
 int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext);
 int treatBufferImg(int ind, int num, long int n, char* buffer, char* ext);

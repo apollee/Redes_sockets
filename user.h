@@ -17,7 +17,7 @@ void send_commandUDP(char* message);
 void send_commandTCP(char* message);
 int connectTCP();
 int writeTCP(char* message);
-char* readTCP();
+char* readTCP(char* buffer);
 
 void free_and_close();
 
