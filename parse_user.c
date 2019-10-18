@@ -191,6 +191,9 @@ void parse_command_received(char* buffer){
     }
     //free(buffer);
     input_action_received(numTokens, saveTokens, numberChar);
+    /*for(i = 0; i < 120; i++){
+        free(saveTokens[i]);
+    }*/
     free(saveTokens);
     free(token);
 }

@@ -139,11 +139,20 @@ int connectTCP(){
     return h; 
 }
 
-int writeTCP(char* message){
-    ssize_t b = write(fdTCP, message, strlen(message));
-    if (b == -1){
-        return b;
+int writeTCP(char* message, int nread){
+    ssize_t b;
+    if(nread != 0){
+        b = write(fdTCP, message, nread);
+        if (b == -1){
+            return b;
+        }
+    }else{
+        b = write(fdTCP, message, strlen(message));
+        if (b == -1){
+            return b;
+        }
     }
+    
     return b;
 }
 

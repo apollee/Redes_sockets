@@ -19,7 +19,7 @@ void create_topic_directory(char *dirname, char* userID){
     int fd = dirfd(d);
     mkdirat(fd, dirname, 0700);
     
-    //Criar ficheiro
+    //Criar ficheiro topico_UID
     FILE* file;
     char* path = (char*)malloc (sizeof (char) * 1024);
     sprintf(path, "TOPICS/%s/%s_UID.txt", dirname, dirname);
@@ -32,8 +32,8 @@ void create_topic_directory(char *dirname, char* userID){
     strcat(userID, "\0");
     fprintf(file,"%s", userID);
     fclose(file);
-    //free(path);
     closedir(d);
+    free(path);
 }
 
 void create_question_directory(char *dirname, char* userID){
@@ -226,8 +226,10 @@ void questionList(){
         closedir(d);
 	}
 	else{
+        free(path);
 		exit(1);
 	}
+    free(path);
 }
 
 char* questionID(char* dirname, char* path){

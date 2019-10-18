@@ -16,7 +16,7 @@ int create_socket(struct addrinfo* res);
 void send_commandUDP(char* message);
 void send_commandTCP(char* message);
 int connectTCP();
-int writeTCP(char* message);
+int writeTCP(char* message, int nread);
 char* readTCP();
 
 void free_and_close();
