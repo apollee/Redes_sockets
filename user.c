@@ -109,6 +109,7 @@ void send_commandUDP(char *message){
         printf("receiving from UDP server not working\n");
     }
     parse_command_received(buffer);
+    free(buffer);
 }
 
 void start_TCP(){

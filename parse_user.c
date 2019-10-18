@@ -162,6 +162,8 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     else
         //send_message_err(message);
        printf("Invalid command\n");
+    
+    free(message);
 }
 
 //comand that the user got from the server
@@ -189,6 +191,8 @@ void parse_command_received(char* buffer){
     }
     //free(buffer);
     input_action_received(numTokens, saveTokens, numberChar);
+    free(saveTokens);
+    free(token);
 }
 
 //UDP message from the server
@@ -374,6 +378,7 @@ void input_action_received_TCP(char** saveTokens){
     else{
         printf("Unexpected server response\n");
     }
+    free(buffer);
 }
 
 int parse_image_qg(int indice, char* buffer){
