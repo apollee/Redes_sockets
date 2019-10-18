@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <errno.h>
 #include <signal.h>
+#include <sys/time.h>
 #include "parse_user.h" 
 #include "user.h"
 #include "commands_user.h"
@@ -21,7 +22,6 @@ ssize_t n;
 int fdUDP, errcode;
 char host_name[128];
 char port[6];
-//char ip[INET_ADDRSTRLEN];
 char ip[55];
  
 int main(int argc, char *argv[]) {
@@ -52,7 +52,6 @@ int main(int argc, char *argv[]) {
     while(1){ 
         parse_command(); 
     }
-
     free_and_close(); 
 }  
 
@@ -67,11 +66,19 @@ void sigpipe_handler(){
     struct sigaction act;    
     memset(&act,0,sizeof act);
     act.sa_handler=SIG_IGN;
-    if(sigaction(SIGPIPE,&act,NULL)==-1)/*error*/exit(1);   
+
+    if(sigaction(SIGPIPE,&act,NULL)== -1){
+        printf("Error: connection was lost.\n");    
+        exit(-1); 
+    }  
 }
 
 int create_socket(struct addrinfo* res){ 
     int fd = socket(res->ai_family,res->ai_socktype,res->ai_protocol);
+    if(fd == -1){
+        printf("Error: not able to communicate to the server.\n");
+        exit(-1);
+    }
     return fd;
 }
 
@@ -83,30 +90,43 @@ void start_UDP(){
     
     if(!strcmp(ip, FLAG)){
         if((errcode = getaddrinfo(host_name, port, &hintsUDP, &resUDP)) != 0){
-            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+            printf("Error: receiving server information.\n");
+            exit(-1);
         }
-        inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip);
+        if(inet_ntop(resUDP->ai_family, &((struct sockaddr_in*)resUDP->ai_addr)->sin_addr, ip, sizeof ip) == NULL){
+            printf("Error: receiving server information.\n");
+            exit(-1);
+        }
     }
     else{
         if((errcode = getaddrinfo(ip, port, &hintsUDP, &resUDP)) != 0){
-            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+            printf("Error: receiving server information.\n");
+            exit(-1);
         }
     }
 }
 
 void send_commandUDP(char *message){
-    
     n = sendto(fdUDP, message, strlen(message),0,resUDP->ai_addr,resUDP->ai_addrlen);
 
     if(n == -1){
-        printf("send to not working UDP\n");
+        printf("Error: not able to send the message to the server.\n");
+        exit(-1);
     }
     char* buffer = (char*)malloc(sizeof( char)*2048);
     memset(buffer, 0, 2048);
     addrlen = sizeof(addr);
+
+    
+    struct timeval time;
+    time.tv_sec = 10;
+    time.tv_usec = 0;
+    setsockopt(fdUDP, SOL_SOCKET, SO_RCVTIMEO, (const char*)&time, sizeof time);
+    
     n = recvfrom(fdUDP, buffer, 2048, 0, (struct sockaddr*) &addr, &addrlen);
     if(n == -1){
-        printf("receiving from UDP server not working\n");
+        printf("Error: not able to receive the message from the server.\n");
+        exit(-1);
     }
     parse_command_received(buffer);
     free(buffer);
@@ -120,40 +140,43 @@ void start_TCP(){
 
     if(!strcmp(ip, FLAG)){
         if((errcode = getaddrinfo(host_name, port, &hintsTCP, &resTCP)) != 0){
-            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+            printf("Error: receiving server information.\n");
+            exit(-1);
         }
     }
     else{
         if ((errcode = getaddrinfo(ip, port, &hintsTCP, &resTCP)) != 0){
-            fprintf(stderr, "error: getaddrinfo: %s\n", gai_strerror(errcode));
+            printf("Error: receiving server information.\n");
+            exit(-1);
         }
     }
 } 
 
-//divididos as 3 funcoes porque nao queremos fazer connect varias vezes no ciclo while
 int connectTCP(){
     int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
     if(h == -1){
-        printf("send to not working TCP\n");
+        printf("Error: not able to connect to the server.\n");
+        exit(-1);
     }  
     return h; 
 }
 
 int writeTCP(char* message, int nread){
-    ssize_t b;
+    ssize_t n;
     if(nread != 0){
-        b = write(fdTCP, message, nread);
-        if (b == -1){
-            return b;
+        n = write(fdTCP, message, nread); //images
+        if (n == -1){
+            printf("Error: not able to send the message to the server.\n");
+            exit(-1);
         }
     }else{
-        b = write(fdTCP, message, strlen(message));
-        if (b == -1){
-            return b;
+        n = write(fdTCP, message, strlen(message)); //text
+        if (n == -1){
+            printf("Error: not able to send the message to the server.\n");
+            exit(-1);
         }
-    }
-    
-    return b;
+    }   
+    return n;
 }
 
 char* readTCP(){
@@ -161,45 +184,12 @@ char* readTCP(){
     char* bufferFinal;
     int b = read(fdTCP, buffer, 1024); 
     if (b == -1){
-        printf("read not working TCP");
+        printf("Error: not able to receive the message from the server.\n");
+        exit(-1);
     }
-
     bufferFinal = realloc(buffer, strlen(buffer)+1);
     return bufferFinal;
 }
-
-//Esta funcao e para ser chamada depois de tudo ter sido enviado
-void send_commandTCP(char* message){ 
-    //resTCP->ai_addrlen = sizeof(resTCP->ai_addr);
-    int h = connect(fdTCP, resTCP->ai_addr, resTCP->ai_addrlen);
-    if(h == -1){
-        printf("connect not working TCP\n");
-    }
-
-    int b = send(fdTCP, message, strlen(message), 0);
-    if (b == -1){
-        printf("write not working TCP\n");
-    }
-
-    char* buffer = (char*)malloc(sizeof(char)*2048);
-    memset(buffer, 0, 2048);
-    strcpy(buffer, "");
-
-    b = recv(fdTCP, buffer, 50, 0); 
-    if (b == -1){
-        perror("receive not working");
-    }
-
-    write(1, "echo TCP: ", 10);    
-    write(1, buffer, strlen(buffer)); 
-    parse_command_received_TCP(buffer);
-    close(fdTCP);
-
-    fdTCP = create_socket(resTCP);
-    if(fdTCP == -1){
-        printf("creating TCP socket failed\n"); 
-    }
-} 
 
 void free_and_close(){
     freeaddrinfo(resUDP);

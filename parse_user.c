@@ -43,6 +43,7 @@ int parse_command() { // command that the user wrote
     char input[50];
     int numberChar;
     if(fgets(input, 50, stdin) == NULL){
+        printf("Error: command not received\n");
         return -1;
     }    
 
@@ -55,6 +56,7 @@ int parse_command() { // command that the user wrote
         numTokens++;
         token = strtok(NULL, " ");
     }
+
     input_action(numTokens, saveTokens, input, numberChar);
     return 0;
 }
@@ -72,51 +74,51 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         if(commandREGOK(numTokens, saveTokens, numberChar))
             send_message_reg(saveTokens[1], message);
         else
-            printf("Invalid arguments\n"); //nao devia ser um ERR tambem?
+            printf("Error: invalid arguments\n");
     }
 
     else if((!strcmp(saveTokens[0], "topic_list") || !strcmp(saveTokens[0], "tl"))) {
         if(commandTLOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-            	printf("You should register first\n");
+            	printf("Error: you should register first\n");
             else
                 send_message_tl(message);
         }
         else
-            printf("Invalid arguments\n"); 
+            printf("Error: invalid arguments\n"); 
     }
 
     else if((!strcmp(saveTokens[0], "topic_select") || !strcmp(saveTokens[0], "ts"))) {
         if(commandTSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-            	printf("You should register first\n");
+            	printf("Error: you should register first\n");
             else
             	printf("selected topic: %s (%s)\n", local_topic, topicID(local_topic));
         }else
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
     } 
 
     else if((!strcmp(saveTokens[0], "topic_propose") || !strcmp(saveTokens[0], "tp"))) {
         if(commandTPOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_tp(saveTokens[1], message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
     else if((!strcmp(saveTokens[0], "question_list") || !strcmp(saveTokens[0], "ql"))){
         if(commandQLOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else if (!strcmp(local_topic, FLAG))
-                printf("You have to select a topic first\n");
+                printf("Error: you have to select a topic first\n");
             else
                 send_message_ql(message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
     //--------------------------------------------------------------------
@@ -125,34 +127,34 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
     else if((!strcmp(saveTokens[0], "question_get") || !strcmp(saveTokens[0], "qg"))){
         if(commandQGOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_qg(message);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
     
     else if((!strcmp(saveTokens[0], "question_submit") || !strcmp(saveTokens[0], "qs"))){
         if(commandQSOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else{
                 send_message_qs(message, numTokens, saveTokens);
             }
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
     else if((!strcmp(saveTokens[0], "answer_submit") || !strcmp(saveTokens[0], "as"))){
         if(commandASOK(numTokens, saveTokens, numberChar)){
             if(!isREG(id_user))
-                printf("You need to register first\n");
+                printf("Error: you need to register first\n");
             else
                 send_message_as(message, numTokens, saveTokens);
         }else{
-            printf("Invalid arguments\n");
+            printf("Error: invalid arguments\n");
         }
     }
 
@@ -160,8 +162,7 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
         exit(0);
 
     else
-        //send_message_err(message);
-       printf("Invalid command\n");
+       printf("Error: invalid command\n");
     
     free(message);
 }
@@ -170,7 +171,6 @@ void input_action(int numTokens, char** saveTokens, char* input, long int number
 void parse_command_received(char* buffer){ 
     int numTokens = 0;
     int i;
-    //char *saveTokens[120];
     int numberChar;
 
     char** saveTokens = (char **) malloc(sizeof (char*) * 120);
@@ -189,11 +189,7 @@ void parse_command_received(char* buffer){
         numTokens++;
         token = strtok(NULL, " ");
     }
-    //free(buffer);
     input_action_received(numTokens, saveTokens, numberChar);
-    /*for(i = 0; i < 120; i++){
-        free(saveTokens[i]);
-    }*/
     free(saveTokens);
     free(token);
 }
@@ -208,16 +204,31 @@ void input_action_received(int numTokens, char** saveTokens, long int numberChar
             printf("User \"%s\" registered\n", id_user);
         }
         else if(!strcmp(saveTokens[1], "NOK")){
-            printf("User %s not registered\n", id_user); //e suposto?
+            printf("Error: user %s not registered\n", id_user); 
         }
     }
     else if(!strcmp(command, "LTR")){ 
-        printf("available topics:\n");
-        topics_print(saveTokens);
+        int number = atoi(saveTokens[1]);
+        if(number == 0){
+            printf("No available topics\n");
+        }else{
+            printf("Available topics:\n");
+            topics_print(saveTokens);
+        }
     }
-    else if(!strcmp(command, "PTR")){
-       printf("%s %s\n", saveTokens[0], saveTokens[1]);
-       
+    else if(!strcmp(command, "PTR")){ 
+        if(!strcmp(saveTokens[1], "OK")){
+            printf("Topic created with sucess\n");
+        }
+        else if(!strcmp(saveTokens[1], "DUP")){
+            printf("Error: duplicated topic\n");
+        }
+        else if(!strcmp(saveTokens[1], "NOK")){
+            printf("Error: failed to create the topic\n");
+        }
+       else if(!strcmp(saveTokens[1], "FUL")){
+            printf("Error: too many topics created already\n");
+        }  
     }
     else if(!strcmp(command, "LQR")){
         questions_print(saveTokens);
@@ -233,6 +244,7 @@ char** parse_command_received_TCP(char* message){
     int k = 0;
     int i;
     char** saveTokens = saveTokensInit(4, 50);
+
     //First part of parse until data
     for(i = 0; i < 50; i++){
         if(message[i] == ' ' || message[i] == '\n'){
@@ -265,7 +277,7 @@ void input_action_received_TCP(char** saveTokens){
     strcpy(command, saveTokens[0]);
 
     if(!strcmp(command, "QGR")){
-        int qUserID = atoi(saveTokens[1]);
+        //int qUserID = atoi(saveTokens[1]); (not used)
         int qSize = atoi(saveTokens[2]);
         int firstOffset = atoi(saveTokens[5]);
         int indice;
@@ -286,35 +298,10 @@ void input_action_received_TCP(char** saveTokens){
                 indice = 0;
             }
         }
-
-
-
-
-
-
-
-
-
-
-
-        
         printf("localTopic: %s\n", local_topic);
         printf("localQuestion: %s\n", local_question);
-
-
-
-
-        
-
-
         // //calculating qdata
         // int offset = strlen(saveTokens[0]) + strlen(saveTokens[1]) + strlen(saveTokens[2]) + 3 ;
-        
-
-
-
-
-
         // while(qsize > 0){
         //     indice = treatBufferData(saveTokens, offset, qsize, buffer); //qdata
         //     qsize = qsize - (indice - qdata);    
@@ -325,7 +312,6 @@ void input_action_received_TCP(char** saveTokens){
         //         n = read(fdTCP, buffer, 1024);
         //     }
         // }
-
         // if(buffer[indice] == ' '){
         //     indice++;
         //     if(buffer[indice] == '0'){
@@ -335,16 +321,13 @@ void input_action_received_TCP(char** saveTokens){
         //         indice = parse_image_qg(indice, buffer); //qiext qisize qidata
         //     }
         // }
-
         // if(buffer[indice] == ' '){
-        //     indice++;
-            
+        //     indice++;     
         //     // char* number; 
         //     // while(buffer[indice] != ' '){
         //     //     strcat(number, buffer+indice);
         //     //     indice++;
         //     // }   
-
         //     int number_answers = atoi(number); // N
         //     indice += 2;
         //     while(number_answers > 0){
@@ -366,21 +349,21 @@ void input_action_received_TCP(char** saveTokens){
         if(!strcmp(saveTokens[1], "OK")){
             printf("Question submitted with success\n");
         }else if(!strcmp(saveTokens[1], "NOK")){
-            printf("Failed to submit question\n");
+            printf("Error: submitting question\n");
         }else if(!strcmp(saveTokens[1], "FUL")){
-            printf("Failed to submit question - Maximum limit of questions reached\n");
+            printf("Error: maximum limit of questions reached\n");
         }else if(!strcmp(saveTokens[1], "DUP")){ 
-            printf("Duplicated question, failed to submit\n");
+            printf("Error: duplicated question\n");
         }
     }
-    
+
     else if(!strcmp(command, "ANR")){
         if(!strcmp(saveTokens[1], "OK")){
             printf("Answer submitted with success\n");
         }else if(!strcmp(saveTokens[1], "NOK")){
-            printf("Failed to submit answer\n");
+            printf("Error: failed to submit answer\n");
         }else if(!strcmp(command, "FUL")){
-            printf("Failed to submit answer - Maximum limit of answers reached\n");
+            printf("Error: maximum limit of answers reached\n");
         }
     }
     else{

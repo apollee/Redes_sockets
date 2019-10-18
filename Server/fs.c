@@ -39,17 +39,11 @@ int main(int argc, char *argv[]) {
     input_command_server(argc, argv, port); //checks argv commands
 
     start_UDP();
-    
     start_TCP();
 
     char* bufferBeforeParsing;
     char* bufferAfterParsing;
     char* bufferFinal;
-
-    // char* bufferBeforeParsingTCP;
-    // char* bufferAfterParsingTCP;
-    // char* bufferFinalTCP;
-    
 
   	while(1){
         FD_ZERO(&rfds); 

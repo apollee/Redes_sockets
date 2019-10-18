@@ -26,7 +26,7 @@ int commandREGOK(int numTokens, char** saveTokens, long int numberChar){
         return FALSE;
     else if(!onlyNumbers(saveTokens[1]))        
         return FALSE;
-    else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1]))        
+    else if(numberChar - 2 != strlen(saveTokens[0])+strlen(saveTokens[1])) //check spaces     
         return FALSE;       
     else
         return TRUE;
@@ -116,7 +116,6 @@ int commandQGOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
-    //Nao sei se nao temos que verificar os ficheiros 
     if(numTokens < 3 || numTokens > 4){
         return FALSE;
     }
@@ -131,7 +130,6 @@ int commandQSOK(int numTokens, char** saveTokens, long int numberChar){
 }
 
 int commandASOK(int numTokens, char** saveTokens, long int numberChar){
-    //Nao sei se nao temos que verificar os ficheiros 
     if(numTokens < 2 || numTokens > 3){
         return FALSE;
     }
@@ -183,7 +181,6 @@ void send_message_qg(char* message){
     connectTCP();
     writeTCP(message, 0);
     
-    //Aqui começa a besteira de codigo------------------------------------------------------
     char* messageReceived = readTCP();
     
     char** saveTokens = (char **) malloc(sizeof (char*) * 3);
@@ -198,8 +195,6 @@ void send_message_qg(char* message){
     int k = 0;
     int i;
 
-    //Isto ja esta feito no parse_user
-    //First part of parse until data
     for(i = 0; i < 50; i++){
         if(messageReceived[i] == ' '|| messageReceived[i] == '\n'){
             saveTokens[j][k] = '\0';
@@ -216,37 +211,9 @@ void send_message_qg(char* message){
         }
     }
     sprintf(saveTokens[j],"%d", i);
-
-
     input_action_received_TCP(saveTokens);
 
-
-    //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
-
-// void send_message_qs(char* message, int numTokens, char** saveTokens){
-//     char var[1024]; 
-//     sprintf(message, "QUS %s %s %s ", id_user, local_topic, saveTokens[1]);
-//     stat(saveTokens[2], &qsize);
-//     sprintf(var, "%ld", qsize.st_size); //Size of text doc
-//     strcat(message, var);
-//     strcat(message, " ");
-//     //Doc itself
-//     //strcat(message, " ");
-//     if (numTokens == 4){
-//         strcat(message, "1 ");
-//         //Missing extension of image
-//         //strcat(message, " ");
-//         stat(saveTokens[3], &isize);
-//         sprintf(var, "%ld", isize.st_size); //Size of image
-//         strcat(message, var);
-//         //Image itself
-//     }else {
-//         strcat(message, "0");
-//     }
-//     strcat(message, "\n\0"); //atencao ao \0
-//     send_commandTCP(message);
-// }
 
 void send_message_qs(char* message, int numTokens, char** saveTokens){
     long var;
@@ -257,16 +224,16 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
 
     connectTCP();
     sprintf(file_with_extension, "%s.txt", saveTokens[2]); //adding the .txt to the file name;
+    fd_bufferData = fopen(file_with_extension, "r");
+    if (fd_bufferData == NULL){
+        printf("Error: no text file found.\n");
+        exit(-1);
+    }
+
     stat(file_with_extension, &qsize);
     var = qsize.st_size; //Size of text doc
     
     sprintf(message, "QUS %s %s %s %ld ", id_user, local_topic, saveTokens[1], var);
-    fd_bufferData = fopen(file_with_extension, "r");
-    if (fd_bufferData == NULL){
-        fprintf(stderr, "cannot open input file\n");
-        exit(-1);
-        //return -1;
-    }
 
     while(var > 0){
         numBytes = treatBufferDataQUS(file_with_extension, var, indice, message);
@@ -275,7 +242,11 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         memset(message, 0, 1024);
     }
 
-    fclose(fd_bufferData);
+    if(fclose(fd_bufferData) != 0){
+        printf("Error: in communication.\n");
+        exit(-1);
+    }
+    
     strcpy(message, "");
     if (numTokens == 4){
         strcat(message, " 1 ");
@@ -291,17 +262,16 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
         stat(saveTokens[3], &isize);
         sprintf(var2, "%ld", isize.st_size);
         size_image = atoi(var2);//Size of image
-        //printf("THE SIZE OF THE IMAGE IS: %d", size_image);
         strcat(message, var2);
         strcat(message, " ");
+
         write(fdTCP, message, strlen(message));
         memset(message, 0, 1024);
         indice = 0;
         fd_bufferImg = fopen(saveTokens[3], "rb");
         if (fd_bufferImg == NULL){
-            fprintf(stderr, "error: %s\n", strerror(errno));
+            printf("Error: no image found.\n");
             exit(-1);
-            //return -1;
         }
         while(size_image > 0){
             numBytes = treatBufferImageQUS(saveTokens, size_image, indice);
@@ -316,7 +286,6 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     writeTCP(message, 0);
     free(file_with_extension);
     printf("%s", message);
-    //send_commandTCP(message);
     parse_command_received_TCP(readTCP());
 }
 
@@ -465,7 +434,7 @@ int treatBufferDataQUS(char* file_with_extension, int qsize, int indice, char* m
 }
 
 int treatBufferImageQUS(char** saveTokens, int qsize, int indice){
-    /*FILE* file;*/
+    FILE* file;
     ssize_t n;
     int max = qsize > 1024 ? 1024 : qsize;
     char* newMessage = (char*)malloc(sizeof(char)*max);
@@ -474,12 +443,12 @@ int treatBufferImageQUS(char** saveTokens, int qsize, int indice){
     fseek(fd_bufferImg, indice, SEEK_SET);
     int nread = fread(newMessage, 1, max, fd_bufferImg); 
 
-    /*file = fopen("teste.jpg", "ab");
+    file = fopen("teste.jpg", "ab");
     if(file < 0){
         exit(1);
     }
     fwrite(newMessage, 1,nread, file);
-    fclose(file);*/
+    fclose(file);
     n = write(fdTCP, newMessage, nread);
     free(newMessage);
     return n;

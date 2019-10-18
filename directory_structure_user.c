@@ -14,9 +14,17 @@ void create_directory(char* dirname){
 
 void create_topic_directory(char *dirname, char* userID){
     DIR *d;
-    //Open topic folder
+    //Open topic folder 
     d = opendir("TOPICS");
+    if(d == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     int fd = dirfd(d);
+    if(fd == -1){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     mkdirat(fd, dirname, 0700);
     
     //Criar ficheiro topico_UID
@@ -24,15 +32,17 @@ void create_topic_directory(char *dirname, char* userID){
     char* path = (char*)malloc (sizeof (char) * 1024);
     sprintf(path, "TOPICS/%s/%s_UID.txt", dirname, dirname);
     file = fopen(path, "w");
-    //free(path);
     if (file < 0) {
-        perror("CLIENT:\n");
-        exit(1);
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
     }
     strcat(userID, "\0");
     fprintf(file,"%s", userID);
     fclose(file);
-    closedir(d);
+    if(closedir(d) == -1){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     free(path);
 }
 
@@ -42,7 +52,15 @@ void create_question_directory(char *dirname, char* userID){
     char* message = malloc (sizeof (char) * 1024); 
     sprintf(message, "TOPICS/%s", local_topic);
     d = opendir(message);
+    if(d == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     int fd = dirfd(d);
+    if(fd == -1){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     mkdirat(fd, dirname, 0700);
     
     //Criar ficheiro
@@ -50,16 +68,18 @@ void create_question_directory(char *dirname, char* userID){
     char* path = (char*)malloc (sizeof (char) * 1024);
     sprintf(path, "TOPICS/%s/%s/%s_UID.txt", local_topic, dirname, dirname);
     file = fopen(path, "w");
-    //free(path);
-    if (file < 0) {
-        perror("CLIENT:\n");
-        exit(1);
+    if(file == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
     }
+
     strcat(userID, "\0");
     fprintf(file,"%s", userID);
     fclose(file);
-    //free(path);
-    closedir(d);    
+    if(closedir(d) == -1){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }   
 }
 
 int getTopic_by_number(int number){ //get the topic by the number
@@ -72,6 +92,10 @@ int getTopic_by_number(int number){ //get the topic by the number
     } 
 
     d = opendir("TOPICS");
+    if(d == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     int current_topic_number = 1;
     if(d){
         while((dir = readdir(d)) != NULL){
@@ -83,7 +107,10 @@ int getTopic_by_number(int number){ //get the topic by the number
                     current_topic_number++;            
             }   
         }
-        closedir(d);
+        if(closedir(d) == -1){
+            printf("Error in receiving information from the server.\n");
+            exit(-1);
+        } 
     }
     return flag;
 }
@@ -100,6 +127,10 @@ int getQuestion_by_number(int number){ //get the topic by the number
     } 
 
     d = opendir(message);
+    if(d == NULL){
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
+    }
     int current_question_number = 1;
     if(d){
         while((dir = readdir(d)) != NULL){
@@ -111,7 +142,10 @@ int getQuestion_by_number(int number){ //get the topic by the number
                     current_question_number++;            
             }   
         }
-        closedir(d);
+        if(closedir(d) == -1){
+            printf("Error in receiving information from the server.\n");
+            exit(-1);
+        }
     }
     free(message);
     return flag;
@@ -146,7 +180,10 @@ int checkExistenceofQuestion(char* dirname){ //check if a question exists
                 return 1;
             }
         }
-        closedir(d);
+        if(closedir(d) == -1){
+            printf("Error in receiving information from the server.\n");
+            exit(-1);
+        }
     }
     free(message);
     return 0;
@@ -159,11 +196,11 @@ char* topicID(char* dirname){ //get the id of the person that created a topic
     size_t len = 0; 
     
     file = fopen(message, "r");
-    char *line = NULL;
     if(file == NULL){
-        exit(EXIT_FAILURE);
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
     }
-    
+    char *line = NULL;
     getline(&line, &len, file);
     line[strcspn(line, "\n")] = 0;
     free(message);
@@ -174,8 +211,8 @@ void topicList(){ //get the list of topics
     DIR *d;
     struct dirent *dir;
     d = opendir("TOPICS");
+
     int count = 0;
-    //printf("message antes do topicList: !%s!\n", message);
     if (d){
         dir = readdir(d);
         while(dir != NULL){
@@ -185,13 +222,13 @@ void topicList(){ //get the list of topics
            		printf("%d - ", count);
                 printf("%s (proposed by ", dir->d_name);
                 printf("%s)\n", topicID(dir->d_name));
-                //if(num != count){
-                  //  strcat(message, " ");
-                //}
             }
             dir=readdir(d);
         }
-        closedir(d);
+        if(closedir(d) == -1){
+            printf("Error in receiving information from the server.\n");
+            exit(-1);
+        }
 	}
 	else{
 		exit(1);
@@ -204,10 +241,8 @@ void questionList(){
     char* path = (char*)malloc(sizeof(char)*1024);
     sprintf(path, "TOPICS/%s", local_topic);
 
-
     d = opendir(path);
     int count = 0;
-    //printf("message antes do topicList: !%s!\n", message);
     if (d){
         dir = readdir(d);
         while(dir != NULL){
@@ -217,17 +252,18 @@ void questionList(){
            		printf("%d - ", count);
                 printf("%s (proposed by ", dir->d_name);
                 printf("%s)\n", questionID(dir->d_name, path));
-                //if(num != count){
-                  //  strcat(message, " ");
-                //}
+
             }
             dir=readdir(d);
         }
-        closedir(d);
+        if(closedir(d) == -1){
+            printf("Error in receiving information from the server.\n");
+            exit(-1);
+        }
 	}
 	else{
         free(path);
-		exit(1);
+		exit(-1);
 	}
     free(path);
 }
@@ -241,7 +277,8 @@ char* questionID(char* dirname, char* path){
     file = fopen(message, "r");
     char *line = NULL;
     if(file == NULL){
-        exit(EXIT_FAILURE);
+        printf("Error in receiving information from the server.\n");
+        exit(-1);
     }
     
     getline(&line, &len, file);
