@@ -183,6 +183,10 @@ void send_message_qg(char* message){
     strcat(message, " ");
     strcat(message, local_question);
     strcat(message, "\n");
+    fdTCP = create_socket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
+    }
     connectTCP();
     writeTCP(message, 0);
     
@@ -226,7 +230,7 @@ void send_message_qg(char* message){
     }
     free(saveTokens);
     free(messageReceived);
-
+    close(fdTCP);
     //send_commandTCP(message); //Tem de ser dividido nas funcoes connect write e read
 }
 
@@ -237,12 +241,17 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     int indice = 0;
     int numBytes; 
 
+    fdTCP = create_socket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
+    }
     connectTCP();
     sprintf(file_with_extension, "%s.txt", saveTokens[2]); //adding the .txt to the file name;
     fd_bufferData = fopen(file_with_extension, "r");
     if (fd_bufferData == NULL){
         printf("Error: no text file found.\n");
-        exit(-1);
+        close(fdTCP);
+        return;
     }
 
     stat(file_with_extension, &qsize);
@@ -259,7 +268,8 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
 
     if(fclose(fd_bufferData) != 0){
         printf("Error: in communication.\n");
-        exit(-1);
+        close(fdTCP);
+        return;
     }
     
     strcpy(message, "");
@@ -303,7 +313,6 @@ void send_message_qs(char* message, int numTokens, char** saveTokens){
     printf("%s", message);
     parse_command_received_TCP(readTCP());
     close(fdTCP); 
-    fdTCP = create_socket(resTCP);
 }
 
 void send_message_as(char* message, int numTokens, char** saveTokens){
@@ -312,7 +321,12 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     memset(file_with_extension, 0, 1024);
     int indice = 0;
     int numBytes; 
-
+    fdTCP = create_socket(resTCP);
+    if(fdTCP == -1){
+        printf("creating TCP socket failed\n");
+    }
+    connectTCP();
+    writeTCP(message, 0);
     connectTCP();
     sprintf(file_with_extension, "%s.txt", saveTokens[1]); //adding the .txt to the file name;
     stat(file_with_extension, &qsize);
@@ -373,7 +387,6 @@ void send_message_as(char* message, int numTokens, char** saveTokens){
     free(file_with_extension);
     parse_command_received_TCP(readTCP());
     close(fdTCP); 
-    fdTCP = create_socket(resTCP);
 }
 
 void send_message_err(char* message){
@@ -432,8 +445,8 @@ void questions_print(char** saveTokens){
         //printf("%s ", token);
         char * token2 = strtok(NULL, ":");
         //printf("(proposed by %s)\n", token2);
-        //char * token3 = strtok(NULL, ""); //number of answers
-        create_question_directory(token, token2);
+        char * token3 = strtok(NULL, ""); //number of answers
+        //create_question_directory(token, token2, token3);
     }
     questionList();
 }

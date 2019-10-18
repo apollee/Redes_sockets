@@ -43,10 +43,6 @@ int main(int argc, char *argv[]) {
 
     //TCP-------------------------------------------------------------------
     start_TCP();
-    fdTCP = create_socket(resTCP);
-    if(fdTCP == -1){
-        printf("creating TCP socket failed\n");
-    }
 
     //start the program
     while(1){ 
@@ -195,5 +191,4 @@ void free_and_close(){
     freeaddrinfo(resUDP);
     freeaddrinfo(resTCP);
     close(fdUDP); 
-    close(fdTCP);  
 } 
