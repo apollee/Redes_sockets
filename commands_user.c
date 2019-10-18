@@ -432,8 +432,8 @@ void questions_print(char** saveTokens){
         //printf("%s ", token);
         char * token2 = strtok(NULL, ":");
         //printf("(proposed by %s)\n", token2);
-        //char * token3 = strtok(NULL, ""); //number of answers
-        create_question_directory(token, token2);
+        char * token3 = strtok(NULL, ""); //number of answers
+        create_question_directory(token, token2, token3);
     }
     questionList();
 }
