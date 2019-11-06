@@ -449,7 +449,7 @@ int treatBufferDataANS(char** saveTokens, int ind, int num, char* buffer, char* 
     int max = num > strlen(buffer)-ind ? strlen(buffer)-ind : num;
     int i, k = 0;
     char* message = (char*)malloc(sizeof(char)*(max+1));
-    memset(message, 0, max);
+    memset(message, 0, max + 1);
     for(i = ind; i < max; i++, k++){
         message[k] = buffer[i];
     }
