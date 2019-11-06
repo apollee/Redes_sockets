@@ -1,3 +1,0 @@
-reg 97021
-ts 4
-qs questao idade.txt
